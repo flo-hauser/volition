@@ -1,0 +1,25 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`WeekPage > renders stable markup 1`] = `
+"<q-page-stub class="q-pa-md">
+  <div class="q-mx-auto" style="max-width: 640px;">
+    <q-card-stub flat="" bordered="">
+      <q-card-section-stub>
+        <div class="text-h6 text-secondary text-weight-bold">pages.week.title</div>
+        <div class="text-body2 text-grey-8 q-mt-xs">pages.week.hint</div>
+        <div class="text-caption text-grey-7 q-mt-sm">pages.week.thisWeek</div>
+      </q-card-section-stub>
+      <q-separator-stub></q-separator-stub>
+      <q-list-stub separator="">
+        <q-item-stub>
+          <q-item-section-stub>
+            <q-item-label-stub class="text-weight-medium">Sports</q-item-label-stub>
+            <q-item-label-stub caption="">pages.week.progressLabel</q-item-label-stub>
+          </q-item-section-stub>
+          <q-item-section-stub side="" class="text-primary text-weight-medium">2 / 3</q-item-section-stub>
+        </q-item-stub>
+      </q-list-stub>
+    </q-card-stub>
+  </div>
+</q-page-stub>"
+`;

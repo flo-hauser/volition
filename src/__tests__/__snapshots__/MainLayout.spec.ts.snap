@@ -1,0 +1,29 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`MainLayout > renders stable markup 1`] = `
+"<q-layout-stub view="lHh Lpr lFf" class="bg-grey-1">
+  <q-header-stub bordered="" class="bg-primary text-white">
+    <q-toolbar-stub>
+      <q-toolbar-title-stub class="text-weight-bold">nav.today</q-toolbar-title-stub>
+      <q-btn-toggle-stub modelvalue="en-US" dense="" unelevated="" toggle-color="secondary" color="white" text-color="secondary" class="q-mr-sm" options="[object Object],[object Object]"></q-btn-toggle-stub>
+      <q-btn-stub flat="" dense="" no-caps="" color="white" icon="add" label="app.addTask" to="/tasks/new"></q-btn-stub>
+    </q-toolbar-stub>
+    <!--v-if-->
+  </q-header-stub>
+  <q-page-container-stub>
+    <q-slide-transition-stub>
+      <div>
+        <router-view-stub></router-view-stub>
+      </div>
+    </q-slide-transition-stub>
+    <!--v-if-->
+  </q-page-container-stub>
+  <q-footer-stub bordered="" class="bg-secondary text-white">
+    <q-tabs-stub dense="" indicator-color="warning" active-color="warning" align="justify">
+      <q-route-tab-stub to="/" icon="today" label="nav.today" exact=""></q-route-tab-stub>
+      <q-route-tab-stub to="/week" icon="calendar_view_week" label="nav.week"></q-route-tab-stub>
+      <q-route-tab-stub to="/tasks" icon="checklist" label="nav.tasks"></q-route-tab-stub>
+    </q-tabs-stub>
+  </q-footer-stub>
+</q-layout-stub>"
+`;

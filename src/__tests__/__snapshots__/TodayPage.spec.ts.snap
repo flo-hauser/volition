@@ -1,0 +1,31 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`TodayPage > renders stable markup 1`] = `
+"<q-page-stub class="q-pa-md">
+  <div class="q-mx-auto" style="max-width: 640px;">
+    <q-card-stub flat="" bordered="">
+      <q-card-section-stub>
+        <div class="text-h6 text-secondary text-weight-bold">pages.today.title</div>
+        <div class="text-body2 text-grey-8 q-mt-xs">pages.today.hint</div>
+        <div class="text-caption text-grey-7 q-mt-sm">pages.today.weekId</div>
+      </q-card-section-stub>
+      <q-separator-stub></q-separator-stub>
+      <q-list-stub separator="">
+        <q-item-stub class="q-py-sm">
+          <q-item-section-stub>
+            <q-item-label-stub class="text-weight-medium">Sports</q-item-label-stub>
+            <q-item-label-stub caption="">pages.today.progressLabel</q-item-label-stub>
+          </q-item-section-stub>
+          <q-item-section-stub side="">
+            <q-toggle-stub model-value="false" color="primary" label="pages.today.doneToday" disable="false"></q-toggle-stub>
+          </q-item-section-stub>
+        </q-item-stub>
+      </q-list-stub>
+      <q-separator-stub></q-separator-stub>
+      <q-card-actions-stub align="right">
+        <q-btn-stub color="primary" no-caps="" icon="add" label="common.addTask" to="/tasks/new"></q-btn-stub>
+      </q-card-actions-stub>
+    </q-card-stub>
+  </div>
+</q-page-stub>"
+`;
