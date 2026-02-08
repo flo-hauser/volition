@@ -8,9 +8,13 @@ type TestTask = {
 };
 
 const mockNotify = vi.fn();
+const mockReplace = vi.fn();
+const mockRoute = { query: {} as Record<string, string | undefined> };
+
 let mockStore: {
   activeTasks: TestTask[];
   tasks: Record<string, TestTask>;
+  createTask: ReturnType<typeof vi.fn>;
   updateTask: ReturnType<typeof vi.fn>;
   deleteTask: ReturnType<typeof vi.fn>;
 };
@@ -23,6 +27,11 @@ vi.mock('vue-i18n', () => ({
   useI18n: () => ({
     t: (key: string) => key,
   }),
+}));
+
+vi.mock('vue-router', () => ({
+  useRoute: () => mockRoute,
+  useRouter: () => ({ replace: mockReplace }),
 }));
 
 vi.mock('src/stores/tasks.store', () => ({
@@ -47,8 +56,17 @@ function mountPage() {
         'q-item-label': true,
         'q-btn': true,
         'q-dialog': true,
-        'q-input': true,
-        'q-select': true,
+        TaskFormDialog: {
+          template: '<div />',
+          props: [
+            'modelValue',
+            'mode',
+            'submitting',
+            'initialTitle',
+            'initialTargetPerWeek',
+          ],
+          emits: ['update:modelValue', 'submit'],
+        },
       },
     },
   });
@@ -57,6 +75,8 @@ function mountPage() {
 describe('TasksPage', () => {
   beforeEach(() => {
     mockNotify.mockReset();
+    mockReplace.mockReset();
+    mockRoute.query = {};
 
     const task: TestTask = {
       id: 'task-1',
@@ -67,6 +87,7 @@ describe('TasksPage', () => {
     mockStore = {
       activeTasks: [task],
       tasks: { [task.id]: task },
+      createTask: vi.fn().mockResolvedValue(undefined),
       updateTask: vi.fn().mockResolvedValue(undefined),
       deleteTask: vi.fn().mockResolvedValue(undefined),
     };
@@ -84,14 +105,42 @@ describe('TasksPage', () => {
     expect(wrapper.html()).toContain('common.noTasksYet');
   });
 
+  it('opens create modal from query flag', () => {
+    mockRoute.query = { new: '1' };
+    const wrapper = mountPage();
+
+    expect((wrapper.vm as unknown as { isTaskDialogOpen: boolean }).isTaskDialogOpen).toBe(true);
+    expect((wrapper.vm as unknown as { taskDialogMode: string }).taskDialogMode).toBe('create');
+  });
+
+  it('creates task and shows success toast', async () => {
+    const wrapper = mountPage();
+
+    await (
+      wrapper.vm as unknown as {
+        submitTaskForm: (payload: { title: string; targetPerWeek: 1 | 2 | 3 | 4 | 5 | 6 | 7 }) => Promise<void>;
+      }
+    ).submitTaskForm({ title: 'Walk', targetPerWeek: 5 });
+
+    expect(mockStore.createTask).toHaveBeenCalledWith({ title: 'Walk', targetPerWeek: 5 });
+    expect(mockNotify).toHaveBeenCalledWith(
+      expect.objectContaining({
+        type: 'positive',
+        message: 'pages.newTask.createdSuccess',
+      }),
+    );
+  });
+
   it('updates task and shows success toast', async () => {
     const wrapper = mountPage();
 
     (wrapper.vm as unknown as { openEditDialog: (id: string) => void }).openEditDialog('task-1');
-    (wrapper.vm as unknown as { editTitle: string }).editTitle = 'Updated sports';
-    (wrapper.vm as unknown as { editTargetPerWeek: number }).editTargetPerWeek = 5;
 
-    await (wrapper.vm as unknown as { submitEdit: () => Promise<void> }).submitEdit();
+    await (
+      wrapper.vm as unknown as {
+        submitTaskForm: (payload: { title: string; targetPerWeek: 1 | 2 | 3 | 4 | 5 | 6 | 7 }) => Promise<void>;
+      }
+    ).submitTaskForm({ title: 'Updated sports', targetPerWeek: 5 });
 
     expect(mockStore.updateTask).toHaveBeenCalledWith('task-1', {
       title: 'Updated sports',
@@ -110,9 +159,12 @@ describe('TasksPage', () => {
     const wrapper = mountPage();
 
     (wrapper.vm as unknown as { openEditDialog: (id: string) => void }).openEditDialog('task-1');
-    (wrapper.vm as unknown as { editTitle: string }).editTitle = 'Updated sports';
 
-    await (wrapper.vm as unknown as { submitEdit: () => Promise<void> }).submitEdit();
+    await (
+      wrapper.vm as unknown as {
+        submitTaskForm: (payload: { title: string; targetPerWeek: 1 | 2 | 3 | 4 | 5 | 6 | 7 }) => Promise<void>;
+      }
+    ).submitTaskForm({ title: 'Updated sports', targetPerWeek: 5 });
 
     expect(mockNotify).toHaveBeenCalledWith(
       expect.objectContaining({

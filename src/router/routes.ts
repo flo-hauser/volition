@@ -25,9 +25,7 @@ const routes: RouteRecordRaw[] = [
       },
       {
         path: 'tasks/new',
-        name: 'task-new',
-        component: () => import('pages/TaskNewPage.vue'),
-        meta: { titleKey: 'pages.newTask.title' },
+        redirect: '/tasks?new=1',
       },
     ],
   },

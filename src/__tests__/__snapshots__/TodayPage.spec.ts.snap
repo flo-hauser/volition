@@ -23,7 +23,7 @@ exports[`TodayPage > renders stable markup 1`] = `
       </q-list-stub>
       <q-separator-stub></q-separator-stub>
       <q-card-actions-stub align="right">
-        <q-btn-stub color="primary" no-caps="" icon="add" label="common.addTask" to="/tasks/new"></q-btn-stub>
+        <q-btn-stub color="primary" no-caps="" icon="add" label="common.addTask" to="/tasks?new=1"></q-btn-stub>
       </q-card-actions-stub>
     </q-card-stub>
   </div>

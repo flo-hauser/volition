@@ -22,7 +22,7 @@
           color="white"
           icon="add"
           :label="t('app.addTask')"
-          :to="'/tasks/new'"
+          :to="'/tasks?new=1'"
         />
       </q-toolbar>
       <q-banner v-if="initError" dense class="bg-negative text-white">

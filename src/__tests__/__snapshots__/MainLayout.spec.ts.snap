@@ -6,7 +6,7 @@ exports[`MainLayout > renders stable markup 1`] = `
     <q-toolbar-stub>
       <q-toolbar-title-stub class="text-weight-bold">nav.today</q-toolbar-title-stub>
       <q-btn-toggle-stub modelvalue="en-US" dense="" unelevated="" toggle-color="secondary" color="white" text-color="secondary" class="q-mr-sm" options="[object Object],[object Object]"></q-btn-toggle-stub>
-      <q-btn-stub flat="" dense="" no-caps="" color="white" icon="add" label="app.addTask" to="/tasks/new"></q-btn-stub>
+      <q-btn-stub flat="" dense="" no-caps="" color="white" icon="add" label="app.addTask" to="/tasks?new=1"></q-btn-stub>
     </q-toolbar-stub>
     <!--v-if-->
   </q-header-stub>

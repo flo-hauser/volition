@@ -56,63 +56,20 @@
         <q-separator />
 
         <q-card-actions align="right">
-          <q-btn
-            color="primary"
-            no-caps
-            icon="add"
-            :label="t('common.addTask')"
-            :to="'/tasks/new'"
-          />
+          <q-btn color="primary" no-caps icon="add" :label="t('common.addTask')" @click="openCreateDialog" />
         </q-card-actions>
       </q-card>
     </div>
   </q-page>
 
-  <q-dialog v-model="isEditDialogOpen" persistent>
-    <q-card style="min-width: 320px; width: 100%; max-width: 420px">
-      <q-card-section>
-        <div class="text-h6">{{ t('pages.tasks.editTask') }}</div>
-      </q-card-section>
-
-      <q-card-section class="q-pt-none">
-        <q-input
-          v-model="editTitle"
-          outlined
-          maxlength="100"
-          :label="t('pages.newTask.taskTitle')"
-          :error="Boolean(editTitleError)"
-          :error-message="editTitleError"
-          class="q-mb-md"
-        />
-
-        <q-select
-          v-model="editTargetPerWeek"
-          outlined
-          emit-value
-          map-options
-          :label="t('pages.newTask.targetPerWeek')"
-          :options="targetOptions"
-        />
-      </q-card-section>
-
-      <q-card-actions align="right">
-        <q-btn
-          flat
-          no-caps
-          :label="t('common.cancel')"
-          :disable="dialogBusy"
-          @click="closeDialogs"
-        />
-        <q-btn
-          color="primary"
-          no-caps
-          :label="t('common.save')"
-          :loading="dialogBusy"
-          @click="submitEdit"
-        />
-      </q-card-actions>
-    </q-card>
-  </q-dialog>
+  <task-form-dialog
+    v-model="isTaskDialogOpen"
+    :mode="taskDialogMode"
+    :submitting="taskDialogBusy"
+    :initial-title="taskDialogInitialTitle"
+    :initial-target-per-week="taskDialogInitialTargetPerWeek"
+    @submit="submitTaskForm"
+  />
 
   <q-dialog v-model="isDeleteDialogOpen" persistent>
     <q-card style="min-width: 320px; width: 100%; max-width: 420px">
@@ -125,18 +82,12 @@
       </q-card-section>
 
       <q-card-actions align="right">
-        <q-btn
-          flat
-          no-caps
-          :label="t('common.cancel')"
-          :disable="dialogBusy"
-          @click="closeDialogs"
-        />
+        <q-btn flat no-caps :label="t('common.cancel')" :disable="deleteDialogBusy" @click="closeDeleteDialog" />
         <q-btn
           color="negative"
           no-caps
           :label="t('common.delete')"
-          :loading="dialogBusy"
+          :loading="deleteDialogBusy"
           @click="submitDelete"
         />
       </q-card-actions>
@@ -145,55 +96,82 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useQuasar } from 'quasar';
+import { useRoute, useRouter } from 'vue-router';
 
+import TaskFormDialog from 'src/components/TaskFormDialog.vue';
 import { useTasksStore } from 'src/stores/tasks.store';
+
+type TargetPerWeek = 1 | 2 | 3 | 4 | 5 | 6 | 7;
 
 const { t } = useI18n();
 const $q = useQuasar();
+const route = useRoute();
+const router = useRouter();
 const store = useTasksStore();
 
 const tasks = computed(() => store.activeTasks);
 const pendingTaskIds = ref(new Set<string>());
 
-const isEditDialogOpen = ref(false);
-const isDeleteDialogOpen = ref(false);
-const dialogBusy = ref(false);
+const isTaskDialogOpen = ref(false);
+const taskDialogMode = ref<'create' | 'edit'>('create');
+const taskDialogBusy = ref(false);
 const selectedTaskId = ref<string | null>(null);
 
-const editTitle = ref('');
-const editTargetPerWeek = ref<1 | 2 | 3 | 4 | 5 | 6 | 7>(3);
-const editAttempted = ref(false);
+const isDeleteDialogOpen = ref(false);
+const deleteDialogBusy = ref(false);
 
-const targetOptions = computed(() =>
-  ([1, 2, 3, 4, 5, 6, 7] as const).map((value) => ({
-    label:
-      value === 7
-        ? t('pages.newTask.targetOptionDaily')
-        : t('pages.newTask.targetOption', { count: value }),
-    value,
-  })),
-);
-
-const editTitleError = computed(() => {
-  if (!editAttempted.value) {
-    return '';
-  }
-
-  const trimmed = editTitle.value.trim();
-
-  if (trimmed.length === 0) {
-    return t('pages.newTask.titleRequired');
-  }
-
-  if (trimmed.length > 100) {
-    return t('pages.newTask.titleTooLong');
+const taskDialogInitialTitle = computed(() => {
+  if (taskDialogMode.value === 'edit' && selectedTaskId.value) {
+    return store.tasks[selectedTaskId.value]?.title ?? '';
   }
 
   return '';
 });
+
+const taskDialogInitialTargetPerWeek = computed<TargetPerWeek>(() => {
+  if (taskDialogMode.value === 'edit' && selectedTaskId.value) {
+    return store.tasks[selectedTaskId.value]?.targetPerWeek ?? 3;
+  }
+
+  return 3;
+});
+
+function clearNewQueryFlag(): void {
+  if (route.query.new === '1') {
+    void router.replace({
+      path: '/tasks',
+      query: {
+        ...route.query,
+        new: undefined,
+      },
+    });
+  }
+}
+
+function closeTaskDialog(): void {
+  if (taskDialogBusy.value) {
+    return;
+  }
+
+  isTaskDialogOpen.value = false;
+  selectedTaskId.value = null;
+  clearNewQueryFlag();
+}
+
+function forceCloseTaskDialog(): void {
+  isTaskDialogOpen.value = false;
+  selectedTaskId.value = null;
+  clearNewQueryFlag();
+}
+
+function openCreateDialog(): void {
+  taskDialogMode.value = 'create';
+  selectedTaskId.value = null;
+  isTaskDialogOpen.value = true;
+}
 
 function openEditDialog(taskId: string): void {
   const task = store.tasks[taskId];
@@ -202,11 +180,9 @@ function openEditDialog(taskId: string): void {
     return;
   }
 
+  taskDialogMode.value = 'edit';
   selectedTaskId.value = taskId;
-  editTitle.value = task.title;
-  editTargetPerWeek.value = task.targetPerWeek;
-  editAttempted.value = false;
-  isEditDialogOpen.value = true;
+  isTaskDialogOpen.value = true;
 }
 
 function openDeleteDialog(taskId: string): void {
@@ -214,58 +190,61 @@ function openDeleteDialog(taskId: string): void {
   isDeleteDialogOpen.value = true;
 }
 
-function closeDialogs(): void {
-  if (dialogBusy.value) {
+function closeDeleteDialog(): void {
+  if (deleteDialogBusy.value) {
     return;
   }
 
-  isEditDialogOpen.value = false;
   isDeleteDialogOpen.value = false;
   selectedTaskId.value = null;
 }
 
-function forceCloseDialogs(): void {
-  isEditDialogOpen.value = false;
-  isDeleteDialogOpen.value = false;
-  selectedTaskId.value = null;
-}
-
-async function submitEdit(): Promise<void> {
-  editAttempted.value = true;
-
-  if (editTitleError.value) {
-    return;
-  }
-
+async function submitTaskForm(payload: { title: string; targetPerWeek: TargetPerWeek }): Promise<void> {
+  taskDialogBusy.value = true;
   const taskId = selectedTaskId.value;
-  if (!taskId) {
-    return;
-  }
 
-  dialogBusy.value = true;
-  pendingTaskIds.value.add(taskId);
+  if (taskDialogMode.value === 'edit' && taskId) {
+    pendingTaskIds.value.add(taskId);
+  }
 
   try {
-    await store.updateTask(taskId, {
-      title: editTitle.value,
-      targetPerWeek: editTargetPerWeek.value,
-    });
-    $q.notify({
-      type: 'positive',
-      position: 'top-right',
-      message: t('pages.toast.taskUpdated'),
-    });
+    if (taskDialogMode.value === 'create') {
+      await store.createTask(payload);
+      $q.notify({
+        type: 'positive',
+        position: 'top-right',
+        message: t('pages.newTask.createdSuccess'),
+      });
+    } else {
+      if (!taskId) {
+        return;
+      }
+
+      await store.updateTask(taskId, payload);
+      $q.notify({
+        type: 'positive',
+        position: 'top-right',
+        message: t('pages.toast.taskUpdated'),
+      });
+    }
+
+    forceCloseTaskDialog();
   } catch {
     $q.notify({
       type: 'negative',
       position: 'top-right',
-      message: t('pages.toast.taskUpdateFailed'),
+      message:
+        taskDialogMode.value === 'create'
+          ? t('pages.newTask.createFailed')
+          : t('pages.toast.taskUpdateFailed'),
     });
   } finally {
-    dialogBusy.value = false;
-    pendingTaskIds.value.delete(taskId);
-    pendingTaskIds.value = new Set(pendingTaskIds.value);
-    forceCloseDialogs();
+    taskDialogBusy.value = false;
+
+    if (taskId) {
+      pendingTaskIds.value.delete(taskId);
+      pendingTaskIds.value = new Set(pendingTaskIds.value);
+    }
   }
 }
 
@@ -275,7 +254,7 @@ async function submitDelete(): Promise<void> {
     return;
   }
 
-  dialogBusy.value = true;
+  deleteDialogBusy.value = true;
   pendingTaskIds.value.add(taskId);
 
   try {
@@ -285,6 +264,8 @@ async function submitDelete(): Promise<void> {
       position: 'top-right',
       message: t('pages.toast.taskDeleted'),
     });
+    isDeleteDialogOpen.value = false;
+    selectedTaskId.value = null;
   } catch {
     $q.notify({
       type: 'negative',
@@ -292,10 +273,25 @@ async function submitDelete(): Promise<void> {
       message: t('pages.toast.taskDeleteFailed'),
     });
   } finally {
-    dialogBusy.value = false;
+    deleteDialogBusy.value = false;
     pendingTaskIds.value.delete(taskId);
     pendingTaskIds.value = new Set(pendingTaskIds.value);
-    forceCloseDialogs();
   }
 }
+
+watch(
+  () => route.query.new,
+  (newFlag) => {
+    if (newFlag === '1') {
+      openCreateDialog();
+    }
+  },
+  { immediate: true },
+);
+
+watch(isTaskDialogOpen, (isOpen) => {
+  if (!isOpen) {
+    closeTaskDialog();
+  }
+});
 </script>

@@ -38,7 +38,7 @@
         <q-separator />
 
         <q-card-actions align="right">
-          <q-btn color="primary" no-caps icon="add" :label="t('common.addTask')" :to="'/tasks/new'" />
+          <q-btn color="primary" no-caps icon="add" :label="t('common.addTask')" :to="'/tasks?new=1'" />
         </q-card-actions>
       </q-card>
     </div>
