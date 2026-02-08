@@ -59,11 +59,18 @@ export const useTasksStore = defineStore('tasks', () => {
     };
   }
 
-  async function persist(): Promise<void> {
+  async function persistOrRollback<T>(operation: () => T): Promise<T> {
+    const previousTasks = cloneState(tasks.value);
+    const previousCheckinsByDay = cloneState(checkinsByDay.value);
+
     try {
+      const result = operation();
       await storageAdapter.saveState(createStateSnapshot());
+      return result;
     } catch (error) {
-      console.error('Failed to persist state', error);
+      tasks.value = previousTasks;
+      checkinsByDay.value = previousCheckinsByDay;
+      throw error;
     }
   }
 
@@ -101,13 +108,14 @@ export const useTasksStore = defineStore('tasks', () => {
       createdAt: new Date().toISOString(),
     };
 
-    tasks.value = {
-      ...tasks.value,
-      [task.id]: task,
-    };
+    return persistOrRollback(() => {
+      tasks.value = {
+        ...tasks.value,
+        [task.id]: task,
+      };
 
-    await persist();
-    return task;
+      return task;
+    });
   }
 
   async function updateTask(taskId: string, input: UpdateTaskInput): Promise<Task> {
@@ -128,13 +136,14 @@ export const useTasksStore = defineStore('tasks', () => {
       targetPerWeek: normalizeTargetPerWeek(input.targetPerWeek),
     };
 
-    tasks.value = {
-      ...tasks.value,
-      [taskId]: updatedTask,
-    };
+    return persistOrRollback(() => {
+      tasks.value = {
+        ...tasks.value,
+        [taskId]: updatedTask,
+      };
 
-    await persist();
-    return updatedTask;
+      return updatedTask;
+    });
   }
 
   async function deleteTask(taskId: string): Promise<void> {
@@ -157,8 +166,9 @@ export const useTasksStore = defineStore('tasks', () => {
       }
     }
 
-    checkinsByDay.value = nextCheckinsByDay;
-    await persist();
+    await persistOrRollback(() => {
+      checkinsByDay.value = nextCheckinsByDay;
+    });
   }
 
   async function toggleForDay(taskId: string, dayISO: string): Promise<void> {
@@ -168,35 +178,35 @@ export const useTasksStore = defineStore('tasks', () => {
 
     const existing = checkinsByDay.value[dayISO]?.[taskId];
 
-    if (existing) {
-      const dayEntry = { ...(checkinsByDay.value[dayISO] ?? {}) };
-      delete dayEntry[taskId];
+    await persistOrRollback(() => {
+      if (existing) {
+        const dayEntry = { ...(checkinsByDay.value[dayISO] ?? {}) };
+        delete dayEntry[taskId];
 
-      const nextCheckinsByDay = { ...checkinsByDay.value };
-      if (Object.keys(dayEntry).length === 0) {
-        delete nextCheckinsByDay[dayISO];
+        const nextCheckinsByDay = { ...checkinsByDay.value };
+        if (Object.keys(dayEntry).length === 0) {
+          delete nextCheckinsByDay[dayISO];
+        } else {
+          nextCheckinsByDay[dayISO] = dayEntry;
+        }
+
+        checkinsByDay.value = nextCheckinsByDay;
       } else {
-        nextCheckinsByDay[dayISO] = dayEntry;
+        const checkin: Checkin = {
+          taskId,
+          day: dayISO,
+          checkedAt: new Date().toISOString(),
+        };
+
+        checkinsByDay.value = {
+          ...checkinsByDay.value,
+          [dayISO]: {
+            ...(checkinsByDay.value[dayISO] ?? {}),
+            [taskId]: checkin,
+          },
+        };
       }
-
-      checkinsByDay.value = nextCheckinsByDay;
-    } else {
-      const checkin: Checkin = {
-        taskId,
-        day: dayISO,
-        checkedAt: new Date().toISOString(),
-      };
-
-      checkinsByDay.value = {
-        ...checkinsByDay.value,
-        [dayISO]: {
-          ...(checkinsByDay.value[dayISO] ?? {}),
-          [taskId]: checkin,
-        },
-      };
-    }
-
-    await persist();
+    });
   }
 
   async function toggleToday(taskId: string): Promise<void> {

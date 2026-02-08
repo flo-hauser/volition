@@ -48,11 +48,13 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { useQuasar } from 'quasar';
 
 import { getIsoWeekId, getLocalDayISO } from 'src/composables/useDay';
 import { useTasksStore } from 'src/stores/tasks.store';
 
 const { t } = useI18n();
+const $q = useQuasar();
 const store = useTasksStore();
 
 const todayISO = getLocalDayISO();
@@ -66,6 +68,12 @@ async function toggleTask(taskId: string): Promise<void> {
 
   try {
     await store.toggleToday(taskId);
+  } catch {
+    $q.notify({
+      type: 'negative',
+      position: 'top-right',
+      message: t('pages.toast.taskToggleFailed'),
+    });
   } finally {
     pendingTaskIds.value.delete(taskId);
     pendingTaskIds.value = new Set(pendingTaskIds.value);

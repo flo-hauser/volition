@@ -121,9 +121,7 @@ describe('useTasksStore', () => {
     expect(store.checkinsByDay['2026-02-07']).toBeUndefined();
   });
 
-  it('keeps create successful when persistence save fails', async () => {
-    vi.spyOn(console, 'error').mockImplementation(() => undefined);
-
+  it('rolls back create when persistence save fails', async () => {
     const adapter: StorageAdapter = {
       loadState: vi.fn().mockResolvedValue(createEmptyStorageState()),
       saveState: vi.fn().mockRejectedValue(new Error('save failed')),
@@ -132,9 +130,29 @@ describe('useTasksStore', () => {
     const store = useTasksStore();
     await store.init(adapter);
 
-    const task = await store.createTask({ title: 'Still created', targetPerWeek: 3 });
+    await expect(
+      store.createTask({ title: 'Should rollback', targetPerWeek: 3 }),
+    ).rejects.toThrow('save failed');
 
-    expect(store.tasks[task.id]).toBeDefined();
+    expect(Object.keys(store.tasks)).toHaveLength(0);
     expect(adapter.saveState).toHaveBeenCalledTimes(1);
+  });
+
+  it('rolls back toggle when persistence save fails', async () => {
+    const adapter: StorageAdapter = {
+      loadState: vi.fn().mockResolvedValue(createEmptyStorageState()),
+      saveState: vi
+        .fn()
+        .mockResolvedValueOnce(undefined)
+        .mockRejectedValueOnce(new Error('save failed')),
+    };
+
+    const store = useTasksStore();
+    await store.init(adapter);
+
+    const task = await store.createTask({ title: 'Sports', targetPerWeek: 3 });
+
+    await expect(store.toggleForDay(task.id, '2026-02-07')).rejects.toThrow('save failed');
+    expect(store.isDone(task.id, '2026-02-07')).toBe(false);
   });
 });

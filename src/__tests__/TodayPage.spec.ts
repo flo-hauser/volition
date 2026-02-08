@@ -1,6 +1,8 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { shallowMount } from '@vue/test-utils';
 
+const mockNotify = vi.fn();
+
 let mockStore: {
   activeTasks: Array<{ id: string; title: string; targetPerWeek: number }>;
   weekProgress: ReturnType<typeof vi.fn>;
@@ -12,6 +14,10 @@ vi.mock('vue-i18n', () => ({
   useI18n: () => ({
     t: (key: string) => key,
   }),
+}));
+
+vi.mock('quasar', () => ({
+  useQuasar: () => ({ notify: mockNotify }),
 }));
 
 vi.mock('src/composables/useDay', () => ({
@@ -48,6 +54,8 @@ function mountPage() {
 
 describe('TodayPage', () => {
   beforeEach(() => {
+    mockNotify.mockReset();
+
     mockStore = {
       activeTasks: [{ id: 'task-1', title: 'Sports', targetPerWeek: 3 }],
       weekProgress: vi.fn().mockReturnValue(1),
@@ -79,11 +87,17 @@ describe('TodayPage', () => {
     mockStore.toggleToday.mockRejectedValueOnce(new Error('toggle failed'));
     const wrapper = mountPage();
 
-    await expect(
-      (wrapper.vm as unknown as { toggleTask: (id: string) => Promise<void> }).toggleTask('task-1'),
-    ).rejects.toThrow('toggle failed');
+    await (wrapper.vm as unknown as { toggleTask: (id: string) => Promise<void> }).toggleTask(
+      'task-1',
+    );
 
     const pendingTaskIds = (wrapper.vm as unknown as { pendingTaskIds: Set<string> }).pendingTaskIds;
     expect(pendingTaskIds.has('task-1')).toBe(false);
+    expect(mockNotify).toHaveBeenCalledWith(
+      expect.objectContaining({
+        type: 'negative',
+        message: 'pages.toast.taskToggleFailed',
+      }),
+    );
   });
 });

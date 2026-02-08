@@ -67,6 +67,11 @@ export default {
       taskDeleted: 'Aufgabe geloescht.',
       taskUpdateFailed: 'Aufgabe konnte nicht aktualisiert werden.',
       taskDeleteFailed: 'Aufgabe konnte nicht geloescht werden.',
+      taskToggleFailed: 'Heutiger Check-in konnte nicht gespeichert werden.',
+    },
+    notFound: {
+      message: 'Ups. Hier gibt es nichts.',
+      goHome: 'Zur Startseite',
     },
   },
 };

@@ -67,6 +67,11 @@ export default {
       taskDeleted: 'Task deleted.',
       taskUpdateFailed: 'Task could not be updated.',
       taskDeleteFailed: 'Task could not be deleted.',
+      taskToggleFailed: 'Today check-in could not be saved.',
+    },
+    notFound: {
+      message: 'Oops. Nothing here...',
+      goHome: 'Go Home',
     },
   },
 };
