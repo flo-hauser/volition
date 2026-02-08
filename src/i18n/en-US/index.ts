@@ -1,7 +1,72 @@
-// This is just an example,
-// so you can safely delete all default props below
-
 export default {
-  failed: 'Action failed',
-  success: 'Action was successful',
+  app: {
+    name: 'Volition',
+    loading: 'Loading your tracker...',
+    addTask: 'Task',
+    initError: 'Could not load local data.',
+  },
+  nav: {
+    today: 'Today',
+    week: 'Week',
+    tasks: 'Tasks',
+  },
+  locale: {
+    enUS: 'EN',
+    deDE: 'DE',
+  },
+  common: {
+    noTasksYet: 'No tasks yet.',
+    weeklyProgress: 'Weekly progress',
+    targetLabel: '{count}x/week',
+    daily: 'Daily',
+    backToTasks: 'Back to tasks',
+    addTask: 'Add task',
+    save: 'Save',
+    cancel: 'Cancel',
+    delete: 'Delete',
+  },
+  pages: {
+    today: {
+      title: 'Today overview',
+      hint: 'All active tasks are shown every day.',
+      openTasks: 'Create your first task to start checking in.',
+      doneToday: 'Done today',
+      progressLabel: '{progress} / {target}',
+      weekId: 'ISO week {weekId}',
+    },
+    week: {
+      title: 'Week overview',
+      hint: 'Current week progress for each active task.',
+      thisWeek: 'Current week: {weekId}',
+      progressLabel: '{progress} / {target}',
+    },
+    tasks: {
+      title: 'Tasks',
+      hint: 'Active tasks and their weekly targets.',
+      editTask: 'Edit task',
+      deleteTask: 'Delete task',
+      deleteConfirm: 'Delete this task and all of its check-ins?',
+    },
+    newTask: {
+      title: 'Create a new task',
+      hint: 'Use positive wording and set a weekly frequency target.',
+      taskTitle: 'Task title',
+      taskTitlePlaceholder: 'e.g. Sports',
+      targetPerWeek: 'Target per week',
+      create: 'Create task',
+      titleRequired: 'Title is required.',
+      titleTooLong: 'Title must be 100 characters or fewer.',
+      submitError: 'Task could not be created. Please try again.',
+      targetOption: '{count}x per week',
+      targetOptionDaily: '7x per week (daily)',
+      createdSuccess: 'Task created.',
+      createFailed: 'Task could not be created. Please try again.',
+    },
+    toast: {
+      taskUpdated: 'Task updated.',
+      taskDeleted: 'Task deleted.',
+      taskUpdateFailed: 'Task could not be updated.',
+      taskDeleteFailed: 'Task could not be deleted.',
+    },
+  },
 };

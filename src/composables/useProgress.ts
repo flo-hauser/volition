@@ -1,0 +1,17 @@
+import { getWeekDays } from './useDay';
+
+import type { Checkin } from 'src/types/task';
+
+export function countTaskCheckinsForWeek(
+  taskId: string,
+  weekId: string,
+  checkinsByDay: Record<string, Record<string, Checkin>>,
+): number {
+  return getWeekDays(weekId).reduce((count, day) => {
+    if (checkinsByDay[day]?.[taskId]) {
+      return count + 1;
+    }
+
+    return count;
+  }, 0);
+}
