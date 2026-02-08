@@ -1,23 +1,27 @@
-import { nextTick, ref } from 'vue';
+import { ref } from 'vue';
 import { flushPromises, shallowMount } from '@vue/test-utils';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-const mockRoute = { meta: { titleKey: 'nav.today' as unknown } };
-const mockLocale = ref('en-US');
+const mockDarkIsActive = ref(false);
 
 let mockStore: {
   isReady: boolean;
   init: ReturnType<typeof vi.fn>;
 };
 
-vi.mock('vue-router', () => ({
-  useRoute: () => mockRoute,
-}));
-
 vi.mock('vue-i18n', () => ({
   useI18n: () => ({
     t: (key: string) => key,
-    locale: mockLocale,
+  }),
+}));
+
+vi.mock('quasar', () => ({
+  useQuasar: () => ({
+    dark: {
+      get isActive() {
+        return mockDarkIsActive.value;
+      },
+    },
   }),
 }));
 
@@ -36,7 +40,7 @@ function mountLayout() {
         'q-header': true,
         'q-toolbar': true,
         'q-toolbar-title': true,
-        'q-btn-toggle': true,
+        'q-img': true,
         'q-btn': true,
         'q-banner': true,
         'q-page-container': true,
@@ -53,8 +57,7 @@ function mountLayout() {
 
 describe('MainLayout', () => {
   beforeEach(() => {
-    mockRoute.meta.titleKey = 'nav.today';
-    mockLocale.value = 'en-US';
+    mockDarkIsActive.value = false;
 
     mockStore = {
       isReady: true,
@@ -75,21 +78,32 @@ describe('MainLayout', () => {
     expect(mockStore.init).toHaveBeenCalledTimes(1);
   });
 
-  it('falls back to app name when route has no title key', async () => {
-    mockRoute.meta.titleKey = undefined;
+  it('keeps app title visible in header', async () => {
     const wrapper = mountLayout();
     await flushPromises();
 
     expect(wrapper.html()).toContain('app.name');
+    expect(wrapper.html()).not.toContain('text-caption ellipsis');
   });
 
-  it('switches current locale through computed setter', async () => {
+  it('switches header icon based on dark mode state', async () => {
+    mockDarkIsActive.value = false;
+    const lightWrapper = mountLayout();
+    await flushPromises();
+    expect(lightWrapper.html()).toContain('/icons/icon-dark.svg');
+
+    mockDarkIsActive.value = true;
+    const darkWrapper = mountLayout();
+    await flushPromises();
+    expect(darkWrapper.html()).toContain('/icons/icon-light.svg');
+  });
+
+  it('shows settings action only in header', async () => {
     const wrapper = mountLayout();
-
-    (wrapper.vm as unknown as { currentLocale: string }).currentLocale = 'de-DE';
-    await nextTick();
-
-    expect(mockLocale.value).toBe('de-DE');
+    await flushPromises();
+    const html = wrapper.html();
+    expect(html.match(/to="\/settings"/g)).toHaveLength(1);
+    expect(html).not.toContain('<q-route-tab-stub data-v-22686b16="" to="/settings"');
   });
 
   it('handles init error and sets store ready', async () => {

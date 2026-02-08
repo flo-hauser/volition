@@ -1,7 +1,7 @@
 <template>
   <q-page class="q-pa-md">
     <div class="q-mx-auto" style="max-width: 640px">
-      <q-card flat bordered>
+      <q-card flat bordered class="vol-surface-card">
         <q-card-section>
           <div class="text-h6 text-secondary text-weight-bold">{{ t('pages.today.title') }}</div>
           <div class="text-body2 text-grey-8 q-mt-xs">{{ t('pages.today.hint') }}</div>

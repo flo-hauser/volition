@@ -2,7 +2,7 @@
 
 exports[`TaskFormDialog > renders stable markup 1`] = `
 "<q-dialog-stub model-value="true" persistent="">
-  <q-card-stub style="min-width: 320px; width: 100%; max-width: 420px;">
+  <q-card-stub class="vol-surface-card" style="min-width: 320px; width: 100%; max-width: 420px;">
     <q-card-section-stub>
       <div class="text-h6">pages.newTask.title</div>
     </q-card-section-stub>

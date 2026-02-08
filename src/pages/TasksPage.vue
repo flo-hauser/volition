@@ -1,7 +1,7 @@
 <template>
   <q-page class="q-pa-md">
     <div class="q-mx-auto" style="max-width: 640px">
-      <q-card flat bordered>
+      <q-card flat bordered class="vol-surface-card">
         <q-card-section>
           <div class="text-h6 text-secondary text-weight-bold">{{ t('pages.tasks.title') }}</div>
           <div class="text-body2 text-grey-8 q-mt-xs">{{ t('pages.tasks.hint') }}</div>
@@ -72,7 +72,7 @@
   />
 
   <q-dialog v-model="isDeleteDialogOpen" persistent>
-    <q-card style="min-width: 320px; width: 100%; max-width: 420px">
+    <q-card class="vol-surface-card" style="min-width: 320px; width: 100%; max-width: 420px">
       <q-card-section>
         <div class="text-h6">{{ t('pages.tasks.deleteTask') }}</div>
       </q-card-section>

@@ -1,1 +1,42 @@
-// app global css in SCSS form
+:root {
+  --vol-bg-1: #fff7d1;
+  --vol-bg-2: #8b5dff;
+  --vol-bg-3: #6a42c2;
+  --vol-surface: #fff7d1;
+  --vol-header: #6a42c2;
+  --vol-footer: #563a9c;
+  --vol-header-text: #fff7d1;
+  --vol-page-text: #563a9c;
+  --vol-progress-fill-start: #8b5dff;
+  --vol-progress-fill-end: #6a42c2;
+}
+
+body.body--dark {
+  --vol-bg-1: #362f4f;
+  --vol-bg-2: #5b23ff;
+  --vol-bg-3: #008bff;
+  --vol-surface: #362f4f;
+  --vol-header: #5b23ff;
+  --vol-footer: #008bff;
+  --vol-header-text: #e4ff30;
+  --vol-page-text: #fff7d1;
+  --vol-progress-fill-start: #008bff;
+  --vol-progress-fill-end: #e4ff30;
+}
+
+body {
+  background:
+    radial-gradient(circle at 10% 0%, color-mix(in srgb, var(--vol-bg-2) 35%, transparent), transparent 45%),
+    radial-gradient(circle at 90% 10%, color-mix(in srgb, var(--vol-bg-3) 30%, transparent), transparent 50%),
+    linear-gradient(155deg, var(--vol-bg-1), color-mix(in srgb, var(--vol-bg-2) 25%, var(--vol-bg-1)) 70%, var(--vol-bg-3));
+  background-attachment: fixed;
+  color: var(--vol-page-text);
+}
+
+.vol-surface-card {
+  background: color-mix(in srgb, var(--vol-surface) 88%, white 12%);
+}
+
+body.body--dark .vol-surface-card {
+  background: color-mix(in srgb, var(--vol-surface) 90%, #000 10%);
+}

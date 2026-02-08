@@ -1,0 +1,20 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`SettingsPage > renders stable markup 1`] = `
+"<div class="q-pa-md">
+  <div class="q-mx-auto" style="max-width: 640px;">
+    <section flat="" bordered="" class="vol-surface-card">
+      <div>
+        <div class="text-h6 text-secondary text-weight-bold">pages.settings.title</div>
+        <div class="text-body2 text-grey-8 q-mt-xs">pages.settings.hint</div>
+      </div>
+      <hr>
+      <div>
+        <div class="text-subtitle2 text-weight-medium q-mb-sm">pages.settings.languageTitle</div><button class="q-btn-toggle-stub q-mb-lg" data-options="[{&quot;value&quot;:&quot;en-US&quot;,&quot;label&quot;:&quot;pages.settings.localeEnglish&quot;},{&quot;value&quot;:&quot;de-DE&quot;,&quot;label&quot;:&quot;pages.settings.localeGerman&quot;}]" unelevated="" no-caps="" color="secondary" text-color="white" toggle-color="primary">en-US</button>
+        <div class="text-subtitle2 text-weight-medium q-mb-sm">pages.settings.themeTitle</div><button class="q-btn-toggle-stub" data-options="[{&quot;value&quot;:&quot;system&quot;,&quot;label&quot;:&quot;pages.settings.themeSystem&quot;},{&quot;value&quot;:&quot;light&quot;,&quot;label&quot;:&quot;pages.settings.themeLight&quot;},{&quot;value&quot;:&quot;dark&quot;,&quot;label&quot;:&quot;pages.settings.themeDark&quot;}]" unelevated="" no-caps="" color="secondary" text-color="white" toggle-color="primary">system</button>
+        <div class="text-caption text-grey-7 q-mt-sm">pages.settings.themeHint</div>
+      </div>
+    </section>
+  </div>
+</div>"
+`;

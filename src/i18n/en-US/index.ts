@@ -9,6 +9,7 @@ export default {
     today: 'Today',
     week: 'Week',
     tasks: 'Tasks',
+    settings: 'Settings',
   },
   locale: {
     enUS: 'EN',
@@ -46,6 +47,18 @@ export default {
       editTask: 'Edit task',
       deleteTask: 'Delete task',
       deleteConfirm: 'Delete this task and all of its check-ins?',
+    },
+    settings: {
+      title: 'App settings',
+      hint: 'Personalize language and appearance.',
+      languageTitle: 'Language',
+      localeEnglish: 'English',
+      localeGerman: 'German',
+      themeTitle: 'Appearance',
+      themeSystem: 'System',
+      themeLight: 'Light',
+      themeDark: 'Dark',
+      themeHint: 'System mode follows your device setting automatically.',
     },
     newTask: {
       title: 'Create a new task',

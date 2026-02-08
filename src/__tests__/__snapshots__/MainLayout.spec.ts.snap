@@ -1,28 +1,33 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`MainLayout > renders stable markup 1`] = `
-"<q-layout-stub view="lHh Lpr lFf" class="bg-grey-1">
-  <q-header-stub bordered="" class="bg-primary text-white">
-    <q-toolbar-stub>
-      <q-toolbar-title-stub class="text-weight-bold">nav.today</q-toolbar-title-stub>
-      <q-btn-toggle-stub modelvalue="en-US" dense="" unelevated="" toggle-color="secondary" color="white" text-color="secondary" class="q-mr-sm" options="[object Object],[object Object]"></q-btn-toggle-stub>
-      <q-btn-stub flat="" dense="" no-caps="" color="white" icon="add" label="app.addTask" to="/tasks?new=1"></q-btn-stub>
+"<q-layout-stub data-v-22686b16="" view="lHh Lpr lFf">
+  <q-header-stub data-v-22686b16="" bordered="" class="vol-header">
+    <q-toolbar-stub data-v-22686b16="">
+      <q-toolbar-title-stub data-v-22686b16="">
+        <div data-v-22686b16="" class="row items-center no-wrap q-gutter-sm">
+          <q-img-stub data-v-22686b16="" src="/icons/icon-dark.svg" width="30px" height="30px" fit="contain"></q-img-stub>
+          <div data-v-22686b16="" class="text-weight-bold">app.name</div>
+        </div>
+      </q-toolbar-title-stub>
+      <q-btn-stub data-v-22686b16="" flat="" dense="" no-caps="" color="white" icon="add" label="app.addTask" to="/tasks?new=1"></q-btn-stub>
+      <q-btn-stub data-v-22686b16="" flat="" dense="" round="" color="white" icon="settings" to="/settings" aria-label="nav.settings"></q-btn-stub>
     </q-toolbar-stub>
     <!--v-if-->
   </q-header-stub>
-  <q-page-container-stub>
-    <q-slide-transition-stub>
-      <div>
-        <router-view-stub></router-view-stub>
+  <q-page-container-stub data-v-22686b16="">
+    <q-slide-transition-stub data-v-22686b16="">
+      <div data-v-22686b16="">
+        <router-view-stub data-v-22686b16=""></router-view-stub>
       </div>
     </q-slide-transition-stub>
     <!--v-if-->
   </q-page-container-stub>
-  <q-footer-stub bordered="" class="bg-secondary text-white">
-    <q-tabs-stub dense="" indicator-color="warning" active-color="warning" align="justify">
-      <q-route-tab-stub to="/" icon="today" label="nav.today" exact=""></q-route-tab-stub>
-      <q-route-tab-stub to="/week" icon="calendar_view_week" label="nav.week"></q-route-tab-stub>
-      <q-route-tab-stub to="/tasks" icon="checklist" label="nav.tasks"></q-route-tab-stub>
+  <q-footer-stub data-v-22686b16="" bordered="" class="vol-footer">
+    <q-tabs-stub data-v-22686b16="" dense="" indicator-color="warning" active-color="warning" align="justify">
+      <q-route-tab-stub data-v-22686b16="" to="/" icon="today" label="nav.today" exact=""></q-route-tab-stub>
+      <q-route-tab-stub data-v-22686b16="" to="/week" icon="calendar_view_week" label="nav.week"></q-route-tab-stub>
+      <q-route-tab-stub data-v-22686b16="" to="/tasks" icon="checklist" label="nav.tasks"></q-route-tab-stub>
     </q-tabs-stub>
   </q-footer-stub>
 </q-layout-stub>"

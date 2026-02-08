@@ -1,6 +1,6 @@
 <template>
   <q-dialog :model-value="modelValue" persistent @update:model-value="onDialogVisibilityChange">
-    <q-card style="min-width: 320px; width: 100%; max-width: 420px">
+    <q-card class="vol-surface-card" style="min-width: 320px; width: 100%; max-width: 420px">
       <q-card-section>
         <div class="text-h6">{{ dialogTitle }}</div>
       </q-card-section>

@@ -2,6 +2,7 @@ import { defineBoot } from '#q-app/wrappers';
 import { createI18n } from 'vue-i18n';
 
 import messages from 'src/i18n';
+import { getStoredLocale } from 'src/composables/useAppPreferences';
 
 export type MessageLanguages = keyof typeof messages;
 export type MessageSchema = (typeof messages)['en-US'];
@@ -15,6 +16,12 @@ declare module 'vue-i18n' {
 /* eslint-enable @typescript-eslint/no-empty-object-type */
 
 function detectLocale(): MessageLanguages {
+  const stored = getStoredLocale();
+
+  if (stored) {
+    return stored;
+  }
+
   const browserLocale = navigator.language.toLowerCase();
 
   if (browserLocale.startsWith('de')) {

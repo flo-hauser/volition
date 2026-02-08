@@ -9,6 +9,7 @@ export default {
     today: 'Heute',
     week: 'Woche',
     tasks: 'Aufgaben',
+    settings: 'Einstellungen',
   },
   locale: {
     enUS: 'EN',
@@ -46,6 +47,18 @@ export default {
       editTask: 'Aufgabe bearbeiten',
       deleteTask: 'Aufgabe loeschen',
       deleteConfirm: 'Diese Aufgabe und alle Check-ins loeschen?',
+    },
+    settings: {
+      title: 'App-Einstellungen',
+      hint: 'Sprache und Darstellung anpassen.',
+      languageTitle: 'Sprache',
+      localeEnglish: 'Englisch',
+      localeGerman: 'Deutsch',
+      themeTitle: 'Darstellung',
+      themeSystem: 'System',
+      themeLight: 'Hell',
+      themeDark: 'Dunkel',
+      themeHint: 'Systemmodus folgt automatisch deiner Geraeteeinstellung.',
     },
     newTask: {
       title: 'Neue Aufgabe erstellen',

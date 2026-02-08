@@ -61,6 +61,18 @@ describe('WeekPage', () => {
     expect((wrapper.vm as unknown as { tasks: Array<{ id: string }> }).tasks).toHaveLength(1);
   });
 
+  it('computes progress fill style for week item background', () => {
+    const wrapper = mountPage();
+
+    const style = (
+      wrapper.vm as unknown as {
+        weekProgressStyle: (taskId: string, targetPerWeek: number) => Record<string, string>;
+      }
+    ).weekProgressStyle('task-1', 3);
+
+    expect(style['--progress-fill']).toBe('66.67%');
+  });
+
   it('renders empty-state branch', () => {
     mockStore.activeTasks = [];
     const wrapper = mountPage();

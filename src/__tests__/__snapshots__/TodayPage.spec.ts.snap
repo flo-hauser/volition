@@ -3,7 +3,7 @@
 exports[`TodayPage > renders stable markup 1`] = `
 "<q-page-stub class="q-pa-md">
   <div class="q-mx-auto" style="max-width: 640px;">
-    <q-card-stub flat="" bordered="">
+    <q-card-stub flat="" bordered="" class="vol-surface-card">
       <q-card-section-stub>
         <div class="text-h6 text-secondary text-weight-bold">pages.today.title</div>
         <div class="text-body2 text-grey-8 q-mt-xs">pages.today.hint</div>
