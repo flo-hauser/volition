@@ -14,6 +14,16 @@ exports[`SettingsPage > renders stable markup 1`] = `
         <div class="text-subtitle2 text-weight-medium q-mb-sm">pages.settings.themeTitle</div><button class="q-btn-toggle-stub" data-options="[{&quot;value&quot;:&quot;system&quot;,&quot;label&quot;:&quot;pages.settings.themeSystem&quot;},{&quot;value&quot;:&quot;light&quot;,&quot;label&quot;:&quot;pages.settings.themeLight&quot;},{&quot;value&quot;:&quot;dark&quot;,&quot;label&quot;:&quot;pages.settings.themeDark&quot;}]" unelevated="" no-caps="" color="secondary" text-color="white" toggle-color="primary">system</button>
         <div class="text-caption text-grey-7 q-mt-sm">pages.settings.themeHint</div>
       </div>
+      <hr>
+      <div>
+        <div class="text-subtitle2 text-weight-medium q-mb-sm">Diagnostics</div>
+        <div class="text-caption q-mb-xs">Secure Context: false</div>
+        <div class="text-caption q-mb-xs">crypto.randomUUID: true</div>
+        <div class="text-caption q-mb-xs">IndexedDB: true</div>
+        <div class="text-caption q-mb-xs">LocalStorage: true</div>
+        <div class="text-caption q-mb-md">UA: test-agent</div><button size="sm" no-caps="" flat="" color="secondary" label="Reload diagnostics"></button>
+        <div class="text-caption text-grey-7 q-mt-md">No captured runtime error yet.</div>
+      </div>
     </section>
   </div>
 </div>"

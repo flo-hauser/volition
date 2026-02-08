@@ -35,19 +35,50 @@
 
           <div class="text-caption text-grey-7 q-mt-sm">{{ t('pages.settings.themeHint') }}</div>
         </q-card-section>
+
+        <q-separator />
+
+        <q-card-section>
+          <div class="text-subtitle2 text-weight-medium q-mb-sm">Diagnostics</div>
+          <div class="text-caption q-mb-xs">Secure Context: {{ String(runtimeDiagnostics.isSecureContext) }}</div>
+          <div class="text-caption q-mb-xs">crypto.randomUUID: {{ String(runtimeDiagnostics.hasRandomUUID) }}</div>
+          <div class="text-caption q-mb-xs">IndexedDB: {{ String(runtimeDiagnostics.hasIndexedDB) }}</div>
+          <div class="text-caption q-mb-xs">LocalStorage: {{ String(runtimeDiagnostics.hasLocalStorage) }}</div>
+          <div class="text-caption q-mb-md">UA: {{ runtimeDiagnostics.userAgent }}</div>
+
+          <q-btn
+            size="sm"
+            no-caps
+            flat
+            color="secondary"
+            label="Reload diagnostics"
+            @click="reloadDebugData"
+          />
+
+          <q-banner v-if="debugLogs.length > 0" class="q-mt-md bg-grey-3 text-grey-10">
+            <div class="text-caption text-weight-medium q-mb-sm">Recent logs (up to 20)</div>
+            <div v-for="entry in debugLogs" :key="entry.id" class="text-caption q-mb-xs">
+              {{ entry.at }} | {{ entry.scope }} | {{ entry.message }}
+            </div>
+          </q-banner>
+          <div v-else class="text-caption text-grey-7 q-mt-md">No captured runtime error yet.</div>
+        </q-card-section>
       </q-card>
     </div>
   </q-page>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import { Dark } from 'quasar';
 import { useI18n } from 'vue-i18n';
 
 import { setStoredLocale, setStoredThemeMode, type AppLocale, type ThemeMode } from 'src/composables/useAppPreferences';
+import { getRuntimeDiagnostics, readDebugLogs, type DebugLogEntry } from 'src/services/debug/runtimeDiagnostics';
 
 const { t, locale } = useI18n({ useScope: 'global' });
+const debugLogs = ref<DebugLogEntry[]>([]);
+const runtimeDiagnostics = computed(() => getRuntimeDiagnostics());
 
 const localeOptions = computed(() => [
   { value: 'en-US', label: t('pages.settings.localeEnglish') },
@@ -95,5 +126,13 @@ const themeMode = computed<ThemeMode>({
 
     Dark.set('auto');
   },
+});
+
+function reloadDebugData(): void {
+  debugLogs.value = readDebugLogs();
+}
+
+onMounted(() => {
+  reloadDebugData();
 });
 </script>

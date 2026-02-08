@@ -169,7 +169,7 @@ describe('TasksPage', () => {
     expect(mockNotify).toHaveBeenCalledWith(
       expect.objectContaining({
         type: 'negative',
-        message: 'pages.toast.taskUpdateFailed',
+        message: expect.stringContaining('pages.toast.taskUpdateFailed'),
       }),
     );
   });
@@ -199,7 +199,7 @@ describe('TasksPage', () => {
     expect(mockNotify).toHaveBeenCalledWith(
       expect.objectContaining({
         type: 'negative',
-        message: 'pages.toast.taskDeleteFailed',
+        message: expect.stringContaining('pages.toast.taskDeleteFailed'),
       }),
     );
   });

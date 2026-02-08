@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { createPinia, setActivePinia } from 'pinia';
 
 import { useTasksStore } from 'src/stores/tasks.store';
+import { createResilientStorageAdapter } from 'src/services/storage/resilientStorageAdapter';
 import { createEmptyStorageState, type StorageAdapter } from 'src/services/storage/storageAdapter';
 import type { StorageState } from 'src/types/storage';
 
@@ -154,5 +155,29 @@ describe('useTasksStore', () => {
 
     await expect(store.toggleForDay(task.id, '2026-02-07')).rejects.toThrow('save failed');
     expect(store.isDone(task.id, '2026-02-07')).toBe(false);
+  });
+
+  it('supports CRUD when primary adapter fails and fallback is available', async () => {
+    const primary: StorageAdapter = {
+      loadState: vi.fn().mockRejectedValue(new Error('indexedDB blocked')),
+      saveState: vi.fn().mockRejectedValue(new Error('indexedDB blocked')),
+    };
+    const fallback: StorageAdapter = {
+      loadState: vi.fn().mockResolvedValue(createEmptyStorageState()),
+      saveState: vi.fn().mockResolvedValue(undefined),
+    };
+
+    const resilientAdapter = createResilientStorageAdapter(primary, fallback);
+    const store = useTasksStore();
+
+    await store.init(resilientAdapter);
+    const task = await store.createTask({ title: 'Mobile fallback', targetPerWeek: 3 });
+    await store.toggleForDay(task.id, '2026-02-07');
+
+    expect(store.tasks[task.id]).toBeDefined();
+    expect(store.isDone(task.id, '2026-02-07')).toBe(true);
+    expect(primary.loadState).toHaveBeenCalledTimes(1);
+    expect(primary.saveState).not.toHaveBeenCalled();
+    expect(fallback.saveState).toHaveBeenCalledTimes(2);
   });
 });

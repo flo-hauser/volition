@@ -1,4 +1,4 @@
-import { defineComponent, h } from 'vue';
+import { defineComponent, h, nextTick } from 'vue';
 import { mount } from '@vue/test-utils';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -6,12 +6,23 @@ const {
   mockLocale,
   setStoredLocale,
   setStoredThemeMode,
+  readDebugLogs,
+  getRuntimeDiagnostics,
   darkSet,
   Dark,
 } = vi.hoisted(() => ({
   mockLocale: { value: 'en-US' as 'en-US' | 'de-DE' },
   setStoredLocale: vi.fn(),
   setStoredThemeMode: vi.fn(),
+  readDebugLogs: vi.fn().mockReturnValue([]),
+  getRuntimeDiagnostics: vi.fn().mockReturnValue({
+    isSecureContext: false,
+    hasCrypto: true,
+    hasRandomUUID: true,
+    hasIndexedDB: true,
+    hasLocalStorage: true,
+    userAgent: 'test-agent',
+  }),
   darkSet: vi.fn(),
   Dark: {
     mode: 'auto' as boolean | 'auto',
@@ -35,6 +46,11 @@ vi.mock('quasar', () => ({
 vi.mock('src/composables/useAppPreferences', () => ({
   setStoredLocale,
   setStoredThemeMode,
+}));
+
+vi.mock('src/services/debug/runtimeDiagnostics', () => ({
+  readDebugLogs,
+  getRuntimeDiagnostics,
 }));
 
 import SettingsPage from 'src/pages/SettingsPage.vue';
@@ -82,6 +98,8 @@ function mountPage() {
         'q-card-section': { template: '<div><slot /></div>' },
         'q-separator': { template: '<hr />' },
         'q-btn-toggle': QBtnToggleStub,
+        'q-btn': { template: '<button><slot /></button>' },
+        'q-banner': { template: '<div><slot /></div>' },
       },
     },
   });
@@ -94,6 +112,17 @@ describe('SettingsPage', () => {
     darkSet.mockReset();
     setStoredLocale.mockReset();
     setStoredThemeMode.mockReset();
+    readDebugLogs.mockReset();
+    getRuntimeDiagnostics.mockReset();
+    readDebugLogs.mockReturnValue([]);
+    getRuntimeDiagnostics.mockReturnValue({
+      isSecureContext: false,
+      hasCrypto: true,
+      hasRandomUUID: true,
+      hasIndexedDB: true,
+      hasLocalStorage: true,
+      userAgent: 'test-agent',
+    });
   });
 
   it('renders stable markup', () => {
@@ -125,6 +154,30 @@ describe('SettingsPage', () => {
 
     expect(setStoredLocale).toHaveBeenCalledOnce();
     expect(setStoredThemeMode).toHaveBeenCalledOnce();
+  });
+
+  it('loads diagnostics logs on mount', async () => {
+    readDebugLogs.mockReturnValue([
+      {
+        id: 'log-1',
+        at: '2026-02-08T10:00:00.000Z',
+        scope: 'tasks.createTask',
+        message: 'boom',
+        diagnostics: {
+          isSecureContext: false,
+          hasCrypto: true,
+          hasRandomUUID: false,
+          hasIndexedDB: true,
+          hasLocalStorage: true,
+          userAgent: 'test-agent',
+        },
+      },
+    ]);
+
+    const wrapper = mountPage();
+    await nextTick();
+    expect(wrapper.html()).toContain('Recent logs (up to 20)');
+    expect(readDebugLogs).toHaveBeenCalled();
   });
 
   it('returns theme mode from Quasar Dark plugin state', () => {

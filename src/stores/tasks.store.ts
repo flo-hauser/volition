@@ -4,9 +4,12 @@ import { defineStore } from 'pinia';
 import { getIsoWeekId, getLocalDayISO } from 'src/composables/useDay';
 import { countTaskCheckinsForWeek } from 'src/composables/useProgress';
 import { indexedDbAdapter } from 'src/services/storage/indexedDbAdapter';
+import { localStorageAdapter } from 'src/services/storage/localStorageAdapter';
+import { createResilientStorageAdapter } from 'src/services/storage/resilientStorageAdapter';
 import { createEmptyStorageState, type StorageAdapter } from 'src/services/storage/storageAdapter';
 import { SCHEMA_VERSION } from 'src/types/storage';
 import type { Checkin, Task } from 'src/types/task';
+import { createId } from 'src/utils/id';
 
 interface CreateTaskInput {
   title: string;
@@ -35,7 +38,13 @@ export const useTasksStore = defineStore('tasks', () => {
   const checkinsByDay = ref<Record<string, Record<string, Checkin>>>({});
   const isReady = ref(false);
 
-  let storageAdapter: StorageAdapter = indexedDbAdapter;
+  let storageAdapter: StorageAdapter = createResilientStorageAdapter(
+    indexedDbAdapter,
+    localStorageAdapter,
+    {
+      isPrimaryAvailable: () => typeof indexedDB !== 'undefined',
+    },
+  );
 
   const activeTasks = computed(() =>
     Object.values(tasks.value).filter((task) => !task.archivedAt),
@@ -102,7 +111,7 @@ export const useTasksStore = defineStore('tasks', () => {
     }
 
     const task: Task = {
-      id: crypto.randomUUID(),
+      id: createId(),
       title,
       targetPerWeek: normalizeTargetPerWeek(input.targetPerWeek),
       createdAt: new Date().toISOString(),

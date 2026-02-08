@@ -102,6 +102,7 @@ import { useQuasar } from 'quasar';
 import { useRoute, useRouter } from 'vue-router';
 
 import TaskFormDialog from 'src/components/TaskFormDialog.vue';
+import { appendDebugLog } from 'src/services/debug/runtimeDiagnostics';
 import { useTasksStore } from 'src/stores/tasks.store';
 
 type TargetPerWeek = 1 | 2 | 3 | 4 | 5 | 6 | 7;
@@ -229,7 +230,11 @@ async function submitTaskForm(payload: { title: string; targetPerWeek: TargetPer
     }
 
     forceCloseTaskDialog();
-  } catch {
+  } catch (error) {
+    appendDebugLog(
+      taskDialogMode.value === 'create' ? 'tasks.createTask' : 'tasks.updateTask',
+      error,
+    );
     $q.notify({
       type: 'negative',
       position: 'top-right',
@@ -266,7 +271,8 @@ async function submitDelete(): Promise<void> {
     });
     isDeleteDialogOpen.value = false;
     selectedTaskId.value = null;
-  } catch {
+  } catch (error) {
+    appendDebugLog('tasks.deleteTask', error);
     $q.notify({
       type: 'negative',
       position: 'top-right',
