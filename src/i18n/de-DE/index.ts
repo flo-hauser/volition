@@ -4,6 +4,9 @@ export default {
     loading: 'Tracker wird geladen...',
     addTask: 'Aufgabe',
     initError: 'Lokale Daten konnten nicht geladen werden.',
+    offlineBanner: 'Du bist offline. Vorhandene Daten bleiben verfuegbar.',
+    updateAvailable: 'Eine neue App-Version ist verfuegbar.',
+    updateAction: 'Aktualisieren',
   },
   nav: {
     today: 'Heute',

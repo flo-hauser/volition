@@ -14,6 +14,8 @@ exports[`MainLayout > renders stable markup 1`] = `
       <q-btn-stub data-v-22686b16="" flat="" dense="" round="" color="white" icon="settings" to="/settings" aria-label="nav.settings"></q-btn-stub>
     </q-toolbar-stub>
     <!--v-if-->
+    <!--v-if-->
+    <!--v-if-->
   </q-header-stub>
   <q-page-container-stub data-v-22686b16="">
     <q-slide-transition-stub data-v-22686b16="">

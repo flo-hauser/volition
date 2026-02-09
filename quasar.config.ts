@@ -23,7 +23,7 @@ export default defineConfig((ctx) => {
         vueShim: true,
       },
 
-      vueRouterMode: 'hash',
+      vueRouterMode: 'history',
 
       vitePlugins: [
         [
@@ -67,6 +67,22 @@ export default defineConfig((ctx) => {
 
     pwa: {
       workboxMode: 'GenerateSW',
+      swFilename: 'sw.js',
+      manifestFilename: 'manifest.json',
+      extendGenerateSWOptions(options) {
+        options.cleanupOutdatedCaches = true;
+        options.navigateFallback = '/index.html';
+        options.runtimeCaching = [
+          {
+            urlPattern: ({ request }) => request.mode === 'navigate',
+            handler: 'NetworkFirst',
+            options: {
+              cacheName: 'pages',
+              networkTimeoutSeconds: 3,
+            },
+          },
+        ];
+      },
     },
 
     cordova: {},

@@ -1,6 +1,6 @@
 import { ref } from 'vue';
 import { flushPromises, shallowMount } from '@vue/test-utils';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 const mockDarkIsActive = ref(false);
 
@@ -56,13 +56,26 @@ function mountLayout() {
 }
 
 describe('MainLayout', () => {
+  const originalNavigator = globalThis.navigator;
+
   beforeEach(() => {
     mockDarkIsActive.value = false;
+    Object.defineProperty(globalThis, 'navigator', {
+      value: { ...originalNavigator, onLine: true },
+      configurable: true,
+    });
 
     mockStore = {
       isReady: true,
       init: vi.fn().mockResolvedValue(undefined),
     };
+  });
+
+  afterEach(() => {
+    Object.defineProperty(globalThis, 'navigator', {
+      value: originalNavigator,
+      configurable: true,
+    });
   });
 
   it('renders stable markup', async () => {
@@ -104,6 +117,33 @@ describe('MainLayout', () => {
     const html = wrapper.html();
     expect(html.match(/to="\/settings"/g)).toHaveLength(1);
     expect(html).not.toContain('<q-route-tab-stub data-v-22686b16="" to="/settings"');
+  });
+
+  it('shows offline banner when browser is offline', async () => {
+    Object.defineProperty(globalThis, 'navigator', {
+      value: { ...originalNavigator, onLine: false },
+      configurable: true,
+    });
+
+    const wrapper = mountLayout();
+    await flushPromises();
+
+    expect(wrapper.html()).toContain('app.offlineBanner');
+  });
+
+  it('shows update banner when service worker update event fires', async () => {
+    const wrapper = mountLayout();
+    await flushPromises();
+
+    window.dispatchEvent(
+      new CustomEvent('volition-pwa-updated', {
+        detail: { waiting: { postMessage: vi.fn() } },
+      }),
+    );
+    await flushPromises();
+
+    expect(wrapper.html()).toContain('app.updateAvailable');
+    expect(wrapper.html()).toContain('app.updateAction');
   });
 
   it('handles init error and sets store ready', async () => {

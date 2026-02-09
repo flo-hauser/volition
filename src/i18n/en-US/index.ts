@@ -4,6 +4,9 @@ export default {
     loading: 'Loading your tracker...',
     addTask: 'Task',
     initError: 'Could not load local data.',
+    offlineBanner: 'You are offline. Existing data is still available.',
+    updateAvailable: 'A new app version is available.',
+    updateAction: 'Refresh',
   },
   nav: {
     today: 'Today',
