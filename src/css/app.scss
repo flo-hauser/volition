@@ -10,9 +10,9 @@
   --ink: #362f4f;
   --ink-soft: #4a4168;
   --ink-mute: #6e6488;
-  --violet: #8b5dff;
-  --violet-deep: #6a42c2;
-  --violet-shadow: #563a9c;
+  --violet: #b25e2d;
+  --violet-deep: #8a421e;
+  --violet-shadow: #6a2d13;
   --acid: #e4ff30;
   --azure: #008bff;
 
@@ -68,10 +68,10 @@ body.body--dark {
   --text: #fff7d1;
   --text-2: #d9d0a8;
   --text-3: #9a926f;
-  --accent: #a888ff;
-  --accent-deep: #8b5dff;
+  --accent: #d4815f;
+  --accent-deep: #b25e2d;
   --accent-ink: #e4ff30;
-  --accent-glow: rgba(168, 136, 255, 0.22);
+  --accent-glow: rgba(212, 129, 95, 0.22);
   --success: #8bd5a3;
 
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.35);
@@ -80,7 +80,7 @@ body.body--dark {
   --shadow-inset: inset 0 1px 0 rgba(255, 247, 209, 0.05);
 
   background:
-    radial-gradient(ellipse at 0% 0%, rgba(139, 93, 255, 0.14), transparent 50%),
+    radial-gradient(ellipse at 0% 0%, rgba(178, 94, 45, 0.12), transparent 50%),
     radial-gradient(ellipse at 100% 100%, rgba(0, 139, 255, 0.1), transparent 55%), var(--bg);
   background-attachment: fixed;
 }
