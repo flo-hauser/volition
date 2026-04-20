@@ -86,7 +86,7 @@ import { useTasksStore } from 'src/stores/tasks.store';
 const $q = useQuasar();
 const tasksStore = useTasksStore();
 const initError = ref(false);
-const isOffline = ref(typeof navigator !== 'undefined' ? !navigator.onLine : false);
+const isOffline = ref(typeof navigator === 'undefined' ? false : !navigator.onLine);
 const updateAvailable = ref(false);
 const waitingRegistration = ref<ServiceWorkerRegistration | null>(null);
 
@@ -143,10 +143,12 @@ onBeforeUnmount(() => {
 .vol-header {
   background: var(--vol-header);
   color: var(--vol-header-text);
+  padding-top: env(safe-area-inset-top);
 }
 
 .vol-footer {
   background: var(--vol-footer);
   color: var(--vol-header-text);
+  padding-bottom: env(safe-area-inset-bottom);
 }
 </style>

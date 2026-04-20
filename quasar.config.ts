@@ -91,6 +91,10 @@ export default defineConfig((ctx) => {
       hideSplashscreen: true,
     },
 
+    bin: {
+      linuxAndroidStudio: '/snap/bin/android-studio',
+    },
+
     electron: {
       preloadScripts: ['electron-preload'],
       inspectPort: 5858,

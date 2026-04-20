@@ -72,15 +72,17 @@ export const useTasksStore = defineStore('tasks', () => {
     const previousTasks = cloneState(tasks.value);
     const previousCheckinsByDay = cloneState(checkinsByDay.value);
 
+    let result: T;
     try {
-      const result = operation();
-      await storageAdapter.saveState(createStateSnapshot());
-      return result;
+      result = operation();
     } catch (error) {
       tasks.value = previousTasks;
       checkinsByDay.value = previousCheckinsByDay;
       throw error;
     }
+
+    await storageAdapter.saveState(createStateSnapshot());
+    return result;
   }
 
   async function init(adapter?: StorageAdapter): Promise<void> {
