@@ -1,47 +1,71 @@
 <template>
-  <q-page class="q-pa-md">
-    <div class="q-mx-auto" style="max-width: 640px">
-      <q-card flat bordered class="vol-surface-card">
-        <q-card-section>
-          <div class="text-h6 text-secondary text-weight-bold">{{ t('pages.today.title') }}</div>
-          <div class="text-body2 text-grey-8 q-mt-xs">{{ t('pages.today.hint') }}</div>
-          <div class="text-caption text-grey-7 q-mt-sm">{{ t('pages.today.weekId', { weekId: currentWeekId }) }}</div>
-        </q-card-section>
+  <q-page class="page page-enter">
+    <header class="page-head">
+      <div class="page-eyebrow">{{ eyebrow }}</div>
+      <h1 class="page-title" v-html="t('pages.today.title')" />
+    </header>
 
-        <q-separator />
+    <TodayHero
+      :done="doneToday"
+      :total="totalTasks"
+      :quote="quote"
+      :eyebrow="t('pages.today.heroEyebrow')"
+      :of-label="t('pages.today.heroOf', { total: totalTasks })"
+    />
 
-        <q-list v-if="tasks.length > 0" separator>
-          <q-item v-for="task in tasks" :key="task.id" class="q-py-sm">
-            <q-item-section>
-              <q-item-label class="text-weight-medium">{{ task.title }}</q-item-label>
-              <q-item-label caption>
-                {{ t('pages.today.progressLabel', { progress: store.weekProgress(task.id, currentWeekId), target: task.targetPerWeek }) }}
-              </q-item-label>
-            </q-item-section>
-
-            <q-item-section side>
-              <q-toggle
-                :model-value="store.isDone(task.id, todayISO)"
-                color="primary"
-                :label="t('pages.today.doneToday')"
-                :disable="pendingTaskIds.has(task.id)"
-                @update:model-value="toggleTask(task.id)"
-              />
-            </q-item-section>
-          </q-item>
-        </q-list>
-
-        <q-card-section v-else class="text-grey-8">
-          {{ t('common.noTasksYet') }} {{ t('pages.today.openTasks') }}
-        </q-card-section>
-
-        <q-separator />
-
-        <q-card-actions align="right">
-          <q-btn color="primary" no-caps icon="add" :label="t('common.addTask')" :to="'/tasks?new=1'" />
-        </q-card-actions>
-      </q-card>
+    <div v-if="tasks.length > 0" class="section-head">
+      <h2 class="section-title">{{ t('pages.today.allTasks') }}</h2>
+      <button type="button" class="section-link" @click="openCreate">
+        {{ t('common.addNew') }}
+      </button>
     </div>
+
+    <div v-if="tasks.length > 0" class="task-list">
+      <article
+        v-for="task in tasks"
+        :key="task.id"
+        class="task-row"
+        :class="{ done: isChecked(task.id) }"
+      >
+        <div class="task-body">
+          <h3 class="task-title">{{ task.title }}</h3>
+          <div class="task-meta">
+            <span>
+              {{
+                t('pages.today.progressLabel', {
+                  progress: store.weekProgress(task.id, currentWeekId),
+                  target: task.targetPerWeek,
+                })
+              }}
+            </span>
+            <span class="dot" aria-hidden="true" />
+            <WeekMini :pattern="getPattern(task.id)" :today-idx="todayIdx" />
+          </div>
+        </div>
+        <CheckButton
+          :model-value="isChecked(task.id)"
+          :disabled="pendingTaskIds.has(task.id)"
+          :aria-check="t('pages.today.doneToday')"
+          :aria-uncheck="t('pages.today.doneToday')"
+          @update:model-value="() => toggleTask(task.id)"
+        />
+      </article>
+    </div>
+
+    <div v-else class="section-head">
+      <p class="page-sub">{{ t('pages.today.openTasks') }}</p>
+    </div>
+
+    <button type="button" class="add-cta" @click="openCreate">
+      + {{ t('common.newIntention') }}
+    </button>
+
+    <TaskSheet
+      v-model="isTaskSheetOpen"
+      mode="create"
+      :submitting="taskSheetBusy"
+      @submit="submitCreate"
+    />
   </q-page>
 </template>
 
@@ -50,33 +74,101 @@ import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useQuasar } from 'quasar';
 
-import { getIsoWeekId, getLocalDayISO } from 'src/composables/useDay';
+import CheckButton from 'src/components/CheckButton.vue';
+import TaskSheet from 'src/components/TaskSheet.vue';
+import TodayHero from 'src/components/TodayHero.vue';
+import WeekMini from 'src/components/WeekMini.vue';
+import { getIsoWeekId, getLocalDayISO, getWeekdayIndex, toLocalDate } from 'src/composables/useDay';
+import { getWeekPattern } from 'src/composables/useProgress';
+import { pickQuote } from 'src/composables/useQuote';
+import { appendDebugLog } from 'src/services/debug/runtimeDiagnostics';
 import { useTasksStore } from 'src/stores/tasks.store';
 
-const { t } = useI18n();
+type TargetPerWeek = 1 | 2 | 3 | 4 | 5 | 6 | 7;
+
+const { t, locale } = useI18n();
 const $q = useQuasar();
 const store = useTasksStore();
 
 const todayISO = getLocalDayISO();
 const currentWeekId = getIsoWeekId(todayISO);
+const todayIdx = getWeekdayIndex(currentWeekId, todayISO);
+
 const pendingTaskIds = ref(new Set<string>());
+const isTaskSheetOpen = ref(false);
+const taskSheetBusy = ref(false);
 
 const tasks = computed(() => store.activeTasks);
 
+const totalTasks = computed(() => tasks.value.length);
+const doneToday = computed(() =>
+  tasks.value.reduce((count, task) => (store.isDone(task.id, todayISO) ? count + 1 : count), 0),
+);
+
+const eyebrow = computed(() => {
+  const date = toLocalDate(todayISO);
+  const longDate = date.toLocaleDateString(locale.value, {
+    weekday: 'long',
+    month: 'long',
+    day: 'numeric',
+  });
+  const weekNumber = currentWeekId.split('-W')[1] ?? '';
+  return t('pages.today.eyebrow', { date: longDate, week: weekNumber });
+});
+
+const quote = computed(() => pickQuote(doneToday.value, totalTasks.value));
+
+function isChecked(taskId: string): boolean {
+  return store.isDone(taskId, todayISO);
+}
+
+function getPattern(taskId: string): number[] {
+  return getWeekPattern(taskId, currentWeekId, store.checkinsByDay);
+}
+
 async function toggleTask(taskId: string): Promise<void> {
   pendingTaskIds.value.add(taskId);
-
   try {
     await store.toggleToday(taskId);
-  } catch {
+  } catch (error) {
+    appendDebugLog('tasks.toggleToday', error);
     $q.notify({
       type: 'negative',
-      position: 'top-right',
+      position: 'top',
       message: t('pages.toast.taskToggleFailed'),
     });
   } finally {
     pendingTaskIds.value.delete(taskId);
     pendingTaskIds.value = new Set(pendingTaskIds.value);
+  }
+}
+
+function openCreate(): void {
+  isTaskSheetOpen.value = true;
+}
+
+async function submitCreate(payload: {
+  title: string;
+  targetPerWeek: TargetPerWeek;
+}): Promise<void> {
+  taskSheetBusy.value = true;
+  try {
+    await store.createTask(payload);
+    $q.notify({
+      type: 'positive',
+      position: 'top',
+      message: t('pages.newTask.createdSuccess'),
+    });
+    isTaskSheetOpen.value = false;
+  } catch (error) {
+    appendDebugLog('tasks.createTask', error);
+    $q.notify({
+      type: 'negative',
+      position: 'top',
+      message: t('pages.newTask.createFailed'),
+    });
+  } finally {
+    taskSheetBusy.value = false;
   }
 }
 </script>

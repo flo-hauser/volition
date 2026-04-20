@@ -1,18 +1,22 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { ref } from 'vue';
 import { shallowMount } from '@vue/test-utils';
 
 const mockNotify = vi.fn();
 
 let mockStore: {
   activeTasks: Array<{ id: string; title: string; targetPerWeek: number }>;
+  checkinsByDay: Record<string, Record<string, unknown>>;
   weekProgress: ReturnType<typeof vi.fn>;
   isDone: ReturnType<typeof vi.fn>;
   toggleToday: ReturnType<typeof vi.fn>;
+  createTask: ReturnType<typeof vi.fn>;
 };
 
 vi.mock('vue-i18n', () => ({
   useI18n: () => ({
     t: (key: string) => key,
+    locale: ref('en-US'),
   }),
 }));
 
@@ -23,6 +27,33 @@ vi.mock('quasar', () => ({
 vi.mock('src/composables/useDay', () => ({
   getLocalDayISO: () => '2026-02-07',
   getIsoWeekId: () => '2026-W06',
+  getWeekdayIndex: () => 5,
+  getWeekDays: () => [
+    '2026-02-02',
+    '2026-02-03',
+    '2026-02-04',
+    '2026-02-05',
+    '2026-02-06',
+    '2026-02-07',
+    '2026-02-08',
+  ],
+  toLocalDate: (dateISO: string) => {
+    const [year, month, day] = dateISO.split('-').map(Number) as [number, number, number];
+    return new Date(year, month - 1, day);
+  },
+}));
+
+vi.mock('src/composables/useProgress', () => ({
+  getWeekPattern: () => [0, 0, 0, 0, 0, 0, 0],
+  countTaskCheckinsForWeek: () => 0,
+}));
+
+vi.mock('src/composables/useQuote', () => ({
+  pickQuote: () => 'A quiet beginning.',
+}));
+
+vi.mock('src/services/debug/runtimeDiagnostics', () => ({
+  appendDebugLog: vi.fn(),
 }));
 
 vi.mock('src/stores/tasks.store', () => ({
@@ -37,16 +68,18 @@ function mountPage() {
       renderStubDefaultSlot: true,
       stubs: {
         'q-page': true,
-        'q-card': true,
-        'q-card-section': true,
-        'q-card-actions': true,
-        'q-separator': true,
-        'q-list': true,
-        'q-item': true,
-        'q-item-section': true,
-        'q-item-label': true,
-        'q-toggle': true,
-        'q-btn': true,
+        CheckButton: {
+          template: '<button class="check-btn-stub" @click="$emit(\'update:modelValue\', !modelValue)" />',
+          props: ['modelValue', 'disabled', 'ariaCheck', 'ariaUncheck'],
+          emits: ['update:modelValue'],
+        },
+        TaskSheet: {
+          template: '<div />',
+          props: ['modelValue', 'mode', 'submitting', 'initialTitle', 'initialTargetPerWeek'],
+          emits: ['update:modelValue', 'submit'],
+        },
+        TodayHero: true,
+        WeekMini: true,
       },
     },
   });
@@ -58,9 +91,11 @@ describe('TodayPage', () => {
 
     mockStore = {
       activeTasks: [{ id: 'task-1', title: 'Sports', targetPerWeek: 3 }],
+      checkinsByDay: {},
       weekProgress: vi.fn().mockReturnValue(1),
       isDone: vi.fn().mockReturnValue(false),
       toggleToday: vi.fn().mockResolvedValue(undefined),
+      createTask: vi.fn().mockResolvedValue(undefined),
     };
   });
 
@@ -73,7 +108,7 @@ describe('TodayPage', () => {
     mockStore.activeTasks = [];
     const wrapper = mountPage();
 
-    expect(wrapper.html()).toContain('common.noTasksYet');
+    expect(wrapper.html()).toContain('pages.today.openTasks');
   });
 
   it('toggles a task for today', async () => {

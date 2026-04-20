@@ -1,13 +1,12 @@
-import { ref } from 'vue';
 import { flushPromises, shallowMount } from '@vue/test-utils';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-
-const mockDarkIsActive = ref(false);
 
 let mockStore: {
   isReady: boolean;
   init: ReturnType<typeof vi.fn>;
 };
+
+const mockPush = vi.fn();
 
 vi.mock('vue-i18n', () => ({
   useI18n: () => ({
@@ -15,14 +14,9 @@ vi.mock('vue-i18n', () => ({
   }),
 }));
 
-vi.mock('quasar', () => ({
-  useQuasar: () => ({
-    dark: {
-      get isActive() {
-        return mockDarkIsActive.value;
-      },
-    },
-  }),
+vi.mock('vue-router', () => ({
+  useRoute: () => ({ path: '/' }),
+  useRouter: () => ({ push: mockPush }),
 }));
 
 vi.mock('src/stores/tasks.store', () => ({
@@ -38,17 +32,15 @@ function mountLayout() {
       stubs: {
         'q-layout': true,
         'q-header': true,
-        'q-toolbar': true,
-        'q-toolbar-title': true,
-        'q-img': true,
-        'q-btn': true,
-        'q-banner': true,
+        'q-icon': true,
         'q-page-container': true,
         'q-slide-transition': true,
         'q-spinner': true,
         'q-footer': true,
-        'q-tabs': true,
-        'q-route-tab': true,
+        'router-link': {
+          template: '<a><slot :isActive="false" :href="to" :navigate="() => {}" /></a>',
+          props: ['to', 'custom'],
+        },
         'router-view': true,
       },
     },
@@ -59,7 +51,7 @@ describe('MainLayout', () => {
   const originalNavigator = globalThis.navigator;
 
   beforeEach(() => {
-    mockDarkIsActive.value = false;
+    mockPush.mockReset();
     Object.defineProperty(globalThis, 'navigator', {
       value: { ...originalNavigator, onLine: true },
       configurable: true,
@@ -91,32 +83,24 @@ describe('MainLayout', () => {
     expect(mockStore.init).toHaveBeenCalledTimes(1);
   });
 
-  it('keeps app title visible in header', async () => {
+  it('renders the brand mark and name in the header', async () => {
     const wrapper = mountLayout();
     await flushPromises();
 
+    expect(wrapper.html()).toContain('brand-mark');
     expect(wrapper.html()).toContain('app.name');
-    expect(wrapper.html()).not.toContain('text-caption ellipsis');
   });
 
-  it('switches header icon based on dark mode state', async () => {
-    mockDarkIsActive.value = false;
-    const lightWrapper = mountLayout();
-    await flushPromises();
-    expect(lightWrapper.html()).toContain('/icons/icon-dark.svg');
-
-    mockDarkIsActive.value = true;
-    const darkWrapper = mountLayout();
-    await flushPromises();
-    expect(darkWrapper.html()).toContain('/icons/icon-light.svg');
-  });
-
-  it('shows settings action only in header', async () => {
+  it('renders a 3-tab bottom bar', async () => {
     const wrapper = mountLayout();
     await flushPromises();
     const html = wrapper.html();
-    expect(html.match(/to="\/settings"/g)).toHaveLength(1);
-    expect(html).not.toContain('<q-route-tab-stub data-v-22686b16="" to="/settings"');
+
+    const tabMatches = html.match(/class="tab(?: active)?"/g) ?? [];
+    expect(tabMatches).toHaveLength(3);
+    expect(html).toContain('nav.today');
+    expect(html).toContain('nav.week');
+    expect(html).toContain('nav.tasks');
   });
 
   it('shows offline banner when browser is offline', async () => {

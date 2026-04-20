@@ -1,25 +1,27 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`WeekPage > renders stable markup 1`] = `
-"<q-page-stub data-v-6d7622f5="" class="q-pa-md">
-  <div data-v-6d7622f5="" class="q-mx-auto" style="max-width: 640px;">
-    <q-card-stub data-v-6d7622f5="" flat="" bordered="" class="vol-surface-card">
-      <q-card-section-stub data-v-6d7622f5="">
-        <div data-v-6d7622f5="" class="text-h6 text-secondary text-weight-bold">pages.week.title</div>
-        <div data-v-6d7622f5="" class="text-body2 text-grey-8 q-mt-xs">pages.week.hint</div>
-        <div data-v-6d7622f5="" class="text-caption text-grey-7 q-mt-sm">pages.week.thisWeek</div>
-      </q-card-section-stub>
-      <q-separator-stub data-v-6d7622f5=""></q-separator-stub>
-      <q-list-stub data-v-6d7622f5="" separator="">
-        <q-item-stub data-v-6d7622f5="" class="week-progress-item" style="--progress-fill: 66.67%;">
-          <q-item-section-stub data-v-6d7622f5="">
-            <q-item-label-stub data-v-6d7622f5="" class="text-weight-medium">Sports</q-item-label-stub>
-            <q-item-label-stub data-v-6d7622f5="" caption="">pages.week.progressLabel</q-item-label-stub>
-          </q-item-section-stub>
-          <q-item-section-stub data-v-6d7622f5="" side="" class="text-primary text-weight-medium">2 / 3</q-item-section-stub>
-        </q-item-stub>
-      </q-list-stub>
-    </q-card-stub>
+"<q-page-stub class="page page-enter">
+  <header class="page-head">
+    <div class="page-eyebrow">pages.week.eyebrow</div>
+    <h1 class="page-title">pages.week.title</h1>
+  </header>
+  <week-strip-stub done="2" target="3" eyebrow="pages.week.stripEyebrow" oflabel="pages.week.stripOf" subtitle="pages.week.stripSubtitle"></week-strip-stub>
+  <div class="section-head">
+    <h2 class="section-title">pages.week.perTask</h2>
+  </div>
+  <div>
+    <article class="week-card">
+      <div class="week-card-head">
+        <div>
+          <h3 class="week-card-title">Sports</h3>
+          <div class="week-card-meta">pages.week.targetPerWeek</div>
+          <!--v-if-->
+        </div>
+        <div class="week-card-progress">2 <span class="of">/ 3</span></div>
+      </div>
+      <viz-dots-stub pattern="1,1,0,0,0,0,0" todayidx="5" daylabels="M,T,W,T,F,S,S"></viz-dots-stub>
+    </article>
   </div>
 </q-page-stub>"
 `;

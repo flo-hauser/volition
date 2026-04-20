@@ -7,10 +7,10 @@ vi.mock('vue-i18n', () => ({
   }),
 }));
 
-import TaskFormDialog from 'src/components/TaskFormDialog.vue';
+import TaskSheet from 'src/components/TaskSheet.vue';
 
-function mountDialog(props?: Record<string, unknown>) {
-  return shallowMount(TaskFormDialog, {
+function mountSheet(props?: Record<string, unknown>) {
+  return shallowMount(TaskSheet, {
     props: {
       modelValue: true,
       mode: 'create',
@@ -19,26 +19,24 @@ function mountDialog(props?: Record<string, unknown>) {
     global: {
       renderStubDefaultSlot: true,
       stubs: {
-        'q-dialog': true,
-        'q-card': true,
-        'q-card-section': true,
-        'q-card-actions': true,
-        'q-input': true,
-        'q-select': true,
-        'q-btn': true,
+        'q-dialog': {
+          template: '<div><slot /></div>',
+          props: ['modelValue'],
+          emits: ['update:modelValue'],
+        },
       },
     },
   });
 }
 
-describe('TaskFormDialog', () => {
+describe('TaskSheet', () => {
   it('renders stable markup', () => {
-    const wrapper = mountDialog();
+    const wrapper = mountSheet();
     expect(wrapper.html()).toMatchSnapshot();
   });
 
   it('emits submit with payload when valid', () => {
-    const wrapper = mountDialog({ initialTitle: 'Sports', initialTargetPerWeek: 3 });
+    const wrapper = mountSheet({ initialTitle: 'Sports', initialTargetPerWeek: 3 });
 
     (wrapper.vm as unknown as { submit: () => void }).submit();
 
@@ -46,7 +44,7 @@ describe('TaskFormDialog', () => {
   });
 
   it('does not emit submit when title is empty', () => {
-    const wrapper = mountDialog({ initialTitle: '   ' });
+    const wrapper = mountSheet({ initialTitle: '   ' });
 
     (wrapper.vm as unknown as { submit: () => void }).submit();
 
@@ -54,9 +52,15 @@ describe('TaskFormDialog', () => {
   });
 
   it('uses edit mode labels', () => {
-    const wrapper = mountDialog({ mode: 'edit' });
+    const wrapper = mountSheet({ mode: 'edit' });
 
     expect(wrapper.html()).toContain('pages.tasks.editTask');
     expect(wrapper.html()).toContain('common.save');
+  });
+
+  it('exposes a 7-button frequency picker', () => {
+    const wrapper = mountSheet();
+    const buttons = wrapper.findAll('.freq-picker button');
+    expect(buttons).toHaveLength(7);
   });
 });

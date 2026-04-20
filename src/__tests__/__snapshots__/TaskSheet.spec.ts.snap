@@ -1,0 +1,22 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`TaskSheet > renders stable markup 1`] = `
+"<div position="bottom" persistent="" transition-show="jump-up" transition-hide="jump-down">
+  <div class="sheet-card">
+    <div class="grab" aria-hidden="true"></div>
+    <h2>pages.newTask.title</h2>
+    <p class="sub">pages.newTask.hint</p>
+    <div class="field"><label for="task-sheet-title-v-0">pages.newTask.taskTitle</label><input id="task-sheet-title-v-0" type="text" maxlength="100" placeholder="pages.newTask.taskTitlePlaceholder" aria-invalid="false">
+      <!--v-if-->
+    </div>
+    <fieldset class="field freq-fieldset">
+      <legend>pages.newTask.targetPerWeek</legend>
+      <div class="freq-picker"><button type="button" class="" aria-pressed="false" aria-label="pages.newTask.targetOption">1</button><button type="button" class="" aria-pressed="false" aria-label="pages.newTask.targetOption">2</button><button type="button" class="sel" aria-pressed="true" aria-label="pages.newTask.targetOption">3</button><button type="button" class="" aria-pressed="false" aria-label="pages.newTask.targetOption">4</button><button type="button" class="" aria-pressed="false" aria-label="pages.newTask.targetOption">5</button><button type="button" class="" aria-pressed="false" aria-label="pages.newTask.targetOption">6</button><button type="button" class="" aria-pressed="false" aria-label="pages.newTask.targetOptionDaily">7</button></div>
+      <div class="freq-caption">pages.newTask.freqCaptionRegular</div>
+    </fieldset>
+    <div class="sheet-actions"><button type="button" class="ghost-btn">common.cancel</button><button type="button" class="primary-btn" disabled=""><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="16" height="16" aria-hidden="true">
+          <polyline points="20 6 9 17 4 12"></polyline>
+        </svg> pages.newTask.create</button></div>
+  </div>
+</div>"
+`;

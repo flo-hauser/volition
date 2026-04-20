@@ -1,52 +1,34 @@
 <template>
-  <q-layout view="lHh Lpr lFf">
-    <q-header bordered class="vol-header">
-      <q-toolbar>
-        <q-toolbar-title>
-          <div class="row items-center no-wrap q-gutter-sm">
-            <q-img :src="headerIconSrc" width="30px" height="30px" fit="contain" />
-            <div class="text-weight-bold">{{ t('app.name') }}</div>
-          </div>
-        </q-toolbar-title>
-
-        <q-btn
-          flat
-          dense
-          no-caps
-          color="white"
-          icon="add"
-          :label="t('app.addTask')"
-          :to="'/tasks?new=1'"
-        />
-        <q-btn
-          flat
-          dense
-          round
-          color="white"
-          icon="settings"
-          :to="'/settings'"
-          :aria-label="t('nav.settings')"
-        />
-      </q-toolbar>
-      <q-banner v-if="initError" dense class="bg-negative text-white">
-        {{ t('app.initError') }}
-      </q-banner>
-      <q-banner v-if="isOffline" dense class="bg-warning text-black">
-        {{ t('app.offlineBanner') }}
-      </q-banner>
-      <q-banner v-if="updateAvailable" dense class="bg-info text-white">
-        <div class="row items-center justify-between q-gutter-sm">
-          <div>{{ t('app.updateAvailable') }}</div>
-          <q-btn
-            dense
-            no-caps
-            color="white"
-            text-color="primary"
-            :label="t('app.updateAction')"
-            @click="applyUpdate"
-          />
+  <q-layout view="hHh lpR fFf">
+    <q-header class="vol-header" reveal :reveal-offset="1">
+      <div class="app-header">
+        <div class="brand">
+          <div class="brand-mark" aria-hidden="true">V</div>
+          <div class="brand-name">{{ t('app.name') }}</div>
         </div>
-      </q-banner>
+        <button
+          class="icon-btn"
+          type="button"
+          :aria-label="t('nav.settings')"
+          @click="goToSettings"
+        >
+          <q-icon name="settings" />
+        </button>
+      </div>
+
+      <div v-if="initError" class="app-banner error" role="alert">
+        {{ t('app.initError') }}
+      </div>
+      <output v-if="isOffline" class="app-banner warn">
+        {{ t('app.offlineBanner') }}
+      </output>
+      <output v-if="updateAvailable" class="app-banner">
+        <span>{{ t('app.updateAvailable') }}</span>
+        <span class="spacer" />
+        <button class="ghost-btn" type="button" @click="applyUpdate">
+          {{ t('app.updateAction') }}
+        </button>
+      </output>
     </q-header>
 
     <q-page-container>
@@ -62,29 +44,54 @@
         style="min-height: 60vh"
       >
         <q-spinner color="primary" size="2em" />
-        <div class="text-body2 text-grey-2 q-mt-md">{{ t('app.loading') }}</div>
+        <div class="text-body2 q-mt-md" style="color: var(--text-2)">
+          {{ t('app.loading') }}
+        </div>
       </div>
     </q-page-container>
 
-    <q-footer bordered class="vol-footer">
-      <q-tabs dense indicator-color="warning" active-color="warning" align="justify">
-        <q-route-tab to="/" icon="today" :label="t('nav.today')" exact />
-        <q-route-tab to="/week" icon="calendar_view_week" :label="t('nav.week')" />
-        <q-route-tab to="/tasks" icon="checklist" :label="t('nav.tasks')" />
-      </q-tabs>
+    <q-footer class="vol-footer">
+      <nav class="tabbar" aria-label="Primary">
+        <router-link
+          v-for="tab in tabs"
+          :key="tab.to"
+          v-slot="{ isActive, href, navigate }"
+          :to="tab.to"
+          custom
+        >
+          <a
+            :href="href"
+            :class="['tab', { active: tab.exact ? route.path === tab.to : isActive }]"
+            :aria-current="
+              tab.exact
+                ? route.path === tab.to
+                  ? 'page'
+                  : undefined
+                : isActive
+                  ? 'page'
+                  : undefined
+            "
+            @click="navigate"
+          >
+            <q-icon :name="tab.icon" />
+            <span>{{ t(tab.labelKey) }}</span>
+          </a>
+        </router-link>
+      </nav>
     </q-footer>
   </q-layout>
 </template>
 
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
+import { onBeforeUnmount, onMounted, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { useQuasar } from 'quasar';
+import { useRoute, useRouter } from 'vue-router';
 
 import { useTasksStore } from 'src/stores/tasks.store';
 
-const $q = useQuasar();
 const tasksStore = useTasksStore();
+const route = useRoute();
+const router = useRouter();
 const initError = ref(false);
 const isOffline = ref(typeof navigator === 'undefined' ? false : !navigator.onLine);
 const updateAvailable = ref(false);
@@ -92,9 +99,15 @@ const waitingRegistration = ref<ServiceWorkerRegistration | null>(null);
 
 const { t } = useI18n({ useScope: 'global' });
 
-const headerIconSrc = computed(() =>
-  $q.dark.isActive ? '/icons/icon-light.svg' : '/icons/icon-dark.svg',
-);
+const tabs = [
+  { to: '/', icon: 'today', labelKey: 'nav.today', exact: true },
+  { to: '/week', icon: 'calendar_view_week', labelKey: 'nav.week', exact: false },
+  { to: '/tasks', icon: 'checklist', labelKey: 'nav.tasks', exact: false },
+] as const;
+
+function goToSettings(): void {
+  void router.push('/settings');
+}
 
 function handleOfflineStatus(isOnline: boolean): void {
   isOffline.value = !isOnline;
@@ -141,14 +154,14 @@ onBeforeUnmount(() => {
 
 <style scoped>
 .vol-header {
-  background: var(--vol-header);
-  color: var(--vol-header-text);
-  padding-top: env(safe-area-inset-top);
+  background: transparent;
+  color: var(--text);
+  box-shadow: none;
 }
 
 .vol-footer {
-  background: var(--vol-footer);
-  color: var(--vol-header-text);
-  padding-bottom: env(safe-area-inset-bottom);
+  background: transparent;
+  color: var(--text);
+  box-shadow: none;
 }
 </style>

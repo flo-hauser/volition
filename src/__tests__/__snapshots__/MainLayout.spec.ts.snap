@@ -1,22 +1,20 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`MainLayout > renders stable markup 1`] = `
-"<q-layout-stub data-v-22686b16="" view="lHh Lpr lFf">
-  <q-header-stub data-v-22686b16="" bordered="" class="vol-header">
-    <q-toolbar-stub data-v-22686b16="">
-      <q-toolbar-title-stub data-v-22686b16="">
-        <div data-v-22686b16="" class="row items-center no-wrap q-gutter-sm">
-          <q-img-stub data-v-22686b16="" src="/icons/icon-dark.svg" width="30px" height="30px" fit="contain"></q-img-stub>
-          <div data-v-22686b16="" class="text-weight-bold">app.name</div>
-        </div>
-      </q-toolbar-title-stub>
-      <q-btn-stub data-v-22686b16="" flat="" dense="" no-caps="" color="white" icon="add" label="app.addTask" to="/tasks?new=1"></q-btn-stub>
-      <q-btn-stub data-v-22686b16="" flat="" dense="" round="" color="white" icon="settings" to="/settings" aria-label="nav.settings"></q-btn-stub>
-    </q-toolbar-stub>
+"<q-layout-stub data-v-22686b16="" view="hHh lpR fFf">
+  <header data-v-22686b16="" class="vol-header">
+    <div data-v-22686b16="" class="app-header">
+      <div data-v-22686b16="" class="brand">
+        <div data-v-22686b16="" class="brand-mark" aria-hidden="true">V</div>
+        <div data-v-22686b16="" class="brand-name">app.name</div>
+      </div><button data-v-22686b16="" class="icon-btn" type="button" aria-label="nav.settings">
+        <q-icon-stub data-v-22686b16="" name="settings"></q-icon-stub>
+      </button>
+    </div>
     <!--v-if-->
     <!--v-if-->
     <!--v-if-->
-  </q-header-stub>
+  </header>
   <q-page-container-stub data-v-22686b16="">
     <q-slide-transition-stub data-v-22686b16="">
       <div data-v-22686b16="">
@@ -25,12 +23,14 @@ exports[`MainLayout > renders stable markup 1`] = `
     </q-slide-transition-stub>
     <!--v-if-->
   </q-page-container-stub>
-  <q-footer-stub data-v-22686b16="" bordered="" class="vol-footer">
-    <q-tabs-stub data-v-22686b16="" dense="" indicator-color="warning" active-color="warning" align="justify">
-      <q-route-tab-stub data-v-22686b16="" to="/" icon="today" label="nav.today" exact=""></q-route-tab-stub>
-      <q-route-tab-stub data-v-22686b16="" to="/week" icon="calendar_view_week" label="nav.week"></q-route-tab-stub>
-      <q-route-tab-stub data-v-22686b16="" to="/tasks" icon="checklist" label="nav.tasks"></q-route-tab-stub>
-    </q-tabs-stub>
+  <q-footer-stub data-v-22686b16="" class="vol-footer">
+    <nav data-v-22686b16="" class="tabbar" aria-label="Primary"><a data-v-22686b16=""><a data-v-22686b16="" href="/" class="tab active" aria-current="page">
+          <q-icon-stub data-v-22686b16="" name="today"></q-icon-stub><span data-v-22686b16="">nav.today</span>
+        </a></a><a data-v-22686b16=""><a data-v-22686b16="" href="/week" class="tab">
+          <q-icon-stub data-v-22686b16="" name="calendar_view_week"></q-icon-stub><span data-v-22686b16="">nav.week</span>
+        </a></a><a data-v-22686b16=""><a data-v-22686b16="" href="/tasks" class="tab">
+          <q-icon-stub data-v-22686b16="" name="checklist"></q-icon-stub><span data-v-22686b16="">nav.tasks</span>
+        </a></a></nav>
   </q-footer-stub>
 </q-layout-stub>"
 `;

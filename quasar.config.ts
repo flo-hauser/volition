@@ -6,7 +6,7 @@ import { fileURLToPath } from 'node:url';
 
 export default defineConfig((ctx) => {
   return {
-    boot: ['theme', 'i18n'],
+    boot: ['fonts', 'theme', 'i18n'],
 
     css: ['app.scss'],
 

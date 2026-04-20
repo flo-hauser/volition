@@ -1,4 +1,4 @@
-import { defineComponent, h, nextTick } from 'vue';
+import { nextTick } from 'vue';
 import { mount } from '@vue/test-utils';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -10,6 +10,8 @@ const {
   getRuntimeDiagnostics,
   darkSet,
   Dark,
+  mockBack,
+  mockPush,
 } = vi.hoisted(() => ({
   mockLocale: { value: 'en-US' as 'en-US' | 'de-DE' },
   setStoredLocale: vi.fn(),
@@ -28,6 +30,8 @@ const {
     mode: 'auto' as boolean | 'auto',
     set: vi.fn(),
   },
+  mockBack: vi.fn(),
+  mockPush: vi.fn(),
 }));
 
 Dark.set = darkSet;
@@ -43,6 +47,10 @@ vi.mock('quasar', () => ({
   Dark,
 }));
 
+vi.mock('vue-router', () => ({
+  useRouter: () => ({ back: mockBack, push: mockPush }),
+}));
+
 vi.mock('src/composables/useAppPreferences', () => ({
   setStoredLocale,
   setStoredThemeMode,
@@ -55,51 +63,12 @@ vi.mock('src/services/debug/runtimeDiagnostics', () => ({
 
 import SettingsPage from 'src/pages/SettingsPage.vue';
 
-const QBtnToggleStub = defineComponent({
-  name: 'QBtnToggle',
-  props: {
-    modelValue: {
-      type: String,
-      required: false,
-      default: '',
-    },
-    options: {
-      type: Array as () => Array<{ value: string; label: string }>,
-      required: false,
-      default: () => [],
-    },
-  },
-  emits: ['update:modelValue'],
-  setup(props, { emit }) {
-    return () =>
-      h(
-        'button',
-        {
-          class: 'q-btn-toggle-stub',
-          'data-options': JSON.stringify(props.options),
-          onClick: () => {
-            const firstAlternative = props.options.find((option) => option.value !== props.modelValue);
-            if (firstAlternative) {
-              emit('update:modelValue', firstAlternative.value);
-            }
-          },
-        },
-        String(props.modelValue),
-      );
-  },
-});
-
 function mountPage() {
   return mount(SettingsPage, {
     global: {
       stubs: {
         'q-page': { template: '<div><slot /></div>' },
-        'q-card': { template: '<section><slot /></section>' },
-        'q-card-section': { template: '<div><slot /></div>' },
-        'q-separator': { template: '<hr />' },
-        'q-btn-toggle': QBtnToggleStub,
-        'q-btn': { template: '<button><slot /></button>' },
-        'q-banner': { template: '<div><slot /></div>' },
+        'q-icon': { template: '<span />' },
       },
     },
   });
@@ -114,6 +83,8 @@ describe('SettingsPage', () => {
     setStoredThemeMode.mockReset();
     readDebugLogs.mockReset();
     getRuntimeDiagnostics.mockReset();
+    mockBack.mockReset();
+    mockPush.mockReset();
     readDebugLogs.mockReturnValue([]);
     getRuntimeDiagnostics.mockReturnValue({
       isSecureContext: false,
@@ -145,15 +116,13 @@ describe('SettingsPage', () => {
     expect((wrapper.vm as unknown as { currentLocale: 'en-US' | 'de-DE' }).currentLocale).toBe('de-DE');
   });
 
-  it('updates locale and theme from toggle events', async () => {
+  it('persists changes when a segmented locale button is clicked', async () => {
     const wrapper = mountPage();
-    const toggles = wrapper.findAll('button.q-btn-toggle-stub');
+    const localeButtons = wrapper.findAll('.seg')[0]?.findAll('.seg-btn') ?? [];
+    const germanButton = localeButtons.find((b) => b.text().includes('localeGerman'));
+    await germanButton?.trigger('click');
 
-    await toggles[0]?.trigger('click');
-    await toggles[1]?.trigger('click');
-
-    expect(setStoredLocale).toHaveBeenCalledOnce();
-    expect(setStoredThemeMode).toHaveBeenCalledOnce();
+    expect(setStoredLocale).toHaveBeenCalledWith('de-DE');
   });
 
   it('loads diagnostics logs on mount', async () => {

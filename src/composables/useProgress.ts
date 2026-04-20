@@ -15,3 +15,11 @@ export function countTaskCheckinsForWeek(
     return count;
   }, 0);
 }
+
+export function getWeekPattern(
+  taskId: string,
+  weekId: string,
+  checkinsByDay: Record<string, Record<string, Checkin>>,
+): number[] {
+  return getWeekDays(weekId).map((day) => (checkinsByDay[day]?.[taskId] ? 1 : 0));
+}

@@ -1,37 +1,24 @@
-const DAY_MS = 24 * 60 * 60 * 1000;
+import {
+  format,
+  parseISO,
+  getISOWeek,
+  getISOWeekYear,
+  startOfISOWeek,
+  eachDayOfInterval,
+} from 'date-fns';
 
-function toLocalDate(dayISO: string): Date {
-  const [year, month, day] = dayISO.split('-').map(Number);
-
-  if (!year || !month || !day) {
-    throw new Error(`Invalid day ISO string: ${dayISO}`);
-  }
-
-  return new Date(year, month - 1, day);
-}
-
-function toDayISO(date: Date): string {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  return `${year}-${month}-${day}`;
+export function toLocalDate(dayISO: string): Date {
+  return parseISO(dayISO);
 }
 
 export function getLocalDayISO(date = new Date()): string {
-  return toDayISO(date);
+  return format(date, 'yyyy-MM-dd');
 }
 
 export function getIsoWeekId(dayISO: string): string {
-  const date = toLocalDate(dayISO);
-  const dayOfWeek = date.getDay() || 7;
-
-  date.setDate(date.getDate() + 4 - dayOfWeek);
-
-  const weekYear = date.getFullYear();
-  const yearStart = new Date(weekYear, 0, 1);
-  const dayDiff = Math.floor((date.getTime() - yearStart.getTime()) / DAY_MS);
-  const week = Math.ceil((dayDiff + 1) / 7);
-
+  const date = parseISO(dayISO);
+  const weekYear = getISOWeekYear(date);
+  const week = getISOWeek(date);
   return `${weekYear}-W${String(week).padStart(2, '0')}`;
 }
 
@@ -49,17 +36,24 @@ export function getWeekDays(weekId: string): string[] {
     throw new Error(`Invalid week number: ${weekNumber}`);
   }
 
+  // Jan 4 is always in ISO week 1
   const jan4 = new Date(weekYear, 0, 4);
-  const jan4DayOfWeek = jan4.getDay() || 7;
-  const firstWeekMonday = new Date(jan4);
-  firstWeekMonday.setDate(jan4.getDate() - jan4DayOfWeek + 1);
 
-  const monday = new Date(firstWeekMonday);
-  monday.setDate(firstWeekMonday.getDate() + (weekNumber - 1) * 7);
+  // Get Monday of week 1
+  const week1Monday = startOfISOWeek(jan4);
 
-  return Array.from({ length: 7 }, (_, index) => {
-    const day = new Date(monday);
-    day.setDate(monday.getDate() + index);
-    return toDayISO(day);
-  });
+  // Calculate the Monday of the target week by adding (weekNumber - 1) weeks
+  const targetMonday = new Date(week1Monday);
+  targetMonday.setDate(week1Monday.getDate() + (weekNumber - 1) * 7);
+
+  // Generate all 7 days starting from Monday
+  return eachDayOfInterval({
+    start: targetMonday,
+    end: new Date(targetMonday.getFullYear(), targetMonday.getMonth(), targetMonday.getDate() + 6),
+  }).map((day) => format(day, 'yyyy-MM-dd'));
+}
+
+export function getWeekdayIndex(weekId: string, dayISO: string): number {
+  const days = getWeekDays(weekId);
+  return days.indexOf(dayISO);
 }

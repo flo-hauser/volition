@@ -34,6 +34,10 @@ vi.mock('vue-router', () => ({
   useRouter: () => ({ replace: mockReplace }),
 }));
 
+vi.mock('src/services/debug/runtimeDiagnostics', () => ({
+  appendDebugLog: vi.fn(),
+}));
+
 vi.mock('src/stores/tasks.store', () => ({
   useTasksStore: () => mockStore,
 }));
@@ -46,17 +50,13 @@ function mountPage() {
       renderStubDefaultSlot: true,
       stubs: {
         'q-page': true,
-        'q-card': true,
-        'q-card-section': true,
-        'q-card-actions': true,
-        'q-separator': true,
-        'q-list': true,
-        'q-item': true,
-        'q-item-section': true,
-        'q-item-label': true,
-        'q-btn': true,
-        'q-dialog': true,
-        TaskFormDialog: {
+        'q-icon': true,
+        'q-dialog': {
+          template: '<div><slot /></div>',
+          props: ['modelValue'],
+          emits: ['update:modelValue'],
+        },
+        TaskSheet: {
           template: '<div />',
           props: [
             'modelValue',
@@ -113,6 +113,15 @@ describe('TasksPage', () => {
     expect((wrapper.vm as unknown as { taskDialogMode: string }).taskDialogMode).toBe('create');
   });
 
+  it('opens edit mode when a task row is tapped', () => {
+    const wrapper = mountPage();
+
+    (wrapper.vm as unknown as { openEdit: (id: string) => void }).openEdit('task-1');
+
+    expect((wrapper.vm as unknown as { isTaskDialogOpen: boolean }).isTaskDialogOpen).toBe(true);
+    expect((wrapper.vm as unknown as { taskDialogMode: string }).taskDialogMode).toBe('edit');
+  });
+
   it('creates task and shows success toast', async () => {
     const wrapper = mountPage();
 
@@ -134,7 +143,7 @@ describe('TasksPage', () => {
   it('updates task and shows success toast', async () => {
     const wrapper = mountPage();
 
-    (wrapper.vm as unknown as { openEditDialog: (id: string) => void }).openEditDialog('task-1');
+    (wrapper.vm as unknown as { openEdit: (id: string) => void }).openEdit('task-1');
 
     await (
       wrapper.vm as unknown as {
@@ -158,7 +167,7 @@ describe('TasksPage', () => {
     mockStore.updateTask.mockRejectedValueOnce(new Error('update failed'));
     const wrapper = mountPage();
 
-    (wrapper.vm as unknown as { openEditDialog: (id: string) => void }).openEditDialog('task-1');
+    (wrapper.vm as unknown as { openEdit: (id: string) => void }).openEdit('task-1');
 
     await (
       wrapper.vm as unknown as {

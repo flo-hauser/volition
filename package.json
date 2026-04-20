@@ -8,6 +8,7 @@
   "private": true,
   "scripts": {
     "lint": "eslint -c ./eslint.config.js \"./src*/**/*.{ts,js,cjs,mjs,vue}\"",
+    "typecheck": "vue-tsc --noEmit",
     "format": "prettier --write \"**/*.{js,ts,vue,scss,html,md,json}\" --ignore-path .gitignore",
     "test": "vitest run",
     "dev": "quasar dev",
@@ -17,8 +18,11 @@
     "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
+    "@fontsource/geist": "^5.2.8",
+    "@fontsource/instrument-serif": "^5.2.8",
     "@quasar/extras": "^1.16.4",
     "axios": "^1.2.1",
+    "date-fns": "^4.1.0",
     "pinia": "^3.0.1",
     "quasar": "^2.16.0",
     "vue": "^3.5.22",

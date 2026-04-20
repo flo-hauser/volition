@@ -1,30 +1,31 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`SettingsPage > renders stable markup 1`] = `
-"<div class="q-pa-md">
-  <div class="q-mx-auto" style="max-width: 640px;">
-    <section flat="" bordered="" class="vol-surface-card">
-      <div>
-        <div class="text-h6 text-secondary text-weight-bold">pages.settings.title</div>
-        <div class="text-body2 text-grey-8 q-mt-xs">pages.settings.hint</div>
-      </div>
-      <hr>
-      <div>
-        <div class="text-subtitle2 text-weight-medium q-mb-sm">pages.settings.languageTitle</div><button class="q-btn-toggle-stub q-mb-lg" data-options="[{&quot;value&quot;:&quot;en-US&quot;,&quot;label&quot;:&quot;pages.settings.localeEnglish&quot;},{&quot;value&quot;:&quot;de-DE&quot;,&quot;label&quot;:&quot;pages.settings.localeGerman&quot;}]" unelevated="" no-caps="" color="secondary" text-color="white" toggle-color="primary">en-US</button>
-        <div class="text-subtitle2 text-weight-medium q-mb-sm">pages.settings.themeTitle</div><button class="q-btn-toggle-stub" data-options="[{&quot;value&quot;:&quot;system&quot;,&quot;label&quot;:&quot;pages.settings.themeSystem&quot;},{&quot;value&quot;:&quot;light&quot;,&quot;label&quot;:&quot;pages.settings.themeLight&quot;},{&quot;value&quot;:&quot;dark&quot;,&quot;label&quot;:&quot;pages.settings.themeDark&quot;}]" unelevated="" no-caps="" color="secondary" text-color="white" toggle-color="primary">system</button>
-        <div class="text-caption text-grey-7 q-mt-sm">pages.settings.themeHint</div>
-      </div>
-      <hr>
-      <div>
-        <div class="text-subtitle2 text-weight-medium q-mb-sm">Diagnostics</div>
-        <div class="text-caption q-mb-xs">Secure Context: false</div>
-        <div class="text-caption q-mb-xs">crypto.randomUUID: true</div>
-        <div class="text-caption q-mb-xs">IndexedDB: true</div>
-        <div class="text-caption q-mb-xs">LocalStorage: true</div>
-        <div class="text-caption q-mb-md">UA: test-agent</div><button size="sm" no-caps="" flat="" color="secondary" label="Reload diagnostics"></button>
-        <div class="text-caption text-grey-7 q-mt-md">No captured runtime error yet.</div>
-      </div>
-    </section>
-  </div>
+"<div data-v-4ff3282c="" class="page page-enter">
+  <header data-v-4ff3282c="" class="page-head"><button data-v-4ff3282c="" class="icon-btn" type="button" style="margin-bottom: 12px;" aria-label="common.back"><span data-v-4ff3282c="" name="arrow_back"></span></button>
+    <div data-v-4ff3282c="" class="page-eyebrow">nav.settings</div>
+    <h1 data-v-4ff3282c="" class="page-title">pages.settings.title</h1>
+    <p data-v-4ff3282c="" class="page-sub">pages.settings.hint</p>
+  </header>
+  <section data-v-4ff3282c="" class="settings-section">
+    <h2 data-v-4ff3282c="" class="section-title">pages.settings.languageTitle</h2>
+    <div data-v-4ff3282c="" class="seg"><button data-v-4ff3282c="" type="button" class="seg-btn sel" aria-pressed="true">pages.settings.localeEnglish</button><button data-v-4ff3282c="" type="button" class="seg-btn" aria-pressed="false">pages.settings.localeGerman</button></div>
+  </section>
+  <section data-v-4ff3282c="" class="settings-section">
+    <h2 data-v-4ff3282c="" class="section-title">pages.settings.themeTitle</h2>
+    <div data-v-4ff3282c="" class="seg"><button data-v-4ff3282c="" type="button" class="seg-btn sel" aria-pressed="true">pages.settings.themeSystem</button><button data-v-4ff3282c="" type="button" class="seg-btn" aria-pressed="false">pages.settings.themeLight</button><button data-v-4ff3282c="" type="button" class="seg-btn" aria-pressed="false">pages.settings.themeDark</button></div>
+    <p data-v-4ff3282c="" class="settings-hint">pages.settings.themeHint</p>
+  </section>
+  <section data-v-4ff3282c="" class="settings-section">
+    <h2 data-v-4ff3282c="" class="section-title">Diagnostics</h2>
+    <div data-v-4ff3282c="" class="diag">
+      <div data-v-4ff3282c="">Secure Context: false</div>
+      <div data-v-4ff3282c="">crypto.randomUUID: true</div>
+      <div data-v-4ff3282c="">IndexedDB: true</div>
+      <div data-v-4ff3282c="">LocalStorage: true</div>
+      <div data-v-4ff3282c="" class="ua">UA: test-agent</div>
+    </div><button data-v-4ff3282c="" type="button" class="ghost-btn"> Reload diagnostics </button>
+    <p data-v-4ff3282c="" class="settings-hint">No captured runtime error yet.</p>
+  </section>
 </div>"
 `;
