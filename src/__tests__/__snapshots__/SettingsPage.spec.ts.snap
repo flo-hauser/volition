@@ -23,9 +23,15 @@ exports[`SettingsPage > renders stable markup 1`] = `
       <div data-v-4ff3282c="">crypto.randomUUID: true</div>
       <div data-v-4ff3282c="">IndexedDB: true</div>
       <div data-v-4ff3282c="">LocalStorage: true</div>
+      <div data-v-4ff3282c="">Storage Backend: IndexedDB</div>
       <div data-v-4ff3282c="" class="ua">UA: test-agent</div>
-    </div><button data-v-4ff3282c="" type="button" class="ghost-btn"> Reload diagnostics </button>
+    </div><button data-v-4ff3282c="" type="button" class="ghost-btn">Reload diagnostics</button>
     <p data-v-4ff3282c="" class="settings-hint">No captured runtime error yet.</p>
+  </section>
+  <section data-v-4ff3282c="" class="settings-section">
+    <h2 data-v-4ff3282c="" class="section-title">Data</h2>
+    <div data-v-4ff3282c="" class="diag"> Tasks <br data-v-4ff3282c=""> []</div>
+    <div data-v-4ff3282c="" class="diag"> Check Ins <br data-v-4ff3282c=""> {}</div>
   </section>
 </div>"
 `;

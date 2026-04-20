@@ -1,6 +1,6 @@
 import type { StorageState } from 'src/types/storage';
 
-import type { StorageAdapter } from './storageAdapter';
+import { getStorageDebugLabel, type StorageAdapter } from './storageAdapter';
 
 interface ResilientStorageOptions {
   isPrimaryAvailable?: () => boolean;
@@ -12,6 +12,10 @@ export function createResilientStorageAdapter(
   options: ResilientStorageOptions = {},
 ): StorageAdapter {
   let useFallbackOnly = false;
+
+  function getActiveAdapter(): StorageAdapter {
+    return useFallbackOnly ? fallback : primary;
+  }
 
   function primaryUsable(): boolean {
     if (useFallbackOnly) {
@@ -27,6 +31,10 @@ export function createResilientStorageAdapter(
   }
 
   return {
+    getDebugLabel() {
+      return getStorageDebugLabel(getActiveAdapter());
+    },
+
     async loadState(): Promise<StorageState | null> {
       if (!primaryUsable()) {
         return fallback.loadState();

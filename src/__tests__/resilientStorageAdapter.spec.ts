@@ -16,11 +16,13 @@ describe('resilientStorageAdapter', () => {
 
   beforeEach(() => {
     primary = {
+      debugLabel: 'IndexedDB',
       loadState: vi.fn().mockResolvedValue(EMPTY_STATE),
       saveState: vi.fn().mockResolvedValue(undefined),
     };
 
     fallback = {
+      debugLabel: 'LocalStorage',
       loadState: vi.fn().mockResolvedValue(EMPTY_STATE),
       saveState: vi.fn().mockResolvedValue(undefined),
     };
@@ -29,6 +31,7 @@ describe('resilientStorageAdapter', () => {
   it('uses primary adapter when healthy', async () => {
     const adapter = createResilientStorageAdapter(primary, fallback);
 
+    expect(adapter.getDebugLabel?.()).toBe('IndexedDB');
     await adapter.loadState();
     await adapter.saveState(EMPTY_STATE);
 
@@ -44,6 +47,7 @@ describe('resilientStorageAdapter', () => {
     const adapter = createResilientStorageAdapter(primary, fallback);
 
     await expect(adapter.loadState()).resolves.toEqual(EMPTY_STATE);
+    expect(adapter.getDebugLabel?.()).toBe('LocalStorage');
     await adapter.saveState(EMPTY_STATE);
 
     expect(primary.loadState).toHaveBeenCalledTimes(1);
@@ -58,6 +62,7 @@ describe('resilientStorageAdapter', () => {
     const adapter = createResilientStorageAdapter(primary, fallback);
 
     await adapter.saveState(EMPTY_STATE);
+    expect(adapter.getDebugLabel?.()).toBe('LocalStorage');
     await adapter.saveState(EMPTY_STATE);
 
     expect(primary.saveState).toHaveBeenCalledTimes(1);
@@ -69,7 +74,9 @@ describe('resilientStorageAdapter', () => {
       isPrimaryAvailable: () => false,
     });
 
+    expect(adapter.getDebugLabel?.()).toBe('IndexedDB');
     await adapter.loadState();
+    expect(adapter.getDebugLabel?.()).toBe('LocalStorage');
     await adapter.saveState(EMPTY_STATE);
 
     expect(primary.loadState).not.toHaveBeenCalled();
@@ -84,6 +91,7 @@ describe('resilientStorageAdapter', () => {
     const adapter = createResilientStorageAdapter(primary, fallback);
 
     await expect(adapter.loadState()).resolves.toEqual(EMPTY_STATE);
+    expect(adapter.getDebugLabel?.()).toBe('LocalStorage');
 
     expect(primary.loadState).toHaveBeenCalledTimes(1);
     expect(fallback.loadState).toHaveBeenCalledTimes(1);

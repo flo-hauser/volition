@@ -21,6 +21,7 @@ function isStorageStateLike(value: unknown): value is StorageState {
 }
 
 export const localStorageAdapter: StorageAdapter = {
+  debugLabel: 'LocalStorage',
   loadState() {
     if (typeof localStorage === 'undefined') {
       return Promise.resolve(null);

@@ -14,6 +14,7 @@ describe('useTasksStore', () => {
 
   function createMockAdapter(initialState?: StorageState): StorageAdapter {
     return {
+      debugLabel: 'MockStorage',
       loadState: vi.fn().mockResolvedValue(initialState ?? createEmptyStorageState()),
       saveState: vi.fn().mockResolvedValue(undefined),
     };
@@ -35,6 +36,7 @@ describe('useTasksStore', () => {
 
     expect(store.isReady).toBe(true);
     expect(store.tasks.task1?.title).toBe('Sports');
+    expect(store.activeStorageBackend).toBe('MockStorage');
     expect(adapter.loadState).toHaveBeenCalledTimes(1);
   });
 
@@ -159,10 +161,12 @@ describe('useTasksStore', () => {
 
   it('supports CRUD when primary adapter fails and fallback is available', async () => {
     const primary: StorageAdapter = {
+      debugLabel: 'IndexedDB',
       loadState: vi.fn().mockRejectedValue(new Error('indexedDB blocked')),
       saveState: vi.fn().mockRejectedValue(new Error('indexedDB blocked')),
     };
     const fallback: StorageAdapter = {
+      debugLabel: 'LocalStorage',
       loadState: vi.fn().mockResolvedValue(createEmptyStorageState()),
       saveState: vi.fn().mockResolvedValue(undefined),
     };
@@ -176,6 +180,7 @@ describe('useTasksStore', () => {
 
     expect(store.tasks[task.id]).toBeDefined();
     expect(store.isDone(task.id, '2026-02-07')).toBe(true);
+    expect(store.activeStorageBackend).toBe('LocalStorage');
     expect(primary.loadState).toHaveBeenCalledTimes(1);
     expect(primary.saveState).not.toHaveBeenCalled();
     expect(fallback.saveState).toHaveBeenCalledTimes(2);

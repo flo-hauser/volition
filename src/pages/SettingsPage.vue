@@ -57,6 +57,7 @@
         <div>crypto.randomUUID: {{ String(runtimeDiagnostics.hasRandomUUID) }}</div>
         <div>IndexedDB: {{ String(runtimeDiagnostics.hasIndexedDB) }}</div>
         <div>LocalStorage: {{ String(runtimeDiagnostics.hasLocalStorage) }}</div>
+        <div>Storage Backend: {{ store.activeStorageBackend }}</div>
         <div class="ua">UA: {{ runtimeDiagnostics.userAgent }}</div>
       </div>
       <button type="button" class="ghost-btn" @click="reloadDebugData">Reload diagnostics</button>

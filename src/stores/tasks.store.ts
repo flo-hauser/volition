@@ -6,7 +6,11 @@ import { countTaskCheckinsForWeek } from 'src/composables/useProgress';
 import { indexedDbAdapter } from 'src/services/storage/indexedDbAdapter';
 import { localStorageAdapter } from 'src/services/storage/localStorageAdapter';
 import { createResilientStorageAdapter } from 'src/services/storage/resilientStorageAdapter';
-import { createEmptyStorageState, type StorageAdapter } from 'src/services/storage/storageAdapter';
+import {
+  createEmptyStorageState,
+  getStorageDebugLabel,
+  type StorageAdapter,
+} from 'src/services/storage/storageAdapter';
 import { SCHEMA_VERSION } from 'src/types/storage';
 import type { Checkin, Task } from 'src/types/task';
 import { createId } from 'src/utils/id';
@@ -45,10 +49,13 @@ export const useTasksStore = defineStore('tasks', () => {
       isPrimaryAvailable: () => typeof indexedDB !== 'undefined',
     },
   );
+  const activeStorageBackend = ref(getStorageDebugLabel(storageAdapter));
 
-  const activeTasks = computed(() =>
-    Object.values(tasks.value).filter((task) => !task.archivedAt),
-  );
+  const activeTasks = computed(() => Object.values(tasks.value).filter((task) => !task.archivedAt));
+
+  function syncActiveStorageBackend(): void {
+    activeStorageBackend.value = getStorageDebugLabel(storageAdapter);
+  }
 
   function isDone(taskId: string, dayISO = getLocalDayISO()): boolean {
     return Boolean(checkinsByDay.value[dayISO]?.[taskId]);
@@ -72,17 +79,16 @@ export const useTasksStore = defineStore('tasks', () => {
     const previousTasks = cloneState(tasks.value);
     const previousCheckinsByDay = cloneState(checkinsByDay.value);
 
-    let result: T;
     try {
-      result = operation();
+      const result = operation();
+      await storageAdapter.saveState(createStateSnapshot());
+      syncActiveStorageBackend();
+      return result;
     } catch (error) {
       tasks.value = previousTasks;
       checkinsByDay.value = previousCheckinsByDay;
       throw error;
     }
-
-    await storageAdapter.saveState(createStateSnapshot());
-    return result;
   }
 
   async function init(adapter?: StorageAdapter): Promise<void> {
@@ -90,7 +96,10 @@ export const useTasksStore = defineStore('tasks', () => {
       storageAdapter = adapter;
     }
 
+    syncActiveStorageBackend();
+
     const loadedState = await storageAdapter.loadState();
+    syncActiveStorageBackend();
     const state = loadedState ?? createEmptyStorageState();
 
     if (state.meta.schemaVersion !== SCHEMA_VERSION) {
@@ -229,6 +238,7 @@ export const useTasksStore = defineStore('tasks', () => {
     checkinsByDay,
     isReady,
     activeTasks,
+    activeStorageBackend,
     isDone,
     weekProgress,
     init,

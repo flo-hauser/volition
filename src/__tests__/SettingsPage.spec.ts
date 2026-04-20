@@ -1,5 +1,6 @@
 import { nextTick } from 'vue';
 import { mount } from '@vue/test-utils';
+import { createPinia, setActivePinia } from 'pinia';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const {
@@ -12,6 +13,7 @@ const {
   Dark,
   mockBack,
   mockPush,
+  mockStore,
 } = vi.hoisted(() => ({
   mockLocale: { value: 'en-US' as 'en-US' | 'de-DE' },
   setStoredLocale: vi.fn(),
@@ -32,6 +34,11 @@ const {
   },
   mockBack: vi.fn(),
   mockPush: vi.fn(),
+  mockStore: {
+    activeStorageBackend: 'IndexedDB',
+    activeTasks: [],
+    checkinsByDay: {},
+  },
 }));
 
 Dark.set = darkSet;
@@ -61,6 +68,10 @@ vi.mock('src/services/debug/runtimeDiagnostics', () => ({
   getRuntimeDiagnostics,
 }));
 
+vi.mock('src/stores/tasks.store', () => ({
+  useTasksStore: () => mockStore,
+}));
+
 import SettingsPage from 'src/pages/SettingsPage.vue';
 
 function mountPage() {
@@ -76,6 +87,7 @@ function mountPage() {
 
 describe('SettingsPage', () => {
   beforeEach(() => {
+    setActivePinia(createPinia());
     mockLocale.value = 'en-US';
     Dark.mode = 'auto';
     darkSet.mockReset();
@@ -85,6 +97,9 @@ describe('SettingsPage', () => {
     getRuntimeDiagnostics.mockReset();
     mockBack.mockReset();
     mockPush.mockReset();
+    mockStore.activeStorageBackend = 'IndexedDB';
+    mockStore.activeTasks = [];
+    mockStore.checkinsByDay = {};
     readDebugLogs.mockReturnValue([]);
     getRuntimeDiagnostics.mockReturnValue({
       isSecureContext: false,
@@ -147,6 +162,14 @@ describe('SettingsPage', () => {
     await nextTick();
     expect(wrapper.html()).toContain('Recent logs (up to 20)');
     expect(readDebugLogs).toHaveBeenCalled();
+  });
+
+  it('renders the active storage backend in diagnostics', () => {
+    mockStore.activeStorageBackend = 'LocalStorage';
+
+    const wrapper = mountPage();
+
+    expect(wrapper.html()).toContain('Storage Backend: LocalStorage');
   });
 
   it('returns theme mode from Quasar Dark plugin state', () => {

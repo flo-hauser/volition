@@ -57,6 +57,7 @@ function writeState(database: IDBDatabase, state: StorageState): Promise<void> {
 }
 
 export const indexedDbAdapter: StorageAdapter = {
+  debugLabel: 'IndexedDB',
   async loadState() {
     if (typeof indexedDB === 'undefined') {
       return null;

@@ -2,7 +2,7 @@
 
 exports[`MainLayout > renders stable markup 1`] = `
 "<q-layout-stub data-v-22686b16="" view="hHh lpR fFf">
-  <header data-v-22686b16="" class="vol-header">
+  <q-header-stub data-v-22686b16="" class="vol-header" reveal="" reveal-offset="1">
     <div data-v-22686b16="" class="app-header">
       <div data-v-22686b16="" class="brand">
         <div data-v-22686b16="" class="brand-mark" aria-hidden="true">V</div>
@@ -14,7 +14,7 @@ exports[`MainLayout > renders stable markup 1`] = `
     <!--v-if-->
     <!--v-if-->
     <!--v-if-->
-  </header>
+  </q-header-stub>
   <q-page-container-stub data-v-22686b16="">
     <q-slide-transition-stub data-v-22686b16="">
       <div data-v-22686b16="">
