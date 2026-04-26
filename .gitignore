@@ -37,3 +37,10 @@ coverage
 
 # utilty scripts
 __pycache__
+
+# AI assistant files
+CLAUDE.md
+AGENTS.md
+PLANS.md
+.codex
+tmp/

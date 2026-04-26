@@ -124,4 +124,10 @@ export default {
       goHome: 'Go Home',
     },
   },
+  quotes: {
+    start: ['A quiet beginning.', 'Small steps, steady heart.', 'Arrive, then begin.'],
+    mid: ['Keep the rhythm.', "You're doing beautifully.", 'Steady as the tide.'],
+    near: ['Almost there.', 'One gentle push.', 'The week bends toward you.'],
+    done: ['Your week is whole.', 'Beautifully complete.', 'Stillness earned.'],
+  },
 };

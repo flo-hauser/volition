@@ -160,14 +160,18 @@ describe('SettingsPage', () => {
 
     const wrapper = mountPage();
     await nextTick();
+    (wrapper.vm as unknown as { showDebug: boolean }).showDebug = true;
+    await nextTick();
     expect(wrapper.html()).toContain('Recent logs (up to 20)');
     expect(readDebugLogs).toHaveBeenCalled();
   });
 
-  it('renders the active storage backend in diagnostics', () => {
+  it('renders the active storage backend in diagnostics', async () => {
     mockStore.activeStorageBackend = 'LocalStorage';
 
     const wrapper = mountPage();
+    (wrapper.vm as unknown as { showDebug: boolean }).showDebug = true;
+    await nextTick();
 
     expect(wrapper.html()).toContain('Storage Backend: LocalStorage');
   });

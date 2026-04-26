@@ -50,6 +50,13 @@
       <p class="settings-hint">{{ t('pages.settings.themeHint') }}</p>
     </section>
 
+    <section class="settings-section debug-toggle-section">
+      <button type="button" class="debug-toggle-btn" @click="showDebug = !showDebug">
+        Debug {{ showDebug ? '▴' : '▾' }}
+      </button>
+    </section>
+
+    <template v-if="showDebug">
     <section class="settings-section">
       <h2 class="section-title">Diagnostics</h2>
       <div class="diag">
@@ -80,6 +87,7 @@
         {{ store.checkinsByDay }}
       </div>
     </section>
+    </template>
   </q-page>
 </template>
 
@@ -105,6 +113,7 @@ import { useTasksStore } from 'src/stores/tasks.store';
 const { t, locale } = useI18n({ useScope: 'global' });
 const router = useRouter();
 const debugLogs = ref<DebugLogEntry[]>([]);
+const showDebug = ref(false);
 const runtimeDiagnostics = computed(() => getRuntimeDiagnostics());
 const store = useTasksStore();
 
@@ -242,5 +251,22 @@ onMounted(() => {
   font-size: 11px;
   color: var(--text-3);
   line-height: 1.45;
+}
+.debug-toggle-section {
+  padding-top: 8px;
+  padding-bottom: 8px;
+}
+.debug-toggle-btn {
+  background: none;
+  border: none;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-3);
+  cursor: pointer;
+  padding: 4px 0;
+  letter-spacing: 0.05em;
+}
+.debug-toggle-btn:hover {
+  color: var(--text-2);
 }
 </style>

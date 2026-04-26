@@ -54,7 +54,7 @@ vi.mock('src/composables/useProgress', () => ({
 }));
 
 vi.mock('src/composables/useQuote', () => ({
-  pickQuote: () => 'A quiet beginning.',
+  useQuote: () => ({ pickQuote: () => 'A quiet beginning.' }),
 }));
 
 vi.mock('src/services/debug/runtimeDiagnostics', () => ({

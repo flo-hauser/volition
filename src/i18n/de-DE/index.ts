@@ -124,4 +124,10 @@ export default {
       goHome: 'Zur Startseite',
     },
   },
+  quotes: {
+    start: ['Ein stiller Anfang.', 'Kleine Schritte, ruhiges Herz.', 'Ankommen, dann beginnen.'],
+    mid: ['Halte den Rhythmus.', 'Du machst das wunderschön.', 'Stetig wie die Gezeiten.'],
+    near: ['Fast geschafft.', 'Noch ein sanfter Schubs.', 'Die Woche neigt sich dir zu.'],
+    done: ['Deine Woche ist vollständig.', 'Wunderschön vollbracht.', 'Stille verdient.'],
+  },
 };

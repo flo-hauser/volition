@@ -16,22 +16,7 @@ exports[`SettingsPage > renders stable markup 1`] = `
     <div data-v-4ff3282c="" class="seg"><button data-v-4ff3282c="" type="button" class="seg-btn sel" aria-pressed="true">pages.settings.themeSystem</button><button data-v-4ff3282c="" type="button" class="seg-btn" aria-pressed="false">pages.settings.themeLight</button><button data-v-4ff3282c="" type="button" class="seg-btn" aria-pressed="false">pages.settings.themeDark</button></div>
     <p data-v-4ff3282c="" class="settings-hint">pages.settings.themeHint</p>
   </section>
-  <section data-v-4ff3282c="" class="settings-section">
-    <h2 data-v-4ff3282c="" class="section-title">Diagnostics</h2>
-    <div data-v-4ff3282c="" class="diag">
-      <div data-v-4ff3282c="">Secure Context: false</div>
-      <div data-v-4ff3282c="">crypto.randomUUID: true</div>
-      <div data-v-4ff3282c="">IndexedDB: true</div>
-      <div data-v-4ff3282c="">LocalStorage: true</div>
-      <div data-v-4ff3282c="">Storage Backend: IndexedDB</div>
-      <div data-v-4ff3282c="" class="ua">UA: test-agent</div>
-    </div><button data-v-4ff3282c="" type="button" class="ghost-btn">Reload diagnostics</button>
-    <p data-v-4ff3282c="" class="settings-hint">No captured runtime error yet.</p>
-  </section>
-  <section data-v-4ff3282c="" class="settings-section">
-    <h2 data-v-4ff3282c="" class="section-title">Data</h2>
-    <div data-v-4ff3282c="" class="diag"> Tasks <br data-v-4ff3282c=""> []</div>
-    <div data-v-4ff3282c="" class="diag"> Check Ins <br data-v-4ff3282c=""> {}</div>
-  </section>
+  <section data-v-4ff3282c="" class="settings-section debug-toggle-section"><button data-v-4ff3282c="" type="button" class="debug-toggle-btn"> Debug ▾</button></section>
+  <!--v-if-->
 </div>"
 `;

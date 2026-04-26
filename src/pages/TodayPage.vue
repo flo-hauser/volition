@@ -86,7 +86,7 @@ import TodayHero from 'src/components/TodayHero.vue';
 import WeekMini from 'src/components/WeekMini.vue';
 import { getIsoWeekId, getLocalDayISO, getWeekdayIndex, toLocalDate } from 'src/composables/useDay';
 import { getWeekPattern } from 'src/composables/useProgress';
-import { pickQuote } from 'src/composables/useQuote';
+import { useQuote } from 'src/composables/useQuote';
 import { appendDebugLog } from 'src/services/debug/runtimeDiagnostics';
 import { useTasksStore } from 'src/stores/tasks.store';
 
@@ -96,6 +96,7 @@ const { t, locale } = useI18n();
 const $q = useQuasar();
 const store = useTasksStore();
 const router = useRouter();
+const { pickQuote } = useQuote();
 
 const todayISO = getLocalDayISO();
 const currentWeekId = getIsoWeekId(todayISO);
