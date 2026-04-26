@@ -21,11 +21,12 @@
     </div>
 
     <div v-if="tasks.length > 0" class="task-list">
-      <article
+      <div
         v-for="task in tasks"
         :key="task.id"
         class="task-row"
         :class="{ done: isChecked(task.id) }"
+        @click="goToDetail(task.id)"
       >
         <div class="task-body">
           <h3 class="task-title">{{ task.title }}</h3>
@@ -38,6 +39,10 @@
                 })
               }}
             </span>
+            <template v-if="store.getStreak(task.id) > 1">
+              <span class="dot" aria-hidden="true" />
+              <span class="streak">🔥 {{ store.getStreak(task.id) }}w</span>
+            </template>
             <span class="dot" aria-hidden="true" />
             <WeekMini :pattern="getPattern(task.id)" :today-idx="todayIdx" />
           </div>
@@ -49,7 +54,7 @@
           :aria-uncheck="t('pages.today.doneToday')"
           @update:model-value="() => toggleTask(task.id)"
         />
-      </article>
+      </div>
     </div>
 
     <div v-else class="section-head">
@@ -73,6 +78,7 @@
 import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useQuasar } from 'quasar';
+import { useRouter } from 'vue-router';
 
 import CheckButton from 'src/components/CheckButton.vue';
 import TaskSheet from 'src/components/TaskSheet.vue';
@@ -89,6 +95,7 @@ type TargetPerWeek = 1 | 2 | 3 | 4 | 5 | 6 | 7;
 const { t, locale } = useI18n();
 const $q = useQuasar();
 const store = useTasksStore();
+const router = useRouter();
 
 const todayISO = getLocalDayISO();
 const currentWeekId = getIsoWeekId(todayISO);
@@ -141,6 +148,10 @@ async function toggleTask(taskId: string): Promise<void> {
     pendingTaskIds.value.delete(taskId);
     pendingTaskIds.value = new Set(pendingTaskIds.value);
   }
+}
+
+function goToDetail(taskId: string): void {
+  void router.push(`/tasks/${taskId}`);
 }
 
 function openCreate(): void {

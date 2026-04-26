@@ -30,6 +30,12 @@ const routes: RouteRecordRaw[] = [
         meta: { titleKey: 'nav.settings' },
       },
       {
+        path: 'tasks/:id',
+        name: 'task-detail',
+        component: () => import('pages/TaskDetailPage.vue'),
+        meta: { titleKey: 'nav.tasks', hideHeader: true },
+      },
+      {
         path: 'tasks/new',
         redirect: '/tasks?new=1',
       },

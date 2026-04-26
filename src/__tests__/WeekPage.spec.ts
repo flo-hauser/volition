@@ -39,6 +39,10 @@ vi.mock('src/composables/useProgress', () => ({
   countTaskCheckinsForWeek: () => 0,
 }));
 
+vi.mock('vue-router', () => ({
+  useRouter: () => ({ push: vi.fn() }),
+}));
+
 vi.mock('src/stores/tasks.store', () => ({
   useTasksStore: () => mockStore,
 }));

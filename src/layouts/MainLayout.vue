@@ -1,6 +1,6 @@
 <template>
   <q-layout view="hHh lpR fFf">
-    <q-header class="vol-header" reveal :reveal-offset="1">
+    <q-header v-if="!hideHeader" class="vol-header" reveal :reveal-offset="1">
       <div class="app-header">
         <div class="brand">
           <div class="brand-mark" aria-hidden="true">V</div>
@@ -83,7 +83,7 @@
 </template>
 
 <script setup lang="ts">
-import { onBeforeUnmount, onMounted, ref } from 'vue';
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRoute, useRouter } from 'vue-router';
 
@@ -92,6 +92,7 @@ import { useTasksStore } from 'src/stores/tasks.store';
 const tasksStore = useTasksStore();
 const route = useRoute();
 const router = useRouter();
+const hideHeader = computed(() => Boolean(route.meta?.['hideHeader']));
 const initError = ref(false);
 const isOffline = ref(typeof navigator === 'undefined' ? false : !navigator.onLine);
 const updateAvailable = ref(false);

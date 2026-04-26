@@ -9,8 +9,9 @@
       :done="totalDone"
       :target="totalTarget"
       :eyebrow="t('pages.week.stripEyebrow')"
-      :of-label="t('pages.week.stripOf', { total: totalTarget })"
       :subtitle="t('pages.week.stripSubtitle')"
+      :day-pattern="dayPattern"
+      :today-idx="todayIdx"
     />
 
     <div class="section-head">
@@ -18,11 +19,13 @@
     </div>
 
     <div v-if="tasks.length > 0">
-      <article
+      <button
         v-for="task in tasks"
         :key="task.id"
+        type="button"
         class="week-card"
         :class="{ achieved: isAchieved(task) }"
+        @click="goToDetail(task.id)"
       >
         <div class="week-card-head">
           <div>
@@ -40,7 +43,7 @@
           </div>
         </div>
         <VizDots :pattern="getPattern(task.id)" :today-idx="todayIdx" />
-      </article>
+      </button>
     </div>
 
     <div v-else class="section-head">
@@ -52,6 +55,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { useRouter } from 'vue-router';
 
 import VizDots from 'src/components/VizDots.vue';
 import WeekStrip from 'src/components/WeekStrip.vue';
@@ -68,6 +72,7 @@ import type { Task } from 'src/types/task';
 
 const { t, locale } = useI18n();
 const store = useTasksStore();
+const router = useRouter();
 
 const todayISO = getLocalDayISO();
 const weekId = getIsoWeekId(todayISO);
@@ -94,11 +99,23 @@ const eyebrow = computed(() => {
   return t('pages.week.eyebrow', { week: weekNumber, start, end });
 });
 
+const dayPattern = computed<number[]>(() => {
+  const days = getWeekDays(weekId);
+  return days.map((day) => {
+    const dayCheckins = store.checkinsByDay[day];
+    return dayCheckins ? Object.keys(dayCheckins).length : 0;
+  });
+});
+
 function isAchieved(task: Task): boolean {
   return store.weekProgress(task.id, weekId) >= task.targetPerWeek;
 }
 
 function getPattern(taskId: string): number[] {
   return getWeekPattern(taskId, weekId, store.checkinsByDay);
+}
+
+function goToDetail(taskId: string): void {
+  void router.push(`/tasks/${taskId}`);
 }
 </script>

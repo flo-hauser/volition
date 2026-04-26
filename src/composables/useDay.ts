@@ -57,3 +57,10 @@ export function getWeekdayIndex(weekId: string, dayISO: string): number {
   const days = getWeekDays(weekId);
   return days.indexOf(dayISO);
 }
+
+export function getPreviousWeekId(weekId: string): string {
+  const days = getWeekDays(weekId);
+  const monday = parseISO(days[0]!);
+  const prevMonday = new Date(monday.getTime() - 7 * 24 * 60 * 60 * 1000);
+  return getIsoWeekId(format(prevMonday, 'yyyy-MM-dd'));
+}

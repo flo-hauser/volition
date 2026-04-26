@@ -7,19 +7,17 @@ exports[`TasksPage > renders stable markup 1`] = `
     <h1 class="page-title">pages.tasks.title</h1>
     <p class="page-sub">pages.tasks.subtitle</p>
   </header>
-  <div class="tasks-list">
-    <div class="tasks-row"><button type="button" class="tasks-row-main" aria-label="pages.tasks.editTask: Sports"><span class="freq" aria-hidden="true">3 <span class="x">pages.tasks.freqSuffix</span></span><span class="body"><span class="title">Sports</span><span class="hint">pages.tasks.hintDaysOfSeven</span></span></button><button class="icon-btn" type="button" aria-label="pages.tasks.deleteTask">
-        <q-icon-stub name="delete_outline"></q-icon-stub>
-      </button></div>
-  </div><button type="button" class="add-cta"> + pages.tasks.newTask</button>
+  <div class="tasks-list"><button type="button" class="tasks-row">
+      <div class="freq" aria-hidden="true">3 <span class="x">pages.tasks.freqSuffix</span></div>
+      <div class="body">
+        <div class="title">Sports</div>
+        <div class="hint">pages.tasks.hintDaysOfSeven
+          <!--v-if-->
+        </div>
+      </div><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <polyline points="9 18 15 12 9 6"></polyline>
+      </svg>
+    </button></div><button type="button" class="add-cta"> + pages.tasks.newTask</button>
   <div></div>
-  <div persistent="">
-    <div class="sheet-card" style="max-width: 420px;">
-      <div class="grab" aria-hidden="true"></div>
-      <h2>pages.tasks.deleteTask</h2>
-      <p class="sub">pages.tasks.deleteConfirm</p>
-      <div class="sheet-actions"><button type="button" class="ghost-btn">common.cancel</button><button type="button" class="primary-btn">common.delete</button></div>
-    </div>
-  </div>
 </q-page-stub>"
 `;

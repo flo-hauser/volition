@@ -1,7 +1,7 @@
 import { computed, ref } from 'vue';
 import { defineStore } from 'pinia';
 
-import { getIsoWeekId, getLocalDayISO } from 'src/composables/useDay';
+import { getIsoWeekId, getLocalDayISO, getPreviousWeekId, getWeekDays } from 'src/composables/useDay';
 import { countTaskCheckinsForWeek } from 'src/composables/useProgress';
 import { indexedDbAdapter } from 'src/services/storage/indexedDbAdapter';
 import { localStorageAdapter } from 'src/services/storage/localStorageAdapter';
@@ -63,6 +63,49 @@ export const useTasksStore = defineStore('tasks', () => {
 
   function weekProgress(taskId: string, weekId = getIsoWeekId(getLocalDayISO())): number {
     return countTaskCheckinsForWeek(taskId, weekId, checkinsByDay.value);
+  }
+
+  function getStreak(taskId: string): number {
+    const task = tasks.value[taskId];
+    if (!task) return 0;
+
+    let streak = 0;
+    let weekId = getIsoWeekId(getLocalDayISO());
+
+    for (let i = 0; i < 52; i++) {
+      const progress = countTaskCheckinsForWeek(taskId, weekId, checkinsByDay.value);
+      if (progress >= task.targetPerWeek) {
+        streak++;
+      } else if (i > 0) {
+        break;
+      }
+      weekId = getPreviousWeekId(weekId);
+    }
+
+    return streak;
+  }
+
+  function getHeatmapDays(
+    taskId: string,
+    weeksBack = 12,
+  ): Array<{ dayISO: string; checked: boolean; isToday: boolean; isFuture: boolean }> {
+    const todayISO = getLocalDayISO();
+    let weekId = getIsoWeekId(todayISO);
+    const weeks: string[] = [];
+
+    for (let i = 0; i < weeksBack; i++) {
+      weeks.unshift(weekId);
+      weekId = getPreviousWeekId(weekId);
+    }
+
+    return weeks.flatMap((wId) =>
+      getWeekDays(wId).map((day) => ({
+        dayISO: day,
+        isToday: day === todayISO,
+        isFuture: day > todayISO,
+        checked: day <= todayISO && Boolean(checkinsByDay.value[day]?.[taskId]),
+      })),
+    );
   }
 
   function createStateSnapshot() {
@@ -241,6 +284,8 @@ export const useTasksStore = defineStore('tasks', () => {
     activeStorageBackend,
     isDone,
     weekProgress,
+    getStreak,
+    getHeatmapDays,
     init,
     createTask,
     updateTask,

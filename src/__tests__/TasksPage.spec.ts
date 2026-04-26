@@ -9,14 +9,13 @@ type TestTask = {
 
 const mockNotify = vi.fn();
 const mockReplace = vi.fn();
+const mockPush = vi.fn();
 const mockRoute = { query: {} as Record<string, string | undefined> };
 
 let mockStore: {
   activeTasks: TestTask[];
-  tasks: Record<string, TestTask>;
+  getStreak: ReturnType<typeof vi.fn>;
   createTask: ReturnType<typeof vi.fn>;
-  updateTask: ReturnType<typeof vi.fn>;
-  deleteTask: ReturnType<typeof vi.fn>;
 };
 
 vi.mock('quasar', () => ({
@@ -31,7 +30,7 @@ vi.mock('vue-i18n', () => ({
 
 vi.mock('vue-router', () => ({
   useRoute: () => mockRoute,
-  useRouter: () => ({ replace: mockReplace }),
+  useRouter: () => ({ replace: mockReplace, push: mockPush }),
 }));
 
 vi.mock('src/services/debug/runtimeDiagnostics', () => ({
@@ -50,21 +49,9 @@ function mountPage() {
       renderStubDefaultSlot: true,
       stubs: {
         'q-page': true,
-        'q-icon': true,
-        'q-dialog': {
-          template: '<div><slot /></div>',
-          props: ['modelValue'],
-          emits: ['update:modelValue'],
-        },
         TaskSheet: {
           template: '<div />',
-          props: [
-            'modelValue',
-            'mode',
-            'submitting',
-            'initialTitle',
-            'initialTargetPerWeek',
-          ],
+          props: ['modelValue', 'mode', 'submitting'],
           emits: ['update:modelValue', 'submit'],
         },
       },
@@ -76,6 +63,7 @@ describe('TasksPage', () => {
   beforeEach(() => {
     mockNotify.mockReset();
     mockReplace.mockReset();
+    mockPush.mockReset();
     mockRoute.query = {};
 
     const task: TestTask = {
@@ -86,10 +74,8 @@ describe('TasksPage', () => {
 
     mockStore = {
       activeTasks: [task],
-      tasks: { [task.id]: task },
+      getStreak: vi.fn().mockReturnValue(0),
       createTask: vi.fn().mockResolvedValue(undefined),
-      updateTask: vi.fn().mockResolvedValue(undefined),
-      deleteTask: vi.fn().mockResolvedValue(undefined),
     };
   });
 
@@ -101,25 +87,19 @@ describe('TasksPage', () => {
   it('renders empty-state branch', () => {
     mockStore.activeTasks = [];
     const wrapper = mountPage();
-
     expect(wrapper.html()).toContain('common.noTasksYet');
   });
 
   it('opens create modal from query flag', () => {
     mockRoute.query = { new: '1' };
     const wrapper = mountPage();
-
     expect((wrapper.vm as unknown as { isTaskDialogOpen: boolean }).isTaskDialogOpen).toBe(true);
-    expect((wrapper.vm as unknown as { taskDialogMode: string }).taskDialogMode).toBe('create');
   });
 
-  it('opens edit mode when a task row is tapped', () => {
+  it('navigates to task detail on goToDetail', () => {
     const wrapper = mountPage();
-
-    (wrapper.vm as unknown as { openEdit: (id: string) => void }).openEdit('task-1');
-
-    expect((wrapper.vm as unknown as { isTaskDialogOpen: boolean }).isTaskDialogOpen).toBe(true);
-    expect((wrapper.vm as unknown as { taskDialogMode: string }).taskDialogMode).toBe('edit');
+    (wrapper.vm as unknown as { goToDetail: (id: string) => void }).goToDetail('task-1');
+    expect(mockPush).toHaveBeenCalledWith('/tasks/task-1');
   });
 
   it('creates task and shows success toast', async () => {
@@ -127,89 +107,28 @@ describe('TasksPage', () => {
 
     await (
       wrapper.vm as unknown as {
-        submitTaskForm: (payload: { title: string; targetPerWeek: 1 | 2 | 3 | 4 | 5 | 6 | 7 }) => Promise<void>;
+        submitCreate: (payload: { title: string; targetPerWeek: 1 | 2 | 3 | 4 | 5 | 6 | 7 }) => Promise<void>;
       }
-    ).submitTaskForm({ title: 'Walk', targetPerWeek: 5 });
+    ).submitCreate({ title: 'Walk', targetPerWeek: 5 });
 
     expect(mockStore.createTask).toHaveBeenCalledWith({ title: 'Walk', targetPerWeek: 5 });
     expect(mockNotify).toHaveBeenCalledWith(
-      expect.objectContaining({
-        type: 'positive',
-        message: 'pages.newTask.createdSuccess',
-      }),
+      expect.objectContaining({ type: 'positive', message: 'pages.newTask.createdSuccess' }),
     );
   });
 
-  it('updates task and shows success toast', async () => {
+  it('shows negative toast when create fails', async () => {
+    mockStore.createTask.mockRejectedValueOnce(new Error('create failed'));
     const wrapper = mountPage();
-
-    (wrapper.vm as unknown as { openEdit: (id: string) => void }).openEdit('task-1');
 
     await (
       wrapper.vm as unknown as {
-        submitTaskForm: (payload: { title: string; targetPerWeek: 1 | 2 | 3 | 4 | 5 | 6 | 7 }) => Promise<void>;
+        submitCreate: (payload: { title: string; targetPerWeek: 1 }) => Promise<void>;
       }
-    ).submitTaskForm({ title: 'Updated sports', targetPerWeek: 5 });
-
-    expect(mockStore.updateTask).toHaveBeenCalledWith('task-1', {
-      title: 'Updated sports',
-      targetPerWeek: 5,
-    });
-    expect(mockNotify).toHaveBeenCalledWith(
-      expect.objectContaining({
-        type: 'positive',
-        message: 'pages.toast.taskUpdated',
-      }),
-    );
-  });
-
-  it('shows negative toast when update fails', async () => {
-    mockStore.updateTask.mockRejectedValueOnce(new Error('update failed'));
-    const wrapper = mountPage();
-
-    (wrapper.vm as unknown as { openEdit: (id: string) => void }).openEdit('task-1');
-
-    await (
-      wrapper.vm as unknown as {
-        submitTaskForm: (payload: { title: string; targetPerWeek: 1 | 2 | 3 | 4 | 5 | 6 | 7 }) => Promise<void>;
-      }
-    ).submitTaskForm({ title: 'Updated sports', targetPerWeek: 5 });
+    ).submitCreate({ title: 'Walk', targetPerWeek: 1 });
 
     expect(mockNotify).toHaveBeenCalledWith(
-      expect.objectContaining({
-        type: 'negative',
-        message: expect.stringContaining('pages.toast.taskUpdateFailed'),
-      }),
-    );
-  });
-
-  it('deletes task and shows success toast', async () => {
-    const wrapper = mountPage();
-
-    (wrapper.vm as unknown as { openDeleteDialog: (id: string) => void }).openDeleteDialog('task-1');
-    await (wrapper.vm as unknown as { submitDelete: () => Promise<void> }).submitDelete();
-
-    expect(mockStore.deleteTask).toHaveBeenCalledWith('task-1');
-    expect(mockNotify).toHaveBeenCalledWith(
-      expect.objectContaining({
-        type: 'positive',
-        message: 'pages.toast.taskDeleted',
-      }),
-    );
-  });
-
-  it('shows negative toast when delete fails', async () => {
-    mockStore.deleteTask.mockRejectedValueOnce(new Error('delete failed'));
-
-    const wrapper = mountPage();
-    (wrapper.vm as unknown as { openDeleteDialog: (id: string) => void }).openDeleteDialog('task-1');
-    await (wrapper.vm as unknown as { submitDelete: () => Promise<void> }).submitDelete();
-
-    expect(mockNotify).toHaveBeenCalledWith(
-      expect.objectContaining({
-        type: 'negative',
-        message: expect.stringContaining('pages.toast.taskDeleteFailed'),
-      }),
+      expect.objectContaining({ type: 'negative', message: 'pages.newTask.createFailed' }),
     );
   });
 });

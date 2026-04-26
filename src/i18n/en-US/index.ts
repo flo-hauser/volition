@@ -110,6 +110,15 @@ export default {
       taskDeleteFailed: 'Task could not be deleted.',
       taskToggleFailed: 'Today check-in could not be saved.',
     },
+    detail: {
+      thisWeek: 'This week',
+      streak: 'Streak',
+      twelveWeekRate: '12-wk rate',
+      checkedInToday: 'Checked in for today',
+      notYetToday: 'Not yet done today',
+      lastTwelveWeeks: 'Last 12 weeks',
+      quote: 'Volition is the quiet return to what matters — every day, without ceremony.',
+    },
     notFound: {
       message: 'Oops. Nothing here...',
       goHome: 'Go Home',

@@ -11,14 +11,15 @@ exports[`TodayPage > renders stable markup 1`] = `
     <h2 class="section-title">pages.today.allTasks</h2><button type="button" class="section-link">common.addNew</button>
   </div>
   <div class="task-list">
-    <article class="task-row">
+    <div class="task-row">
       <div class="task-body">
         <h3 class="task-title">Sports</h3>
-        <div class="task-meta"><span>pages.today.progressLabel</span><span class="dot" aria-hidden="true"></span>
+        <div class="task-meta"><span>pages.today.progressLabel</span>
+          <!--v-if--><span class="dot" aria-hidden="true"></span>
           <week-mini-stub pattern="0,0,0,0,0,0,0" todayidx="5" aria-label="Week check-ins"></week-mini-stub>
         </div>
       </div><button class="check-btn-stub"></button>
-    </article>
+    </div>
   </div><button type="button" class="add-cta"> + common.newIntention</button>
   <div></div>
 </q-page-stub>"

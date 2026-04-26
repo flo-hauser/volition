@@ -110,6 +110,15 @@ export default {
       taskDeleteFailed: 'Aufgabe konnte nicht geloescht werden.',
       taskToggleFailed: 'Heutiger Check-in konnte nicht gespeichert werden.',
     },
+    detail: {
+      thisWeek: 'Diese Woche',
+      streak: 'Serie',
+      twelveWeekRate: '12-Wo.-Rate',
+      checkedInToday: 'Heute eingecheckt',
+      notYetToday: 'Heute noch nicht erledigt',
+      lastTwelveWeeks: 'Letzte 12 Wochen',
+      quote: 'Volition ist die stille Rueckkehr zu dem, was zaehlt — jeden Tag, ohne Zeremonie.',
+    },
     notFound: {
       message: 'Ups. Hier gibt es nichts.',
       goHome: 'Zur Startseite',

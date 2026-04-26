@@ -5,6 +5,8 @@ import '@fontsource/geist/500.css';
 import '@fontsource/geist/600.css';
 import '@fontsource/instrument-serif/400.css';
 import '@fontsource/instrument-serif/400-italic.css';
+import '@fontsource/jetbrains-mono/400.css';
+import '@fontsource/jetbrains-mono/500.css';
 
 export default defineBoot(() => {
   /* font-face CSS is imported for its side effects */

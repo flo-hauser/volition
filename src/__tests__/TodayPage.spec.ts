@@ -9,6 +9,7 @@ let mockStore: {
   checkinsByDay: Record<string, Record<string, unknown>>;
   weekProgress: ReturnType<typeof vi.fn>;
   isDone: ReturnType<typeof vi.fn>;
+  getStreak: ReturnType<typeof vi.fn>;
   toggleToday: ReturnType<typeof vi.fn>;
   createTask: ReturnType<typeof vi.fn>;
 };
@@ -22,6 +23,10 @@ vi.mock('vue-i18n', () => ({
 
 vi.mock('quasar', () => ({
   useQuasar: () => ({ notify: mockNotify }),
+}));
+
+vi.mock('vue-router', () => ({
+  useRouter: () => ({ push: vi.fn() }),
 }));
 
 vi.mock('src/composables/useDay', () => ({
@@ -94,6 +99,7 @@ describe('TodayPage', () => {
       checkinsByDay: {},
       weekProgress: vi.fn().mockReturnValue(1),
       isDone: vi.fn().mockReturnValue(false),
+      getStreak: vi.fn().mockReturnValue(0),
       toggleToday: vi.fn().mockResolvedValue(undefined),
       createTask: vi.fn().mockResolvedValue(undefined),
     };

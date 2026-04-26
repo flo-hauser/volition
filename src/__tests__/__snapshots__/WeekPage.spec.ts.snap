@@ -6,12 +6,11 @@ exports[`WeekPage > renders stable markup 1`] = `
     <div class="page-eyebrow">pages.week.eyebrow</div>
     <h1 class="page-title">pages.week.title</h1>
   </header>
-  <week-strip-stub done="2" target="3" eyebrow="pages.week.stripEyebrow" oflabel="pages.week.stripOf" subtitle="pages.week.stripSubtitle"></week-strip-stub>
+  <week-strip-stub done="2" target="3" eyebrow="pages.week.stripEyebrow" subtitle="pages.week.stripSubtitle" daypattern="0,0,0,0,0,0,0" todayidx="5"></week-strip-stub>
   <div class="section-head">
     <h2 class="section-title">pages.week.perTask</h2>
   </div>
-  <div>
-    <article class="week-card">
+  <div><button type="button" class="week-card">
       <div class="week-card-head">
         <div>
           <h3 class="week-card-title">Sports</h3>
@@ -21,7 +20,6 @@ exports[`WeekPage > renders stable markup 1`] = `
         <div class="week-card-progress">2 <span class="of">/ 3</span></div>
       </div>
       <viz-dots-stub pattern="1,1,0,0,0,0,0" todayidx="5" daylabels="M,T,W,T,F,S,S"></viz-dots-stub>
-    </article>
-  </div>
+    </button></div>
 </q-page-stub>"
 `;
