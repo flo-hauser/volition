@@ -11,12 +11,17 @@
       name="viewport"
       content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width<% if (ctx.mode.cordova || ctx.mode.capacitor) { %>, viewport-fit=cover<% } %>"
     />
+    <meta name="theme-color" content="#4A6B4D" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#131A15" media="(prefers-color-scheme: dark)" />
 
-    <link rel="icon" type="image/png" sizes="128x128" href="icons/favicon-128x128.ico" />
-    <link rel="icon" type="image/png" sizes="96x96" href="icons/favicon-96x96.ico" />
-    <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32x32.ico" />
-    <link rel="icon" type="image/png" sizes="16x16" href="icons/favicon-16x16.ico" />
-    <link rel="icon" type="image/ico" href="favicon.ico" />
+    <link rel="icon" type="image/svg+xml" href="icons/icon-light.svg" media="(prefers-color-scheme: light)" />
+    <link rel="icon" type="image/svg+xml" href="icons/icon-dark.svg" media="(prefers-color-scheme: dark)" />
+    <link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png" />
+    <link rel="icon" type="image/x-icon" sizes="128x128" href="icons/favicon-128x128.ico" />
+    <link rel="icon" type="image/x-icon" sizes="96x96" href="icons/favicon-96x96.ico" />
+    <link rel="icon" type="image/x-icon" sizes="32x32" href="icons/favicon-32x32.ico" />
+    <link rel="icon" type="image/x-icon" sizes="16x16" href="icons/favicon-16x16.ico" />
+    <link rel="icon" type="image/x-icon" href="favicon.ico" />
   </head>
   <body>
     <!-- quasar:entry-point -->
