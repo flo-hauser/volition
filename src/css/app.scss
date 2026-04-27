@@ -899,19 +899,52 @@ body.body--dark .week-strip-days .col.today {
 .tasks-row {
   display: flex;
   align-items: center;
-  gap: 14px;
-  padding: 16px;
+  gap: 0;
   border-radius: var(--r-md);
   background: var(--surface);
   border: 1px solid var(--hairline);
-  cursor: pointer;
-  transition: all 240ms var(--ease);
+  transition: border-color 240ms var(--ease);
 }
 .tasks-row:hover {
   border-color: var(--hairline-strong);
 }
-.tasks-row:active {
-  transform: scale(0.99);
+.tasks-row--ghost {
+  opacity: 0.4;
+}
+.tasks-row__body {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 16px 16px 0;
+  flex: 1 1 auto;
+  min-width: 0;
+  cursor: pointer;
+  background: transparent;
+  border: 0;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  transition: opacity 240ms var(--ease);
+}
+.tasks-row__body:active {
+  opacity: 0.75;
+}
+.drag-handle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  flex-shrink: 0;
+  align-self: stretch;
+  color: var(--ink-faint, var(--text-3));
+  background: transparent;
+  border: 0;
+  cursor: grab;
+  touch-action: none;
+  padding: 0;
+}
+.drag-handle:active {
+  cursor: grabbing;
 }
 .tasks-row .freq {
   flex: 0 0 auto;

@@ -18,5 +18,6 @@ export function createEmptyStorageState(): StorageState {
     },
     tasks: {},
     checkinsByDay: {},
+    taskOrder: [],
   };
 }

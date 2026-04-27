@@ -27,6 +27,7 @@ describe('indexedDbAdapter', () => {
       meta: { schemaVersion: SCHEMA_VERSION },
       tasks: {},
       checkinsByDay: {},
+      taskOrder: [],
     });
   });
 
@@ -50,6 +51,7 @@ describe('indexedDbAdapter', () => {
           },
         },
       },
+      taskOrder: ['task-1'],
     };
 
     await indexedDbAdapter.saveState(sampleState);
@@ -71,6 +73,7 @@ describe('indexedDbAdapter', () => {
         meta: { schemaVersion: SCHEMA_VERSION },
         tasks: {},
         checkinsByDay: {},
+        taskOrder: [],
       }),
     ).resolves.toBeUndefined();
 

@@ -7,7 +7,6 @@ import { indexedDbAdapter } from 'src/services/storage/indexedDbAdapter';
 import { localStorageAdapter } from 'src/services/storage/localStorageAdapter';
 import { createResilientStorageAdapter } from 'src/services/storage/resilientStorageAdapter';
 import {
-  createEmptyStorageState,
   getStorageDebugLabel,
   type StorageAdapter,
 } from 'src/services/storage/storageAdapter';
@@ -40,6 +39,7 @@ function cloneState<T>(value: T): T {
 export const useTasksStore = defineStore('tasks', () => {
   const tasks = ref<Record<string, Task>>({});
   const checkinsByDay = ref<Record<string, Record<string, Checkin>>>({});
+  const taskOrder = ref<string[]>([]);
   const isReady = ref(false);
 
   let storageAdapter: StorageAdapter = createResilientStorageAdapter(
@@ -51,7 +51,15 @@ export const useTasksStore = defineStore('tasks', () => {
   );
   const activeStorageBackend = ref(getStorageDebugLabel(storageAdapter));
 
-  const activeTasks = computed(() => Object.values(tasks.value).filter((task) => !task.archivedAt));
+  const activeTasks = computed(() => {
+    const active = Object.values(tasks.value).filter((t) => !t.archivedAt);
+    const orderMap = new Map(taskOrder.value.map((id, i) => [id, i]));
+    return active.sort((a, b) => {
+      const ai = orderMap.get(a.id) ?? Infinity;
+      const bi = orderMap.get(b.id) ?? Infinity;
+      return ai - bi;
+    });
+  });
 
   function syncActiveStorageBackend(): void {
     activeStorageBackend.value = getStorageDebugLabel(storageAdapter);
@@ -115,12 +123,14 @@ export const useTasksStore = defineStore('tasks', () => {
       },
       tasks: cloneState(tasks.value),
       checkinsByDay: cloneState(checkinsByDay.value),
+      taskOrder: [...taskOrder.value],
     };
   }
 
   async function persistOrRollback<T>(operation: () => T): Promise<T> {
     const previousTasks = cloneState(tasks.value);
     const previousCheckinsByDay = cloneState(checkinsByDay.value);
+    const previousTaskOrder = [...taskOrder.value];
 
     try {
       const result = operation();
@@ -130,6 +140,7 @@ export const useTasksStore = defineStore('tasks', () => {
     } catch (error) {
       tasks.value = previousTasks;
       checkinsByDay.value = previousCheckinsByDay;
+      taskOrder.value = previousTaskOrder;
       throw error;
     }
   }
@@ -143,17 +154,20 @@ export const useTasksStore = defineStore('tasks', () => {
 
     const loadedState = await storageAdapter.loadState();
     syncActiveStorageBackend();
-    const state = loadedState ?? createEmptyStorageState();
+
+    const state = loadedState ?? { meta: { schemaVersion: -1 }, tasks: {}, checkinsByDay: {}, taskOrder: [] };
 
     if (state.meta.schemaVersion !== SCHEMA_VERSION) {
       tasks.value = {};
       checkinsByDay.value = {};
+      taskOrder.value = [];
       isReady.value = true;
       return;
     }
 
     tasks.value = state.tasks;
     checkinsByDay.value = state.checkinsByDay;
+    taskOrder.value = state.taskOrder;
     isReady.value = true;
   }
 
@@ -176,6 +190,7 @@ export const useTasksStore = defineStore('tasks', () => {
         ...tasks.value,
         [task.id]: task,
       };
+      taskOrder.value = [...taskOrder.value, task.id];
 
       return task;
     });
@@ -214,23 +229,28 @@ export const useTasksStore = defineStore('tasks', () => {
       throw new Error(`Task not found: ${taskId}`);
     }
 
-    const nextTasks = { ...tasks.value };
-    delete nextTasks[taskId];
-    tasks.value = nextTasks;
-
-    const nextCheckinsByDay: Record<string, Record<string, Checkin>> = {};
-
-    for (const [day, dayCheckins] of Object.entries(checkinsByDay.value)) {
-      const nextDayCheckins = { ...dayCheckins };
-      delete nextDayCheckins[taskId];
-
-      if (Object.keys(nextDayCheckins).length > 0) {
-        nextCheckinsByDay[day] = nextDayCheckins;
-      }
-    }
-
     await persistOrRollback(() => {
+      const nextTasks = { ...tasks.value };
+      delete nextTasks[taskId];
+      tasks.value = nextTasks;
+
+      const nextCheckinsByDay: Record<string, Record<string, Checkin>> = {};
+      for (const [day, dayCheckins] of Object.entries(checkinsByDay.value)) {
+        const nextDayCheckins = { ...dayCheckins };
+        delete nextDayCheckins[taskId];
+        if (Object.keys(nextDayCheckins).length > 0) {
+          nextCheckinsByDay[day] = nextDayCheckins;
+        }
+      }
       checkinsByDay.value = nextCheckinsByDay;
+
+      taskOrder.value = taskOrder.value.filter((id) => id !== taskId);
+    });
+  }
+
+  async function reorderTasks(orderedIds: string[]): Promise<void> {
+    await persistOrRollback(() => {
+      taskOrder.value = orderedIds;
     });
   }
 
@@ -279,6 +299,7 @@ export const useTasksStore = defineStore('tasks', () => {
   return {
     tasks,
     checkinsByDay,
+    taskOrder,
     isReady,
     activeTasks,
     activeStorageBackend,
@@ -290,6 +311,7 @@ export const useTasksStore = defineStore('tasks', () => {
     createTask,
     updateTask,
     deleteTask,
+    reorderTasks,
     toggleForDay,
     toggleToday,
   };

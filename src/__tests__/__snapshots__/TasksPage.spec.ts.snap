@@ -7,17 +7,26 @@ exports[`TasksPage > renders stable markup 1`] = `
     <h1 class="page-title">pages.tasks.title</h1>
     <p class="page-sub">pages.tasks.subtitle</p>
   </header>
-  <div class="tasks-list"><button type="button" class="tasks-row">
-      <div class="freq" aria-hidden="true">3 <span class="x">pages.tasks.freqSuffix</span></div>
-      <div class="body">
-        <div class="title">Sports</div>
-        <div class="hint">pages.tasks.hintDaysOfSeven
-          <!--v-if-->
-        </div>
-      </div><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-        <polyline points="9 18 15 12 9 6"></polyline>
-      </svg>
-    </button></div><button type="button" class="add-cta"> + pages.tasks.newTask</button>
+  <div class="tasks-list">
+    <div class="tasks-row" data-id="task-1"><button class="drag-handle" type="button" aria-label="Reorder"><svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" width="16" height="16">
+          <circle cx="7" cy="5" r="1.5"></circle>
+          <circle cx="13" cy="5" r="1.5"></circle>
+          <circle cx="7" cy="10" r="1.5"></circle>
+          <circle cx="13" cy="10" r="1.5"></circle>
+          <circle cx="7" cy="15" r="1.5"></circle>
+          <circle cx="13" cy="15" r="1.5"></circle>
+        </svg></button><button type="button" class="tasks-row__body">
+        <div class="freq" aria-hidden="true">3 <span class="x">pages.tasks.freqSuffix</span></div>
+        <div class="body">
+          <div class="title">Sports</div>
+          <div class="hint">pages.tasks.hintDaysOfSeven
+            <!--v-if-->
+          </div>
+        </div><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <polyline points="9 18 15 12 9 6"></polyline>
+        </svg>
+      </button></div>
+  </div><button type="button" class="add-cta"> + pages.tasks.newTask</button>
   <div></div>
 </q-page-stub>"
 `;

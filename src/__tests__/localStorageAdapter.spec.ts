@@ -17,6 +17,7 @@ describe('localStorageAdapter', () => {
       meta: { schemaVersion: SCHEMA_VERSION },
       tasks: {},
       checkinsByDay: {},
+      taskOrder: [],
     });
   });
 
@@ -40,6 +41,7 @@ describe('localStorageAdapter', () => {
           },
         },
       },
+      taskOrder: ['task-1'],
     };
 
     await localStorageAdapter.saveState(sampleState);
@@ -57,6 +59,7 @@ describe('localStorageAdapter', () => {
       meta: { schemaVersion: SCHEMA_VERSION },
       tasks: {},
       checkinsByDay: {},
+      taskOrder: [],
     });
     expect(localStorage.getItem(STORAGE_KEY)).toBeNull();
   });
@@ -70,6 +73,7 @@ describe('localStorageAdapter', () => {
       meta: { schemaVersion: SCHEMA_VERSION },
       tasks: {},
       checkinsByDay: {},
+      taskOrder: [],
     });
   });
 
@@ -87,6 +91,7 @@ describe('localStorageAdapter', () => {
         meta: { schemaVersion: SCHEMA_VERSION },
         tasks: {},
         checkinsByDay: {},
+        taskOrder: [],
       }),
     ).resolves.toBeUndefined();
 

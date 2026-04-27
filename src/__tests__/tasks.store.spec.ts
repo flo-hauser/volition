@@ -6,19 +6,19 @@ import { createResilientStorageAdapter } from 'src/services/storage/resilientSto
 import { createEmptyStorageState, type StorageAdapter } from 'src/services/storage/storageAdapter';
 import type { StorageState } from 'src/types/storage';
 
+function createMockAdapter(initialState?: StorageState): StorageAdapter {
+  return {
+    debugLabel: 'MockStorage',
+    loadState: vi.fn().mockResolvedValue(initialState ?? createEmptyStorageState()),
+    saveState: vi.fn().mockResolvedValue(undefined),
+  };
+}
+
 describe('useTasksStore', () => {
   beforeEach(() => {
     setActivePinia(createPinia());
     vi.restoreAllMocks();
   });
-
-  function createMockAdapter(initialState?: StorageState): StorageAdapter {
-    return {
-      debugLabel: 'MockStorage',
-      loadState: vi.fn().mockResolvedValue(initialState ?? createEmptyStorageState()),
-      saveState: vi.fn().mockResolvedValue(undefined),
-    };
-  }
 
   it('initializes from adapter state and marks store ready', async () => {
     const state = createEmptyStorageState();
@@ -157,6 +157,45 @@ describe('useTasksStore', () => {
 
     await expect(store.toggleForDay(task.id, '2026-02-07')).rejects.toThrow('save failed');
     expect(store.isDone(task.id, '2026-02-07')).toBe(false);
+  });
+
+  it('createTask appends new task id to taskOrder', async () => {
+    const adapter = createMockAdapter();
+    const store = useTasksStore();
+    await store.init(adapter);
+
+    const a = await store.createTask({ title: 'Alpha', targetPerWeek: 3 });
+    const b = await store.createTask({ title: 'Beta', targetPerWeek: 2 });
+
+    expect(store.taskOrder).toEqual([a.id, b.id]);
+    expect(store.activeTasks.map((t) => t.id)).toEqual([a.id, b.id]);
+  });
+
+  it('deleteTask removes id from taskOrder', async () => {
+    const adapter = createMockAdapter();
+    const store = useTasksStore();
+    await store.init(adapter);
+
+    const a = await store.createTask({ title: 'Alpha', targetPerWeek: 3 });
+    const b = await store.createTask({ title: 'Beta', targetPerWeek: 2 });
+    await store.deleteTask(a.id);
+
+    expect(store.taskOrder).toEqual([b.id]);
+  });
+
+  it('reorderTasks updates order reflected in activeTasks', async () => {
+    const adapter = createMockAdapter();
+    const store = useTasksStore();
+    await store.init(adapter);
+
+    const a = await store.createTask({ title: 'Alpha', targetPerWeek: 3 });
+    const b = await store.createTask({ title: 'Beta', targetPerWeek: 2 });
+    const c = await store.createTask({ title: 'Gamma', targetPerWeek: 1 });
+
+    await store.reorderTasks([c.id, a.id, b.id]);
+
+    expect(store.taskOrder).toEqual([c.id, a.id, b.id]);
+    expect(store.activeTasks.map((t) => t.id)).toEqual([c.id, a.id, b.id]);
   });
 
   it('supports CRUD when primary adapter fails and fallback is available', async () => {

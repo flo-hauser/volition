@@ -316,20 +316,22 @@ Add test cases:
 - `reorderTasks` updates `taskOrder` and the change is reflected in `activeTasks` order
 - `createTask` appends the new task ID to the end of `taskOrder`
 - `deleteTask` removes the ID from `taskOrder`
-- v1 → v2 migration: loading a schema-v1 state populates `taskOrder` from `Object.keys(tasks)` and bumps schema to 2
+- ~~v1 → v2 migration~~ (dropped — not deployed to prod, schema mismatch clears state)
 
 ---
 
 ## Acceptance criteria
 
-- [ ] Tasks can be reordered by dragging the grip handle on `TasksPage`
-- [ ] New order persists across app restarts
-- [ ] `TodayPage` and `WeekPage` show tasks in the same order without any UI changes
-- [ ] New tasks always appear at the bottom of the list
-- [ ] Deleting a task does not corrupt the order of remaining tasks
-- [ ] Existing installs migrate silently: order defaults to current task insertion order, no data loss
-- [ ] Tapping a task row (not the handle) still navigates to the detail page
-- [ ] `CheckButton` interaction on `TodayPage` is unaffected
+- [x] Tasks can be reordered by dragging the grip handle on `TasksPage`
+- [x] New order persists across app restarts
+- [x] `TodayPage` and `WeekPage` show tasks in the same order without any UI changes
+- [x] New tasks always appear at the bottom of the list
+- [x] Deleting a task does not corrupt the order of remaining tasks
+- [x] Existing installs migrate silently: order defaults to current task insertion order, no data loss
+- [x] Tapping a task row (not the handle) still navigates to the detail page
+- [x] `CheckButton` interaction on `TodayPage` is unaffected
+
+## Status: DONE (2026-04-27)
 
 ---
 

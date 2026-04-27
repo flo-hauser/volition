@@ -8,31 +8,43 @@
       <p class="page-sub">{{ t('pages.tasks.subtitle') }}</p>
     </header>
 
-    <div v-if="tasks.length > 0" class="tasks-list">
-      <button
+    <div v-if="tasks.length > 0" ref="taskListEl" class="tasks-list">
+      <div
         v-for="task in tasks"
         :key="task.id"
-        type="button"
         class="tasks-row"
-        @click="goToDetail(task.id)"
+        :data-id="task.id"
       >
-        <div class="freq" aria-hidden="true">
-          {{ task.targetPerWeek }}
-          <span class="x">{{ t('pages.tasks.freqSuffix') }}</span>
-        </div>
-        <div class="body">
-          <div class="title">{{ task.title }}</div>
-          <div class="hint">
-            {{ task.targetPerWeek === 7 ? t('pages.tasks.hintEveryDay') : t('pages.tasks.hintDaysOfSeven', { count: task.targetPerWeek }) }}
-            <template v-if="store.getStreak(task.id) > 1">
-              · {{ store.getStreak(task.id) }}w streak
-            </template>
+        <button class="drag-handle" type="button" aria-label="Reorder" @click.stop>
+          <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" width="16" height="16">
+            <circle cx="7" cy="5" r="1.5" />
+            <circle cx="13" cy="5" r="1.5" />
+            <circle cx="7" cy="10" r="1.5" />
+            <circle cx="13" cy="10" r="1.5" />
+            <circle cx="7" cy="15" r="1.5" />
+            <circle cx="13" cy="15" r="1.5" />
+          </svg>
+        </button>
+
+        <button type="button" class="tasks-row__body" @click="goToDetail(task.id)">
+          <div class="freq" aria-hidden="true">
+            {{ task.targetPerWeek }}
+            <span class="x">{{ t('pages.tasks.freqSuffix') }}</span>
           </div>
-        </div>
-        <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <polyline points="9 18 15 12 9 6" />
-        </svg>
-      </button>
+          <div class="body">
+            <div class="title">{{ task.title }}</div>
+            <div class="hint">
+              {{ task.targetPerWeek === 7 ? t('pages.tasks.hintEveryDay') : t('pages.tasks.hintDaysOfSeven', { count: task.targetPerWeek }) }}
+              <template v-if="store.getStreak(task.id) > 1">
+                · {{ store.getStreak(task.id) }}w streak
+              </template>
+            </div>
+          </div>
+          <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <polyline points="9 18 15 12 9 6" />
+          </svg>
+        </button>
+      </div>
     </div>
 
     <div v-else class="section-head">
@@ -53,10 +65,12 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue';
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useQuasar } from 'quasar';
 import { useRoute, useRouter } from 'vue-router';
+import Sortable from 'sortablejs';
+import type { SortableEvent } from 'sortablejs';
 
 import TaskSheet from 'src/components/TaskSheet.vue';
 import { appendDebugLog } from 'src/services/debug/runtimeDiagnostics';
@@ -71,9 +85,35 @@ const router = useRouter();
 const store = useTasksStore();
 
 const tasks = computed(() => store.activeTasks);
+const taskListEl = ref<HTMLElement | null>(null);
+let sortableInstance: Sortable | null = null;
 
 const isTaskDialogOpen = ref(false);
 const taskDialogBusy = ref(false);
+
+onMounted(() => {
+  if (!taskListEl.value) return;
+
+  sortableInstance = Sortable.create(taskListEl.value, {
+    handle: '.drag-handle',
+    animation: 0,
+    ghostClass: 'tasks-row--ghost',
+    onEnd(evt: SortableEvent) {
+      if (evt.oldIndex === evt.newIndex) return;
+
+      const newOrder = Array.from(taskListEl.value!.querySelectorAll('[data-id]'))
+        .map((el) => (el as HTMLElement).dataset['id']!)
+        .filter(Boolean);
+
+      void store.reorderTasks(newOrder);
+    },
+  });
+});
+
+onUnmounted(() => {
+  sortableInstance?.destroy();
+  sortableInstance = null;
+});
 
 function goToDetail(taskId: string): void {
   void router.push(`/tasks/${taskId}`);

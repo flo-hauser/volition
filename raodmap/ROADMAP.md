@@ -8,7 +8,7 @@ Legend: **[plan]** = implementation plan written, ready to build
 
 ## Suggested build order
 
-**1. Reorder** — bumps `SCHEMA_VERSION` 1→2 and introduces `taskOrder: string[]` into `StorageState`. Do this first so everything downstream builds on the stable schema.
+**1. Reorder** ✅ — bumps `SCHEMA_VERSION` 1→2 and introduces `taskOrder: string[]` into `StorageState`. Do this first so everything downstream builds on the stable schema.
 
 **2. Archiving** — no schema change, but `archiveTask` / `unarchiveTask` need to also remove/re-append IDs in `taskOrder`. Must be written with reorder already in place, otherwise the store methods need patching afterwards.
 
@@ -23,7 +23,7 @@ Legend: **[plan]** = implementation plan written, ready to build
 **Task archiving UI** **[plan](task-archiving.md)**  
 The `archivedAt` field exists on `Task` and the type is ready. Just needs a swipe action or menu option on `TasksPage` to archive/unarchive, and a toggle to show archived tasks.
 
-**Reorder tasks** **[plan](task-reorder.md)**  
+**Reorder tasks** ✅ ~~**[plan](task-reorder.md)**~~  
 Drag-and-drop ordering on `TasksPage`. Store order in `StorageState`. Today and Week views follow the same order.
 
 **Haptic feedback** **[plan](haptic-and-swipe.md)**  

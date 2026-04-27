@@ -8,6 +8,7 @@ const EMPTY_STATE: StorageState = {
   meta: { schemaVersion: SCHEMA_VERSION },
   tasks: {},
   checkinsByDay: {},
+  taskOrder: [],
 };
 
 describe('resilientStorageAdapter', () => {

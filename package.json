@@ -26,6 +26,7 @@
     "date-fns": "^4.1.0",
     "pinia": "^3.0.1",
     "quasar": "^2.16.0",
+    "sortablejs": "^1.15.7",
     "vue": "^3.5.22",
     "vue-i18n": "^11.0.0",
     "vue-router": "^4.0.12"
@@ -35,6 +36,7 @@
     "@intlify/unplugin-vue-i18n": "^4.0.0",
     "@quasar/app-vite": "^2.1.0",
     "@types/node": "^20.5.9",
+    "@types/sortablejs": "^1.15.9",
     "@vitejs/plugin-vue": "^6.0.4",
     "@vitest/coverage-v8": "^4.0.18",
     "@vue/eslint-config-prettier": "^10.1.0",
