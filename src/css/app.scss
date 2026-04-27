@@ -320,6 +320,10 @@ body.body--dark .page-title em {
   background: color-mix(in oklab, var(--accent) 10%, var(--surface));
   border-color: color-mix(in oklab, var(--accent) 25%, var(--hairline));
 }
+.task-row.swiping {
+  transform: translateX(6px);
+  transition: transform 120ms var(--ease-out);
+}
 .task-body {
   flex: 1 1 auto;
   min-width: 0;

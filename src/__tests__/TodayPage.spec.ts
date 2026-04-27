@@ -3,6 +3,9 @@ import { ref } from 'vue';
 import { shallowMount } from '@vue/test-utils';
 
 const mockNotify = vi.fn();
+const { mockImpact } = vi.hoisted(() => ({
+  mockImpact: vi.fn(),
+}));
 
 let mockStore: {
   activeTasks: Array<{ id: string; title: string; targetPerWeek: number }>;
@@ -23,6 +26,11 @@ vi.mock('vue-i18n', () => ({
 
 vi.mock('quasar', () => ({
   useQuasar: () => ({ notify: mockNotify }),
+}));
+
+vi.mock('@capacitor/haptics', () => ({
+  Haptics: { impact: mockImpact },
+  ImpactStyle: { Light: 'LIGHT' },
 }));
 
 vi.mock('vue-router', () => ({
@@ -71,6 +79,9 @@ function mountPage() {
   return shallowMount(TodayPage, {
     global: {
       renderStubDefaultSlot: true,
+      directives: {
+        'touch-swipe': {},
+      },
       stubs: {
         'q-page': true,
         CheckButton: {
@@ -93,6 +104,8 @@ function mountPage() {
 describe('TodayPage', () => {
   beforeEach(() => {
     mockNotify.mockReset();
+    mockImpact.mockReset();
+    mockImpact.mockResolvedValue(undefined);
 
     mockStore = {
       activeTasks: [{ id: 'task-1', title: 'Sports', targetPerWeek: 3 }],
@@ -122,6 +135,16 @@ describe('TodayPage', () => {
     await (wrapper.vm as unknown as { toggleTask: (id: string) => Promise<void> }).toggleTask('task-1');
 
     expect(mockStore.toggleToday).toHaveBeenCalledWith('task-1');
+    expect(mockImpact).toHaveBeenCalledWith({ style: 'LIGHT' });
+  });
+
+  it('does not trigger haptics when unchecking a task', async () => {
+    mockStore.isDone.mockReturnValue(true);
+    const wrapper = mountPage();
+
+    await (wrapper.vm as unknown as { toggleTask: (id: string) => Promise<void> }).toggleTask('task-1');
+
+    expect(mockImpact).not.toHaveBeenCalled();
   });
 
   it('clears pending flag even if toggle fails', async () => {
@@ -140,5 +163,18 @@ describe('TodayPage', () => {
         message: 'pages.toast.taskToggleFailed',
       }),
     );
+  });
+
+  it('toggles a task from a right swipe while idle', async () => {
+    const wrapper = mountPage();
+
+    (wrapper.vm as unknown as {
+      onSwipeRight: (id: string, details: { direction: string }) => void;
+    }).onSwipeRight('task-1', { direction: 'right' });
+
+    await Promise.resolve();
+    await Promise.resolve();
+
+    expect(mockStore.toggleToday).toHaveBeenCalledWith('task-1');
   });
 });
