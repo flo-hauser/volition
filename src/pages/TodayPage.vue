@@ -25,7 +25,8 @@
         v-for="task in tasks"
         :key="task.id"
         class="task-row"
-        :class="{ done: isChecked(task.id) }"
+        :class="{ done: isChecked(task.id), swiping: swipingTaskId === task.id }"
+        v-touch-swipe.right.mouse="getSwipeHandler(task.id)"
         @click="goToDetail(task.id)"
       >
         <div class="task-body">
@@ -75,6 +76,7 @@
 </template>
 
 <script setup lang="ts">
+import { Haptics, ImpactStyle } from '@capacitor/haptics';
 import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useQuasar } from 'quasar';
@@ -91,6 +93,9 @@ import { appendDebugLog } from 'src/services/debug/runtimeDiagnostics';
 import { useTasksStore } from 'src/stores/tasks.store';
 
 type TargetPerWeek = 1 | 2 | 3 | 4 | 5 | 6 | 7;
+type SwipeDetails = {
+  direction?: 'left' | 'right' | 'up' | 'down';
+};
 
 const { t, locale } = useI18n();
 const $q = useQuasar();
@@ -105,6 +110,7 @@ const todayIdx = getWeekdayIndex(currentWeekId, todayISO);
 const pendingTaskIds = ref(new Set<string>());
 const isTaskSheetOpen = ref(false);
 const taskSheetBusy = ref(false);
+const swipingTaskId = ref<string | null>(null);
 
 const tasks = computed(() => store.activeTasks);
 
@@ -135,9 +141,14 @@ function getPattern(taskId: string): number[] {
 }
 
 async function toggleTask(taskId: string): Promise<void> {
+  const wasChecked = isChecked(taskId);
   pendingTaskIds.value.add(taskId);
+  pendingTaskIds.value = new Set(pendingTaskIds.value);
   try {
     await store.toggleToday(taskId);
+    if (!wasChecked) {
+      void Haptics.impact({ style: ImpactStyle.Light }).catch(() => undefined);
+    }
   } catch (error) {
     appendDebugLog('tasks.toggleToday', error);
     $q.notify({
@@ -149,6 +160,23 @@ async function toggleTask(taskId: string): Promise<void> {
     pendingTaskIds.value.delete(taskId);
     pendingTaskIds.value = new Set(pendingTaskIds.value);
   }
+}
+
+function onSwipeRight(taskId: string, details: SwipeDetails): void {
+  if (pendingTaskIds.value.has(taskId) || details.direction !== 'right') return;
+
+  swipingTaskId.value = taskId;
+  void toggleTask(taskId).finally(() => {
+    if (swipingTaskId.value === taskId) {
+      swipingTaskId.value = null;
+    }
+  });
+}
+
+function getSwipeHandler(taskId: string): (details: SwipeDetails) => void {
+  return (details) => {
+    onSwipeRight(taskId, details);
+  };
 }
 
 function goToDetail(taskId: string): void {

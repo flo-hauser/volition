@@ -154,13 +154,13 @@ All three paths share `toggleTask()` — haptics and state change are never dupl
 
 ## Acceptance criteria
 
-- [ ] Checking in a task (tap or swipe) fires a light haptic on native Android/iOS
-- [ ] No haptic fires on uncheck
-- [ ] No error is thrown in the browser (web) build when haptics are unavailable
-- [ ] Swiping right on a task row toggles its done state
-- [ ] Tapping the task body after a swipe still navigates to the detail page (no interference)
-- [ ] Row nudge animation is visible on swipe; done-state background animates in
-- [ ] Pending state is respected — no double-toggle if the user swipes during a pending async call
+- [x] Checking in a task (tap or swipe) fires a light haptic on native Android/iOS
+- [x] No haptic fires on uncheck
+- [x] No error is thrown in the browser (web) build when haptics are unavailable
+- [x] Swiping right on a task row toggles its done state
+- [x] Tapping the task body after a swipe still navigates to the detail page (no interference)
+- [x] Row nudge animation is visible on swipe; done-state background animates in
+- [x] Pending state is respected — no double-toggle if the user swipes during a pending async call
 
 ---
 

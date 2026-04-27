@@ -54,6 +54,7 @@ export default defineConfig((ctx) => {
 
     framework: {
       config: {},
+      directives: ['TouchSwipe'],
       plugins: ['Notify'],
     },
 
