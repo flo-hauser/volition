@@ -915,6 +915,12 @@ body.body--dark .week-strip-days .col.today {
 .tasks-row--ghost {
   opacity: 0.4;
 }
+.tasks-row--archived {
+  opacity: 0.56;
+}
+.tasks-row--archived .body .title {
+  text-decoration: line-through;
+}
 .tasks-row__body {
   display: flex;
   align-items: center;
@@ -994,6 +1000,27 @@ body.body--dark .tasks-row .freq {
   flex: 0 0 auto;
   width: 18px;
   height: 18px;
+}
+.tasks-archived {
+  padding: 0 16px 8px;
+}
+.tasks-archived__label {
+  padding: 4px 0 10px;
+  color: var(--text-3);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.tasks-list--archived {
+  padding: 0 0 8px;
+}
+.page-eyebrow-btn {
+  border: 0;
+  background: transparent;
+  padding: 0;
+  text-align: left;
+  cursor: pointer;
 }
 
 /* Buttons */

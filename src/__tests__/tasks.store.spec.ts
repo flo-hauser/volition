@@ -198,6 +198,41 @@ describe('useTasksStore', () => {
     expect(store.activeTasks.map((t) => t.id)).toEqual([c.id, a.id, b.id]);
   });
 
+  it('archiveTask sets archivedAt, removes id from taskOrder, and hides task from activeTasks', async () => {
+    const adapter = createMockAdapter();
+    const store = useTasksStore();
+    await store.init(adapter);
+
+    const a = await store.createTask({ title: 'Alpha', targetPerWeek: 3 });
+    const b = await store.createTask({ title: 'Beta', targetPerWeek: 2 });
+
+    await store.archiveTask(a.id);
+
+    expect(store.tasks[a.id]?.archivedAt).toMatch(
+      /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z$/,
+    );
+    expect(store.taskOrder).toEqual([b.id]);
+    expect(store.activeTasks.map((t) => t.id)).toEqual([b.id]);
+    expect(store.archivedTasks.map((t) => t.id)).toEqual([a.id]);
+  });
+
+  it('unarchiveTask clears archivedAt and appends id back to taskOrder', async () => {
+    const adapter = createMockAdapter();
+    const store = useTasksStore();
+    await store.init(adapter);
+
+    const a = await store.createTask({ title: 'Alpha', targetPerWeek: 3 });
+    const b = await store.createTask({ title: 'Beta', targetPerWeek: 2 });
+
+    await store.archiveTask(a.id);
+    await store.unarchiveTask(a.id);
+
+    expect(store.tasks[a.id]?.archivedAt).toBeUndefined();
+    expect(store.activeTasks.map((t) => t.id)).toEqual([b.id, a.id]);
+    expect(store.taskOrder).toEqual([b.id, a.id]);
+    expect(store.archivedTasks).toHaveLength(0);
+  });
+
   it('supports CRUD when primary adapter fails and fallback is available', async () => {
     const primary: StorageAdapter = {
       debugLabel: 'IndexedDB',

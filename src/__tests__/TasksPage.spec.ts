@@ -14,8 +14,11 @@ const mockRoute = { query: {} as Record<string, string | undefined> };
 
 let mockStore: {
   activeTasks: TestTask[];
+  archivedTasks: TestTask[];
   getStreak: ReturnType<typeof vi.fn>;
   createTask: ReturnType<typeof vi.fn>;
+  archiveTask: ReturnType<typeof vi.fn>;
+  unarchiveTask: ReturnType<typeof vi.fn>;
 };
 
 vi.mock('quasar', () => ({
@@ -47,8 +50,17 @@ function mountPage() {
   return shallowMount(TasksPage, {
     global: {
       renderStubDefaultSlot: true,
+      directives: {
+        closePopup: {},
+      },
       stubs: {
         'q-page': true,
+        'q-icon': true,
+        'q-menu': true,
+        'q-list': true,
+        'q-item': true,
+        'q-item-section': true,
+        'q-slide-transition': true,
         TaskSheet: {
           template: '<div />',
           props: ['modelValue', 'mode', 'submitting'],
@@ -74,8 +86,11 @@ describe('TasksPage', () => {
 
     mockStore = {
       activeTasks: [task],
+      archivedTasks: [],
       getStreak: vi.fn().mockReturnValue(0),
       createTask: vi.fn().mockResolvedValue(undefined),
+      archiveTask: vi.fn().mockResolvedValue(undefined),
+      unarchiveTask: vi.fn().mockResolvedValue(undefined),
     };
   });
 
@@ -130,5 +145,22 @@ describe('TasksPage', () => {
     expect(mockNotify).toHaveBeenCalledWith(
       expect.objectContaining({ type: 'negative', message: 'pages.newTask.createFailed' }),
     );
+  });
+
+  it('archives a task via store action', async () => {
+    const wrapper = mountPage();
+
+    await (wrapper.vm as unknown as { archive: (id: string) => Promise<void> }).archive('task-1');
+
+    expect(mockStore.archiveTask).toHaveBeenCalledWith('task-1');
+  });
+
+  it('unarchives a task via store action', async () => {
+    mockStore.archivedTasks = [{ id: 'task-2', title: 'Archived', targetPerWeek: 2 }];
+    const wrapper = mountPage();
+
+    await (wrapper.vm as unknown as { unarchive: (id: string) => Promise<void> }).unarchive('task-2');
+
+    expect(mockStore.unarchiveTask).toHaveBeenCalledWith('task-2');
   });
 });

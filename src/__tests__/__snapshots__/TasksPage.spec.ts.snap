@@ -22,11 +22,21 @@ exports[`TasksPage > renders stable markup 1`] = `
           <div class="hint">pages.tasks.hintDaysOfSeven
             <!--v-if-->
           </div>
-        </div><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <polyline points="9 18 15 12 9 6"></polyline>
-        </svg>
-      </button></div>
-  </div><button type="button" class="add-cta"> + pages.tasks.newTask</button>
+        </div>
+        <q-icon-stub class="chev" name="chevron_right" aria-hidden="true"></q-icon-stub>
+      </button>
+      <q-menu-stub context-menu="" touch-position="">
+        <q-list-stub dense="">
+          <q-item-stub clickable="">
+            <q-item-section-stub>pages.tasks.archiveTask</q-item-section-stub>
+          </q-item-stub>
+        </q-list-stub>
+      </q-menu-stub>
+    </div>
+  </div>
+  <q-slide-transition-stub>
+    <!--v-if-->
+  </q-slide-transition-stub><button type="button" class="add-cta"> + pages.tasks.newTask</button>
   <div></div>
 </q-page-stub>"
 `;

@@ -2,21 +2,27 @@
   <q-page v-if="task" class="page page-enter">
     <div class="detail-nav">
       <button type="button" class="icon-btn" :aria-label="t('common.back')" @click="goBack">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-          <polyline points="15 18 9 12 15 6" />
-        </svg>
+        <q-icon name="arrow_back" />
       </button>
       <div style="display:flex;gap:6px">
-        <button type="button" class="icon-btn" :aria-label="t('pages.tasks.editTask')" @click="openEdit">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 1 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
-          </svg>
+        <button
+          type="button"
+          class="icon-btn"
+          :aria-label="task.archivedAt ? t('pages.tasks.unarchiveTask') : t('pages.tasks.archiveTask')"
+          @click="task.archivedAt ? handleUnarchive() : handleArchive()"
+        >
+          <q-icon :name="task.archivedAt ? 'unarchive' : 'archive'" />
+        </button>
+        <button
+          type="button"
+          class="icon-btn"
+          :aria-label="t('pages.tasks.editTask')"
+          @click="openEdit"
+        >
+          <q-icon name="edit" />
         </button>
         <button type="button" class="icon-btn" :aria-label="t('pages.tasks.deleteTask')" @click="confirmDelete">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
-            <path d="M10 11v6"/><path d="M14 11v6"/>
-          </svg>
+          <q-icon name="delete" />
         </button>
       </div>
     </div>
@@ -211,6 +217,27 @@ async function submitDelete(): Promise<void> {
   } finally {
     deleteBusy.value = false;
     isDeleteOpen.value = false;
+  }
+}
+
+async function handleUnarchive(): Promise<void> {
+  try {
+    await store.unarchiveTask(taskId.value);
+    $q.notify({ type: 'positive', position: 'top', message: t('pages.toast.taskUnarchived') });
+  } catch (error) {
+    appendDebugLog('tasks.unarchiveTask', error);
+    $q.notify({ type: 'negative', position: 'top', message: t('pages.toast.taskUnarchiveFailed') });
+  }
+}
+
+async function handleArchive(): Promise<void> {
+  try {
+    await store.archiveTask(taskId.value);
+    $q.notify({ type: 'positive', position: 'top', message: t('pages.toast.taskArchived') });
+    void router.replace('/tasks');
+  } catch (error) {
+    appendDebugLog('tasks.archiveTask', error);
+    $q.notify({ type: 'negative', position: 'top', message: t('pages.toast.taskArchiveFailed') });
   }
 }
 </script>

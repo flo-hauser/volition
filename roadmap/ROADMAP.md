@@ -10,9 +10,9 @@ Legend: **[plan]** = implementation plan written, ready to build
 
 **1. Reorder** ✅ — bumps `SCHEMA_VERSION` 1→2 and introduces `taskOrder: string[]` into `StorageState`. Do this first so everything downstream builds on the stable schema.
 
-**2. Archiving** — no schema change, but `archiveTask` / `unarchiveTask` need to also remove/re-append IDs in `taskOrder`. Must be written with reorder already in place, otherwise the store methods need patching afterwards.
+**2. Archiving** ✅ — no schema change. `archiveTask` / `unarchiveTask` now also remove/re-append IDs in `taskOrder`, so active ordering stays clean.
 
-**3. Data export** — serialises the full `StorageState`. Should land after the schema is finalised so the export format doesn't need a revision. The existing plan needs a small update to include `taskOrder` in the envelope.
+**3. Data export** ✅ — serialises the full `StorageState`. Should land after the schema is finalised so the export format doesn't need a revision. The existing plan needs a small update to include `taskOrder` in the envelope.
 
 **4–6. Haptics + swipe, Week start preference, Onboarding** — fully independent of storage and of each other. Ship in any order.
 
@@ -20,8 +20,8 @@ Legend: **[plan]** = implementation plan written, ready to build
 
 ## Quick wins
 
-**Task archiving UI** **[plan](task-archiving.md)**  
-The `archivedAt` field exists on `Task` and the type is ready. Just needs a swipe action or menu option on `TasksPage` to archive/unarchive, and a toggle to show archived tasks.
+**Task archiving UI** ✅ ~~**[plan](task-archiving.md)**~~  
+Tasks can now be archived from the long-press menu on `TasksPage` or directly from `TaskDetailPage`. Archived tasks are shown on demand via the eyebrow toggle and can be restored without losing history.
 
 **Reorder tasks** ✅ ~~**[plan](task-reorder.md)**~~  
 Drag-and-drop ordering on `TasksPage`. Store order in `StorageState`. Today and Week views follow the same order.
@@ -42,7 +42,7 @@ On `TodayPage`, swipe right on a task row to toggle it done — faster than tapp
 **Reminder notifications**  
 Daily push notification at a user-chosen time: "You have X tasks left for today." Capacitor Local Notifications plugin, configured in Settings. Opt-in, no server needed.
 
-**Data export** **[plan](data-export-import.md)**  
+**Data export** ✅ **[plan](data-export-import.md)**  
 Export all tasks and check-ins as JSON or CSV from Settings. Lets users back up or migrate their data. Import counterpart optional.
 
 **Notes on check-in**  
@@ -77,7 +77,6 @@ Let users protect a streak on one missed day per week. Declared explicitly in th
 
 ## Polish & debt
 
-- Remove hardcoded `archived: 0` eyebrow in `TasksPage` — wire to real archived count once archiving UI exists
 - Clean up the three unknown npm config keys (`shamefully-hoist`, `strict-peer-dependencies`, `resolution-mode`) in `package.json`
 - Consider replacing `ghost-btn` / `icon-btn` with a single shared component to reduce CSS duplication
 - Add `lang="de"` / `lang="en"` to the `<html>` element based on active locale (accessibility + SEO)

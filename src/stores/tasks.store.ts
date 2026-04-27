@@ -63,6 +63,12 @@ export const useTasksStore = defineStore('tasks', () => {
     });
   });
 
+  const archivedTasks = computed(() =>
+    Object.values(tasks.value)
+      .filter((task) => !!task.archivedAt)
+      .sort((a, b) => (b.archivedAt ?? '').localeCompare(a.archivedAt ?? '')),
+  );
+
   function syncActiveStorageBackend(): void {
     activeStorageBackend.value = getStorageDebugLabel(storageAdapter);
   }
@@ -256,6 +262,43 @@ export const useTasksStore = defineStore('tasks', () => {
     });
   }
 
+  async function archiveTask(taskId: string): Promise<void> {
+    const existingTask = tasks.value[taskId];
+
+    if (!existingTask) {
+      throw new Error(`Task not found: ${taskId}`);
+    }
+
+    await persistOrRollback(() => {
+      tasks.value = {
+        ...tasks.value,
+        [taskId]: {
+          ...existingTask,
+          archivedAt: new Date().toISOString(),
+        },
+      };
+      taskOrder.value = taskOrder.value.filter((id) => id !== taskId);
+    });
+  }
+
+  async function unarchiveTask(taskId: string): Promise<void> {
+    const existingTask = tasks.value[taskId];
+
+    if (!existingTask) {
+      throw new Error(`Task not found: ${taskId}`);
+    }
+
+    await persistOrRollback(() => {
+      const nextTask = { ...existingTask };
+      delete nextTask.archivedAt;
+      tasks.value = {
+        ...tasks.value,
+        [taskId]: nextTask,
+      };
+      taskOrder.value = [...taskOrder.value.filter((id) => id !== taskId), taskId];
+    });
+  }
+
   async function toggleForDay(taskId: string, dayISO: string): Promise<void> {
     if (!tasks.value[taskId]) {
       throw new Error(`Task not found: ${taskId}`);
@@ -316,6 +359,7 @@ export const useTasksStore = defineStore('tasks', () => {
     taskOrder,
     isReady,
     activeTasks,
+    archivedTasks,
     activeStorageBackend,
     isDone,
     weekProgress,
@@ -326,6 +370,8 @@ export const useTasksStore = defineStore('tasks', () => {
     updateTask,
     deleteTask,
     reorderTasks,
+    archiveTask,
+    unarchiveTask,
     toggleForDay,
     toggleToday,
     exportState,

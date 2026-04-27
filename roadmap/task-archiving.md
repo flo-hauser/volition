@@ -1,13 +1,13 @@
-# Task Archiving UI — Implementation Plan
+# Task Archiving UI — Implemented
 
 **Roadmap section:** Quick wins  
-**Estimated effort:** ~3–4 hours
+**Status:** Shipped
 
 ---
 
 ## Goal
 
-Give users a way to archive tasks they no longer want active, without deleting history. Show archived tasks on demand via a toggle. Wire the currently hardcoded `archived: 0` eyebrow count to the real value.
+Give users a way to archive tasks they no longer want active, without deleting history. Show archived tasks on demand via a toggle and keep archived counts/order accurate.
 
 ---
 
@@ -34,191 +34,49 @@ Without this, the task silently lingers in `taskOrder` as a stale entry. The sto
 
 ---
 
-## Step 1 — Add `archiveTask` / `unarchiveTask` to the store
+## Implemented
+
+### Store
 
 **File:** [src/stores/tasks.store.ts](../src/stores/tasks.store.ts)
 
-Add two functions using the existing `persistOrRollback` wrapper:
+- Added `archiveTask`, `unarchiveTask`, and `archivedTasks` in [src/stores/tasks.store.ts](../src/stores/tasks.store.ts)
+- Archiving removes the task ID from `taskOrder`
+- Unarchiving appends the task ID back to the end of `taskOrder`
+- Added store tests in [src/__tests__/tasks.store.spec.ts](../src/__tests__/tasks.store.spec.ts)
 
-```ts
-async function archiveTask(id: string): Promise<void> {
-  await persistOrRollback(() => {
-    const task = tasks.value[id];
-    if (!task) throw new Error(`Task ${id} not found`);
-    tasks.value[id] = { ...task, archivedAt: new Date().toISOString() };
-  });
-}
-
-async function unarchiveTask(id: string): Promise<void> {
-  await persistOrRollback(() => {
-    const task = tasks.value[id];
-    if (!task) throw new Error(`Task ${id} not found`);
-    const { archivedAt: _, ...rest } = task;
-    tasks.value[id] = rest as Task;
-  });
-}
-```
-
-Add a `archivedTasks` computed alongside `activeTasks`:
-
-```ts
-const archivedTasks = computed(() =>
-  Object.values(tasks.value).filter((task) => !!task.archivedAt)
-);
-```
-
-Export both functions and `archivedTasks` from the store's `return` object.
-
-**Tests:** [tasks.store.spec.ts](../src/__tests__/tasks.store.spec.ts)
-
-Add two test cases:
-
-- `archiveTask` sets `archivedAt` to an ISO string and the task disappears from `activeTasks`
-- `unarchiveTask` removes `archivedAt` and the task reappears in `activeTasks`
-
----
-
-## Step 2 — Archive action on the task row
+### Tasks list UI
 
 **File:** [src/pages/TasksPage.vue](../src/pages/TasksPage.vue)
 
-### Option A (recommended): long-press context menu
+- Kept the long-press / right-click `q-menu` pattern on task rows
+- Added a real archived count in the eyebrow
+- Added a toggle to reveal archived tasks below the active list
+- Archived rows use the same long-press menu for restore
 
-Use Quasar's `q-menu` with `touch-position` and `context-menu` to show an action on long-press / right-click. This keeps the row tap for navigation and requires no new dependency.
+### Detail page UI
 
-```html
-<!-- inside the task row button -->
-<q-menu touch-position context-menu>
-  <q-list dense>
-    <q-item clickable v-close-popup @click="archive(task.id)">
-      <q-item-section>{{ t('tasks.archive') }}</q-item-section>
-    </q-item>
-  </q-list>
-</q-menu>
-```
+- Added an archive action for active tasks in [src/pages/TaskDetailPage.vue](../src/pages/TaskDetailPage.vue)
+- Added an unarchive action for archived tasks in the same header action area
+- Archiving from detail returns to the tasks list
 
-`archive(id)` calls `store.archiveTask(id)`. No confirmation dialog needed — archiving is reversible.
+### Styling and copy
 
-### Option B: `QSlideItem` (Quasar built-in, better mobile UX)
-
-Quasar ships `QSlideItem` — a component specifically for swipe-to-reveal actions (left/right), exactly like iOS Mail. Replace the `<div class="tasks-row">` wrapper with `<q-slide-item>` and put the archive action in its `#right` slot. No external library, no manual touch math.
-
-```html
-<q-slide-item
-  v-for="task in tasks"
-  :key="task.id"
-  right-color="warning"
-  @right="archive(task.id)"
->
-  <template #right>
-    <q-icon name="archive" />
-  </template>
-
-  <!-- existing row content in default slot -->
-</q-slide-item>
-```
-
-This is the better mobile interaction and less code than raw touch events. The trade-off: the row markup changes, so CSS may need adjusting. Consider doing Option A first (it's one afternoon) and upgrading to B when polishing mobile UX.
-
-**Recommendation:** Ship Option A now (it's the quickest path and Quasar already provides it). Add Option B as a follow-up.
-
----
-
-## Step 3 — Toggle to show archived tasks
-
-**File:** [src/pages/TasksPage.vue](../src/pages/TasksPage.vue)
-
-Add a local reactive boolean `showArchived` (default `false`). When `true`, render the archived list below the active list with a visual separator.
-
-```ts
-const showArchived = ref(false);
-const archivedTasks = computed(() => store.archivedTasks);
-```
-
-In the template, replace the hardcoded eyebrow with:
-
-```html
-<button class="ghost-btn eyebrow" @click="showArchived = !showArchived">
-  archived: {{ archivedTasks.length }}
-</button>
-```
-
-Below the active task list:
-
-```html
-<q-slide-transition>
-  <div v-if="showArchived && archivedTasks.length" class="archived-section">
-    <div
-      v-for="task in archivedTasks"
-      :key="task.id"
-      class="tasks-row tasks-row--archived"
-      @click="goToDetail(task.id)"
-    >
-      <!-- same body markup as active rows -->
-      <q-menu touch-position context-menu>
-        <q-list dense>
-          <q-item clickable v-close-popup @click="store.unarchiveTask(task.id)">
-            <q-item-section>{{ t('tasks.unarchive') }}</q-item-section>
-          </q-item>
-        </q-list>
-      </q-menu>
-    </div>
-  </div>
-</q-slide-transition>
-```
-
-Hide the eyebrow button entirely when `archivedTasks.length === 0` (existing roadmap note).
-
----
-
-## Step 4 — CSS for archived rows
-
-**File:** [src/css/app.scss](../src/css/app.scss)
-
-Add after the existing `.tasks-row` block (~line 960):
-
-```scss
-.tasks-row--archived {
-  opacity: 0.5;
-
-  .body .title {
-    text-decoration: line-through;
-  }
-}
-```
-
----
-
-## Step 5 — i18n strings
-
-**Files:** `src/i18n/en.json`, `src/i18n/de.json`
-
-Add under a `tasks` namespace (or wherever existing task strings live):
-
-```json
-"tasks": {
-  "archive": "Archive",
-  "unarchive": "Unarchive"
-}
-```
-
----
-
-## Step 6 — TaskDetailPage unarchive shortcut (optional but natural)
-
-If a user navigates into an archived task, show an "Unarchive" button in the detail page header/actions area. This gives a second entry point and is a one-liner that calls `store.unarchiveTask(taskId)`.
+- Added archived row styling in [src/css/app.scss](../src/css/app.scss)
+- Added archive/unarchive strings and toasts in the locale files
+- Replaced hardcoded `archived: 0` behavior with live data
 
 ---
 
 ## Acceptance criteria
 
-- [ ] Tapping "Archive" on a task removes it from the active list immediately (optimistic UI via `persistOrRollback`)
-- [ ] `archived: N` eyebrow reflects the real count; clicking toggles the archived section
-- [ ] Archived tasks are visually distinct (strikethrough + opacity)
-- [ ] Long-pressing an archived task shows "Unarchive"; it moves back to the active list
-- [ ] No data is lost — check-in history is fully preserved for archived tasks
-- [ ] Store tests cover both `archiveTask` and `unarchiveTask`
-- [ ] Hardcoded `archived: 0` is gone
+- [x] Tapping "Archive" on a task removes it from the active list immediately (optimistic UI via `persistOrRollback`)
+- [x] `archived: N` eyebrow reflects the real count; clicking toggles the archived section
+- [x] Archived tasks are visually distinct (strikethrough + opacity)
+- [x] Long-pressing an archived task shows "Unarchive"; it moves back to the active list
+- [x] No data is lost — check-in history is fully preserved for archived tasks
+- [x] Store tests cover both `archiveTask` and `unarchiveTask`
+- [x] Hardcoded `archived: 0` is gone
 
 ---
 
@@ -229,7 +87,7 @@ If a user navigates into an archived task, show an "Unarchive" button in the det
 | [src/stores/tasks.store.ts](../src/stores/tasks.store.ts) | Add `archiveTask`, `unarchiveTask`, `archivedTasks` |
 | [src/pages/TasksPage.vue](../src/pages/TasksPage.vue) | Context menus, toggle, eyebrow fix |
 | [src/css/app.scss](../src/css/app.scss) | `.tasks-row--archived` style |
-| [src/i18n/en.json](../src/i18n/en.json) | `tasks.archive` / `tasks.unarchive` |
-| [src/i18n/de.json](../src/i18n/de.json) | Same in German |
+| [src/i18n/en-US/index.ts](../src/i18n/en-US/index.ts) | Archive / unarchive labels and toasts |
+| [src/i18n/de-DE/index.ts](../src/i18n/de-DE/index.ts) | Same in German |
 | [tasks.store.spec.ts](../src/__tests__/tasks.store.spec.ts) | 2 new test cases |
-| [src/pages/TaskDetailPage.vue](../src/pages/TaskDetailPage.vue) | Optional: unarchive button |
+| [src/pages/TaskDetailPage.vue](../src/pages/TaskDetailPage.vue) | Archive and unarchive actions in the header |
