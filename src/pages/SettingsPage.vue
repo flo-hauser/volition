@@ -145,7 +145,7 @@
 
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
-import { Dark } from 'quasar';
+import { Dark, useQuasar } from 'quasar';
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
 
@@ -158,6 +158,7 @@ import {
 import {
   getRuntimeDiagnostics,
   readDebugLogs,
+  appendDebugLog,
   type DebugLogEntry,
 } from 'src/services/debug/runtimeDiagnostics';
 import { triggerDownload, parseImport } from 'src/services/dataTransfer';
@@ -165,6 +166,7 @@ import type { StorageState } from 'src/types/storage';
 import { useTasksStore } from 'src/stores/tasks.store';
 
 const { t, locale } = useI18n({ useScope: 'global' });
+const $q = useQuasar();
 const router = useRouter();
 const debugLogs = ref<DebugLogEntry[]>([]);
 const showDebug = ref(false);
@@ -227,10 +229,24 @@ function reloadDebugData(): void {
   debugLogs.value = readDebugLogs();
 }
 
-function handleExport(): void {
+async function handleExport(): Promise<void> {
   const json = store.exportState();
   const date = new Date().toISOString().slice(0, 10);
-  triggerDownload(json, `volition-backup-${date}.json`);
+  try {
+    await triggerDownload(json, `volition-backup-${date}.json`);
+    $q.notify({
+      type: 'positive',
+      position: 'top',
+      message: t('pages.settings.backup.exportSuccess'),
+    });
+  } catch (error) {
+    appendDebugLog('backup.export', error);
+    $q.notify({
+      type: 'negative',
+      position: 'top',
+      message: t('pages.settings.backup.exportFailed'),
+    });
+  }
 }
 
 async function handleImport(event: Event): Promise<void> {

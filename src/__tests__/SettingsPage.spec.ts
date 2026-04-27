@@ -11,6 +11,7 @@ const {
   getRuntimeDiagnostics,
   darkSet,
   Dark,
+  mockNotify,
   mockBack,
   mockPush,
   mockStore,
@@ -32,12 +33,14 @@ const {
     mode: 'auto' as boolean | 'auto',
     set: vi.fn(),
   },
+  mockNotify: vi.fn(),
   mockBack: vi.fn(),
   mockPush: vi.fn(),
   mockStore: {
     activeStorageBackend: 'IndexedDB',
     activeTasks: [],
     checkinsByDay: {},
+    exportState: vi.fn().mockReturnValue('{}'),
   },
 }));
 
@@ -52,6 +55,7 @@ vi.mock('vue-i18n', () => ({
 
 vi.mock('quasar', () => ({
   Dark,
+  useQuasar: () => ({ notify: mockNotify }),
 }));
 
 vi.mock('vue-router', () => ({
@@ -66,6 +70,7 @@ vi.mock('src/composables/useAppPreferences', () => ({
 vi.mock('src/services/debug/runtimeDiagnostics', () => ({
   readDebugLogs,
   getRuntimeDiagnostics,
+  appendDebugLog: vi.fn(),
 }));
 
 vi.mock('src/stores/tasks.store', () => ({
@@ -97,9 +102,12 @@ describe('SettingsPage', () => {
     getRuntimeDiagnostics.mockReset();
     mockBack.mockReset();
     mockPush.mockReset();
+    mockNotify.mockReset();
     mockStore.activeStorageBackend = 'IndexedDB';
     mockStore.activeTasks = [];
     mockStore.checkinsByDay = {};
+    mockStore.exportState.mockReset();
+    mockStore.exportState.mockReturnValue('{}');
     readDebugLogs.mockReturnValue([]);
     getRuntimeDiagnostics.mockReturnValue({
       isSecureContext: false,

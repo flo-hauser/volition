@@ -89,6 +89,8 @@ export default {
         exportLabel: 'Export data',
         exportHint: 'Download all tasks and check-ins as JSON.',
         exportBtn: 'Export',
+        exportSuccess: 'Backup exported.',
+        exportFailed: 'Backup could not be exported.',
         importLabel: 'Import data',
         importHint: 'Restore from a previously exported file. This replaces all current data.',
         importBtn: 'Choose file',

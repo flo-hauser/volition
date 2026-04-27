@@ -3,6 +3,35 @@ import { exportToJSON, parseImport, triggerDownload } from 'src/services/dataTra
 import type { StorageState } from 'src/types/storage';
 import { SCHEMA_VERSION } from 'src/types/storage';
 
+const {
+  mockWriteFile,
+  mockCanShare,
+  mockShare,
+} = vi.hoisted(() => ({
+  mockWriteFile: vi.fn(),
+  mockCanShare: vi.fn(),
+  mockShare: vi.fn(),
+}));
+
+vi.mock('@capacitor/filesystem', () => ({
+  Filesystem: {
+    writeFile: mockWriteFile,
+  },
+  Directory: {
+    Cache: 'CACHE',
+  },
+  Encoding: {
+    UTF8: 'utf8',
+  },
+}));
+
+vi.mock('@capacitor/share', () => ({
+  Share: {
+    canShare: mockCanShare,
+    share: mockShare,
+  },
+}));
+
 describe('dataTransfer', () => {
   const mockState: StorageState = {
     meta: {
@@ -177,9 +206,13 @@ describe('dataTransfer', () => {
   describe('triggerDownload', () => {
     beforeEach(() => {
       vi.clearAllMocks();
+      mockWriteFile.mockResolvedValue({ uri: 'file:///tmp/test.json' });
+      mockCanShare.mockResolvedValue({ value: true });
+      mockShare.mockResolvedValue(undefined);
+      delete (window as Window & { Capacitor?: unknown }).Capacitor;
     });
 
-    it('creates blob and triggers download', () => {
+    it('creates blob and triggers download on web', async () => {
       const mockClick = vi.fn();
       const originalCreateElement = document.createElement.bind(document);
 
@@ -194,9 +227,32 @@ describe('dataTransfer', () => {
       const json = '{}';
       const filename = 'test.json';
 
-      triggerDownload(json, filename);
+      await triggerDownload(json, filename);
 
       expect(mockClick).toHaveBeenCalled();
+    });
+
+    it('writes and shares a file on native platforms', async () => {
+      (window as Window & {
+        Capacitor?: { isNativePlatform: () => boolean };
+      }).Capacitor = {
+        isNativePlatform: () => true,
+      };
+
+      await triggerDownload('{}', 'test.json');
+
+      expect(mockWriteFile).toHaveBeenCalledWith({
+        path: 'test.json',
+        data: '{}',
+        directory: 'CACHE',
+        encoding: 'utf8',
+      });
+      expect(mockCanShare).toHaveBeenCalled();
+      expect(mockShare).toHaveBeenCalledWith({
+        title: 'test.json',
+        dialogTitle: 'test.json',
+        url: 'file:///tmp/test.json',
+      });
     });
   });
 });

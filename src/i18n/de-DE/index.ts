@@ -89,6 +89,8 @@ export default {
         exportLabel: 'Daten exportieren',
         exportHint: 'Alle Aufgaben und Check-ins als JSON herunterladen.',
         exportBtn: 'Exportieren',
+        exportSuccess: 'Sicherung exportiert.',
+        exportFailed: 'Sicherung konnte nicht exportiert werden.',
         importLabel: 'Daten importieren',
         importHint: 'Aus einer zuvor exportierten Datei wiederherstellen. Ersetzt alle aktuellen Daten.',
         importBtn: 'Datei auswählen',

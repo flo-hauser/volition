@@ -1,3 +1,5 @@
+import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
+import { Share } from '@capacitor/share';
 import { SCHEMA_VERSION, type StorageState } from 'src/types/storage';
 import type { Task, Checkin } from 'src/types/task';
 
@@ -26,7 +28,51 @@ export function exportToJSON(state: StorageState): string {
   return JSON.stringify(envelope, null, 2);
 }
 
-export function triggerDownload(json: string, filename: string): void {
+function isNativePlatform(): boolean {
+  const maybeCapacitor = (window as Window & {
+    Capacitor?: {
+      isNativePlatform?: () => boolean;
+      getPlatform?: () => string;
+    };
+  }).Capacitor;
+
+  if (typeof maybeCapacitor?.isNativePlatform === 'function') {
+    return maybeCapacitor.isNativePlatform();
+  }
+
+  if (typeof maybeCapacitor?.getPlatform === 'function') {
+    return maybeCapacitor.getPlatform() !== 'web';
+  }
+
+  return false;
+}
+
+async function triggerNativeExport(json: string, filename: string): Promise<void> {
+  const { uri } = await Filesystem.writeFile({
+    path: filename,
+    data: json,
+    directory: Directory.Cache,
+    encoding: Encoding.UTF8,
+  });
+
+  const { value: canShare } = await Share.canShare();
+  if (!canShare) {
+    throw new Error('native_share_unavailable');
+  }
+
+  await Share.share({
+    title: filename,
+    dialogTitle: filename,
+    url: uri,
+  });
+}
+
+export async function triggerDownload(json: string, filename: string): Promise<void> {
+  if (isNativePlatform()) {
+    await triggerNativeExport(json, filename);
+    return;
+  }
+
   const blob = new Blob([json], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
