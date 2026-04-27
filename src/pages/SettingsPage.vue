@@ -50,6 +50,14 @@
       <p class="settings-hint">{{ t('pages.settings.themeHint') }}</p>
     </section>
 
+    <section class="settings-section">
+      <h2 class="section-title">{{ t('legal.sectionTitle') }}</h2>
+      <div class="legal-links">
+        <button type="button" class="legal-link" @click="router.push('/imprint')">{{ t('legal.imprintLink') }}</button>
+        <button type="button" class="legal-link" @click="router.push('/privacy')">{{ t('legal.privacyLink') }}</button>
+      </div>
+    </section>
+
     <section class="settings-section debug-toggle-section">
       <button type="button" class="debug-toggle-btn" @click="showDebug = !showDebug">
         Debug {{ showDebug ? '▴' : '▾' }}
@@ -268,5 +276,23 @@ onMounted(() => {
 }
 .debug-toggle-btn:hover {
   color: var(--text-2);
+}
+.legal-links {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.legal-link {
+  background: none;
+  border: none;
+  padding: 6px 0;
+  font-size: 14px;
+  color: var(--accent-deep);
+  font-family: var(--font-body);
+  cursor: pointer;
+  text-align: left;
+}
+:global(body.body--dark) .legal-link {
+  color: var(--accent);
 }
 </style>

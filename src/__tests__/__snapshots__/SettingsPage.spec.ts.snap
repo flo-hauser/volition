@@ -16,6 +16,10 @@ exports[`SettingsPage > renders stable markup 1`] = `
     <div data-v-4ff3282c="" class="seg"><button data-v-4ff3282c="" type="button" class="seg-btn sel" aria-pressed="true">pages.settings.themeSystem</button><button data-v-4ff3282c="" type="button" class="seg-btn" aria-pressed="false">pages.settings.themeLight</button><button data-v-4ff3282c="" type="button" class="seg-btn" aria-pressed="false">pages.settings.themeDark</button></div>
     <p data-v-4ff3282c="" class="settings-hint">pages.settings.themeHint</p>
   </section>
+  <section data-v-4ff3282c="" class="settings-section">
+    <h2 data-v-4ff3282c="" class="section-title">legal.sectionTitle</h2>
+    <div data-v-4ff3282c="" class="legal-links"><button data-v-4ff3282c="" type="button" class="legal-link">legal.imprintLink</button><button data-v-4ff3282c="" type="button" class="legal-link">legal.privacyLink</button></div>
+  </section>
   <section data-v-4ff3282c="" class="settings-section debug-toggle-section"><button data-v-4ff3282c="" type="button" class="debug-toggle-btn"> Debug ▾</button></section>
   <!--v-if-->
 </div>"
