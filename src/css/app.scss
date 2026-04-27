@@ -260,6 +260,9 @@ body.body--dark .brand-mark::after {
 .page-head {
   padding: 16px 24px 20px;
 }
+.page-head--overlay {
+  padding-top: calc(8px + env(safe-area-inset-top));
+}
 .page-eyebrow {
   font-family: var(--font-mono);
   font-size: 10px;
@@ -1234,19 +1237,21 @@ body.body--dark .detail-check-row {
    Tab bar
    ============================================================ */
 .tabbar {
+  --tab-count: 3;
   padding: 8px 12px calc(8px + env(safe-area-inset-bottom));
   background: color-mix(in oklab, var(--bg) 88%, transparent);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border-top: 1px solid var(--hairline);
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(var(--tab-count), minmax(0, 1fr));
   gap: 4px;
 }
 .tab {
   display: flex;
   flex-direction: column;
   align-items: center;
+  min-width: 0;
   gap: 3px;
   padding: 8px 4px;
   border-radius: var(--r-sm);
@@ -1260,6 +1265,9 @@ body.body--dark .detail-check-row {
   cursor: pointer;
   transition: color 200ms var(--ease);
   text-decoration: none;
+}
+.tab span {
+  white-space: nowrap;
 }
 .tab .q-icon,
 .tab svg {

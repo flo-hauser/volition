@@ -95,16 +95,17 @@ describe('MainLayout', () => {
     expect(wrapper.html()).toContain('app.name');
   });
 
-  it('renders a 3-tab bottom bar', async () => {
+  it('renders a 4-tab bottom bar', async () => {
     const wrapper = mountLayout();
     await flushPromises();
     const html = wrapper.html();
 
     const tabMatches = html.match(/class="tab(?: active)?"/g) ?? [];
-    expect(tabMatches).toHaveLength(3);
+    expect(tabMatches).toHaveLength(4);
     expect(html).toContain('nav.today');
     expect(html).toContain('nav.week');
     expect(html).toContain('nav.tasks');
+    expect(html).toContain('nav.settings');
   });
 
   it('shows offline banner when browser is offline', async () => {

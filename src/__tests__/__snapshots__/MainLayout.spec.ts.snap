@@ -1,15 +1,14 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`MainLayout > renders stable markup 1`] = `
-"<q-layout-stub data-v-22686b16="" view="hHh lpR fFf">
-  <q-header-stub data-v-22686b16="" class="vol-header" reveal="" reveal-offset="1">
+"<q-layout-stub data-v-22686b16="" class="" view="hHh lpR fFf">
+  <!--v-if-->
+  <q-header-stub data-v-22686b16="" class="vol-header">
     <div data-v-22686b16="" class="app-header">
       <div data-v-22686b16="" class="brand">
         <div data-v-22686b16="" class="brand-mark" aria-hidden="true">V</div>
         <div data-v-22686b16="" class="brand-name">app.name</div>
-      </div><button data-v-22686b16="" class="icon-btn" type="button" aria-label="nav.settings">
-        <q-icon-stub data-v-22686b16="" name="settings"></q-icon-stub>
-      </button>
+      </div>
     </div>
     <!--v-if-->
     <!--v-if-->
@@ -25,12 +24,14 @@ exports[`MainLayout > renders stable markup 1`] = `
     <div data-v-22686b16="" class="legal-footer"><a data-v-22686b16="" class="legal-footer-link">legal.imprintLink</a><span data-v-22686b16="" class="legal-footer-sep">·</span><a data-v-22686b16="" class="legal-footer-link">legal.privacyLink</a></div>
   </q-page-container-stub>
   <q-footer-stub data-v-22686b16="" class="vol-footer">
-    <nav data-v-22686b16="" class="tabbar" aria-label="Primary"><a data-v-22686b16=""><a data-v-22686b16="" href="/" class="tab active" aria-current="page">
+    <nav data-v-22686b16="" class="tabbar" style="--tab-count: 4;" aria-label="Primary"><a data-v-22686b16=""><a data-v-22686b16="" href="/" class="tab active" aria-current="page">
           <q-icon-stub data-v-22686b16="" name="today"></q-icon-stub><span data-v-22686b16="">nav.today</span>
         </a></a><a data-v-22686b16=""><a data-v-22686b16="" href="/week" class="tab">
           <q-icon-stub data-v-22686b16="" name="calendar_view_week"></q-icon-stub><span data-v-22686b16="">nav.week</span>
         </a></a><a data-v-22686b16=""><a data-v-22686b16="" href="/tasks" class="tab">
           <q-icon-stub data-v-22686b16="" name="checklist"></q-icon-stub><span data-v-22686b16="">nav.tasks</span>
+        </a></a><a data-v-22686b16=""><a data-v-22686b16="" href="/settings" class="tab">
+          <q-icon-stub data-v-22686b16="" name="settings"></q-icon-stub><span data-v-22686b16="">nav.settings</span>
         </a></a></nav>
   </q-footer-stub>
 </q-layout-stub>"

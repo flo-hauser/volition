@@ -72,7 +72,7 @@ function goBack(): void {
 
 <style scoped>
 .legal-section {
-  padding: 16px 24px 40px;
+  padding: 28px 24px 40px;
 }
 .legal-heading {
   font-size: 13px;

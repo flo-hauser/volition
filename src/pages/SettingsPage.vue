@@ -1,15 +1,6 @@
 <template>
   <q-page class="page page-enter">
     <header class="page-head">
-      <button
-        class="icon-btn"
-        type="button"
-        style="margin-bottom: 12px"
-        :aria-label="t('common.back')"
-        @click="goBack"
-      >
-        <q-icon name="arrow_back" />
-      </button>
       <div class="page-eyebrow">{{ t('nav.settings') }}</div>
       <h1 class="page-title">{{ t('pages.settings.title') }}</h1>
       <p class="page-sub">{{ t('pages.settings.hint') }}</p>
@@ -241,14 +232,6 @@ const themeMode = computed<ThemeMode>({
     Dark.set('auto');
   },
 });
-
-function goBack(): void {
-  if (window.history.length > 1) {
-    router.back();
-  } else {
-    void router.push('/');
-  }
-}
 
 function reloadDebugData(): void {
   debugLogs.value = readDebugLogs();

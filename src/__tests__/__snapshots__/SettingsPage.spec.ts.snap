@@ -2,7 +2,7 @@
 
 exports[`SettingsPage > renders stable markup 1`] = `
 "<div data-v-4ff3282c="" class="page page-enter">
-  <header data-v-4ff3282c="" class="page-head"><button data-v-4ff3282c="" class="icon-btn" type="button" style="margin-bottom: 12px;" aria-label="common.back"><span data-v-4ff3282c="" name="arrow_back"></span></button>
+  <header data-v-4ff3282c="" class="page-head">
     <div data-v-4ff3282c="" class="page-eyebrow">nav.settings</div>
     <h1 data-v-4ff3282c="" class="page-title">pages.settings.title</h1>
     <p data-v-4ff3282c="" class="page-sub">pages.settings.hint</p>

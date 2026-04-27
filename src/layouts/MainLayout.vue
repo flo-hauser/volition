@@ -1,19 +1,15 @@
 <template>
-  <q-layout view="hHh lpR fFf">
-    <q-header v-if="!hideHeader" class="vol-header" reveal :reveal-offset="1">
+  <q-layout :class="{ 'native-shell': isNative }" view="hHh lpR fFf">
+    <q-header v-if="showNativeStatusBar" class="native-statusbar" bordered>
+      <div class="native-statusbar__safe" aria-hidden="true" />
+    </q-header>
+
+    <q-header v-if="showHeader" class="vol-header">
       <div class="app-header">
         <div class="brand">
           <div class="brand-mark" aria-hidden="true">V</div>
           <div class="brand-name">{{ t('app.name') }}</div>
         </div>
-        <button
-          class="icon-btn"
-          type="button"
-          :aria-label="t('nav.settings')"
-          @click="goToSettings"
-        >
-          <q-icon name="settings" />
-        </button>
       </div>
 
       <div v-if="initError" class="app-banner error" role="alert">
@@ -50,14 +46,18 @@
       </div>
 
       <div v-if="!isNative" class="legal-footer">
-        <router-link to="/imprint" class="legal-footer-link">{{ t('legal.imprintLink') }}</router-link>
+        <router-link to="/imprint" class="legal-footer-link">{{
+          t('legal.imprintLink')
+        }}</router-link>
         <span class="legal-footer-sep">·</span>
-        <router-link to="/privacy" class="legal-footer-link">{{ t('legal.privacyLink') }}</router-link>
+        <router-link to="/privacy" class="legal-footer-link">{{
+          t('legal.privacyLink')
+        }}</router-link>
       </div>
     </q-page-container>
 
     <q-footer class="vol-footer">
-      <nav class="tabbar" aria-label="Primary">
+      <nav class="tabbar" :style="{ '--tab-count': String(tabs.length) }" aria-label="Primary">
         <router-link
           v-for="tab in tabs"
           :key="tab.to"
@@ -92,7 +92,7 @@
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import { Platform } from 'quasar';
 import { useI18n } from 'vue-i18n';
-import { useRoute, useRouter } from 'vue-router';
+import { useRoute } from 'vue-router';
 
 import { useTasksStore } from 'src/stores/tasks.store';
 
@@ -100,8 +100,9 @@ const isNative = Platform.is.capacitor;
 
 const tasksStore = useTasksStore();
 const route = useRoute();
-const router = useRouter();
 const hideHeader = computed(() => Boolean(route.meta?.['hideHeader']));
+const showHeader = computed(() => !isNative && !hideHeader.value);
+const showNativeStatusBar = computed(() => isNative);
 const initError = ref(false);
 const isOffline = ref(typeof navigator === 'undefined' ? false : !navigator.onLine);
 const updateAvailable = ref(false);
@@ -109,15 +110,15 @@ const waitingRegistration = ref<ServiceWorkerRegistration | null>(null);
 
 const { t } = useI18n({ useScope: 'global' });
 
-const tabs = [
-  { to: '/', icon: 'today', labelKey: 'nav.today', exact: true },
-  { to: '/week', icon: 'calendar_view_week', labelKey: 'nav.week', exact: false },
-  { to: '/tasks', icon: 'checklist', labelKey: 'nav.tasks', exact: false },
-] as const;
-
-function goToSettings(): void {
-  void router.push('/settings');
-}
+const tabs = computed(
+  () =>
+    [
+      { to: '/', icon: 'today', labelKey: 'nav.today', exact: true },
+      { to: '/week', icon: 'calendar_view_week', labelKey: 'nav.week', exact: false },
+      { to: '/tasks', icon: 'checklist', labelKey: 'nav.tasks', exact: false },
+      { to: '/settings', icon: 'settings', labelKey: 'nav.settings', exact: false },
+    ] as const,
+);
 
 function handleOfflineStatus(isOnline: boolean): void {
   isOffline.value = !isOnline;
@@ -164,9 +165,28 @@ onBeforeUnmount(() => {
 
 <style scoped>
 .vol-header {
-  background: transparent;
+  background: color-mix(in oklab, var(--bg-elev) 92%, transparent);
   color: var(--text);
   box-shadow: none;
+  border-bottom: 1px solid var(--hairline);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.native-statusbar {
+  background: var(--accent-deep);
+  color: transparent;
+  box-shadow: none;
+  border-bottom: 0;
+}
+
+.native-statusbar__safe {
+  height: env(safe-area-inset-top);
+  min-height: env(safe-area-inset-top);
+}
+
+:global(body.body--dark) .native-statusbar {
+  background: var(--surface);
 }
 
 .vol-footer {

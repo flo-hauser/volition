@@ -246,7 +246,7 @@ async function handleArchive(): Promise<void> {
 
 <style scoped>
 .detail-nav {
-  padding: calc(8px + env(safe-area-inset-top)) 24px 4px;
+  padding: 8px 24px 4px;
   display: flex;
   align-items: center;
   justify-content: space-between;
