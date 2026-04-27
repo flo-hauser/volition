@@ -14,11 +14,11 @@
 
       <h2 class="legal-heading">{{ t('legal.privacy.s2') }}</h2>
       <p class="legal-block">
-        [YOUR FULL NAME]<br />
-        [STREET AND HOUSE NUMBER]<br />
-        [POSTAL CODE] [CITY]<br />
-        {{ t('legal.privacy.country') }}<br />
-        E-Mail: [YOUR EMAIL ADDRESS]
+        {{ legalContact.name }}<br />
+        {{ legalContact.street }}<br />
+        {{ legalContact.cityLine }}<br />
+        {{ legalContact.country }}<br />
+        E-Mail: {{ legalContact.email }}
       </p>
 
       <h2 class="legal-heading">{{ t('legal.privacy.s3') }}</h2>
@@ -44,7 +44,7 @@
 
       <h2 class="legal-heading">{{ t('legal.privacy.s6') }}</h2>
       <p class="legal-block">{{ t('legal.privacy.rights1') }}</p>
-      <p class="legal-block">{{ t('legal.privacy.rights2') }}</p>
+      <p class="legal-block">{{ t('legal.privacy.rights2') }} {{ legalContact.email }}</p>
 
       <h2 class="legal-heading">{{ t('legal.privacy.s7') }}</h2>
       <p class="legal-block">{{ t('legal.privacy.changes') }}</p>
@@ -58,8 +58,11 @@
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
 
+import { useLegalContact } from 'src/utils/legalContact';
+
 const { t } = useI18n({ useScope: 'global' });
 const router = useRouter();
+const legalContact = useLegalContact();
 
 function goBack(): void {
   if (window.history.length > 1) {

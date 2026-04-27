@@ -11,18 +11,18 @@
     <section class="legal-section">
       <h2 class="legal-heading">{{ t('legal.imprint.s1') }}</h2>
       <p class="legal-block">
-        [YOUR FULL NAME]<br />
-        [STREET AND HOUSE NUMBER]<br />
-        [POSTAL CODE] [CITY]<br />
-        {{ t('legal.imprint.country') }}
+        {{ legalContact.name }}<br />
+        {{ legalContact.street }}<br />
+        {{ legalContact.cityLine }}<br />
+        {{ legalContact.country }}
       </p>
 
       <h2 class="legal-heading">{{ t('legal.imprint.s2') }}</h2>
-      <p class="legal-block">E-Mail: [YOUR EMAIL ADDRESS]</p>
+      <p class="legal-block">E-Mail: {{ legalContact.email }}</p>
 
       <h2 class="legal-heading">{{ t('legal.imprint.s3') }}</h2>
       <p class="legal-block">
-        [YOUR FULL NAME]<br />
+        {{ legalContact.name }}<br />
         {{ t('legal.imprint.addressAbove') }}
       </p>
 
@@ -45,8 +45,11 @@
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
 
+import { useLegalContact } from 'src/utils/legalContact';
+
 const { t } = useI18n({ useScope: 'global' });
 const router = useRouter();
+const legalContact = useLegalContact();
 
 function goBack(): void {
   if (window.history.length > 1) {
