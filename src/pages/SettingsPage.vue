@@ -58,6 +58,50 @@
       </div>
     </section>
 
+    <section class="settings-section">
+      <h2 class="section-title">{{ t('pages.settings.backup.title') }}</h2>
+
+      <div class="settings-row">
+        <div class="settings-row__body">
+          <span class="settings-row__label">{{ t('pages.settings.backup.exportLabel') }}</span>
+          <span class="settings-row__hint">{{ t('pages.settings.backup.exportHint') }}</span>
+        </div>
+        <button type="button" class="ghost-btn" @click="handleExport">
+          {{ t('pages.settings.backup.exportBtn') }}
+        </button>
+      </div>
+
+      <div class="settings-row">
+        <div class="settings-row__body">
+          <span class="settings-row__label">{{ t('pages.settings.backup.importLabel') }}</span>
+          <span class="settings-row__hint">{{ t('pages.settings.backup.importHint') }}</span>
+        </div>
+        <label class="ghost-btn">
+          {{ t('pages.settings.backup.importBtn') }}
+          <input type="file" accept=".json,application/json" hidden @change="handleImport" />
+        </label>
+      </div>
+    </section>
+
+    <q-dialog v-model="confirmDialogOpen">
+      <div class="sheet-card" style="max-width: 420px">
+        <div class="grab" aria-hidden="true" />
+        <h2>{{ t('pages.settings.backup.importConfirmTitle') }}</h2>
+        <p class="sub">{{ t('pages.settings.backup.importConfirm') }}</p>
+        <div v-if="importError" class="error-message">
+          {{ t(`pages.settings.backup.importError${importError}`) || importError }}
+        </div>
+        <div class="sheet-actions">
+          <button type="button" class="ghost-btn" :disabled="importing" @click="confirmDialogOpen = false">
+            {{ t('common.cancel') }}
+          </button>
+          <button type="button" class="primary-btn" :disabled="importing" @click="confirmImport">
+            {{ t('common.confirm') }}
+          </button>
+        </div>
+      </div>
+    </q-dialog>
+
     <section class="settings-section debug-toggle-section">
       <button type="button" class="debug-toggle-btn" @click="showDebug = !showDebug">
         Debug {{ showDebug ? '▴' : '▾' }}
@@ -116,6 +160,8 @@ import {
   readDebugLogs,
   type DebugLogEntry,
 } from 'src/services/debug/runtimeDiagnostics';
+import { triggerDownload, parseImport } from 'src/services/dataTransfer';
+import type { StorageState } from 'src/types/storage';
 import { useTasksStore } from 'src/stores/tasks.store';
 
 const { t, locale } = useI18n({ useScope: 'global' });
@@ -124,6 +170,11 @@ const debugLogs = ref<DebugLogEntry[]>([]);
 const showDebug = ref(false);
 const runtimeDiagnostics = computed(() => getRuntimeDiagnostics());
 const store = useTasksStore();
+
+const confirmDialogOpen = ref(false);
+const importing = ref(false);
+const importError = ref<string | null>(null);
+const pendingImport = ref<StorageState | null>(null);
 
 const localeOptions = computed<{ value: AppLocale; label: string }[]>(() => [
   { value: 'en-US', label: t('pages.settings.localeEnglish') },
@@ -176,6 +227,46 @@ function reloadDebugData(): void {
   debugLogs.value = readDebugLogs();
 }
 
+function handleExport(): void {
+  const json = store.exportState();
+  const date = new Date().toISOString().slice(0, 10);
+  triggerDownload(json, `volition-backup-${date}.json`);
+}
+
+async function handleImport(event: Event): Promise<void> {
+  const file = (event.target as HTMLInputElement).files?.[0];
+  if (!file) return;
+
+  const raw = await file.text();
+  const result = parseImport(raw);
+
+  if (!result.ok || !result.state) {
+    importError.value = result.error ?? 'unknown';
+    confirmDialogOpen.value = true;
+    return;
+  }
+
+  pendingImport.value = result.state;
+  confirmDialogOpen.value = true;
+
+  (event.target as HTMLInputElement).value = '';
+}
+
+async function confirmImport(): Promise<void> {
+  if (!pendingImport.value) return;
+  importing.value = true;
+  try {
+    await store.importState(pendingImport.value);
+    confirmDialogOpen.value = false;
+    importError.value = null;
+    pendingImport.value = null;
+  } catch {
+    importError.value = 'unknown';
+  } finally {
+    importing.value = false;
+  }
+}
+
 onMounted(() => {
   reloadDebugData();
 });
@@ -188,6 +279,27 @@ onMounted(() => {
 .settings-section .section-title {
   padding: 0;
   margin: 0 0 12px;
+}
+.settings-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+.settings-row__body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.settings-row__label {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text);
+}
+.settings-row__hint {
+  font-size: 12px;
+  color: var(--text-3);
 }
 .settings-hint {
   margin-top: 10px;
@@ -294,5 +406,43 @@ onMounted(() => {
 }
 :global(body.body--dark) .legal-link {
   color: var(--accent);
+}
+.sheet-card {
+  background: var(--surface-2);
+  border-radius: var(--r-lg);
+  padding: 24px;
+  position: relative;
+}
+.sheet-card h2 {
+  margin: 0 0 8px;
+  font-size: 16px;
+  font-weight: 600;
+}
+.sheet-card .sub {
+  margin: 0 0 12px;
+  font-size: 14px;
+  color: var(--text-2);
+}
+.error-message {
+  margin: 12px 0;
+  padding: 12px;
+  border-radius: var(--r-md);
+  background: var(--surface);
+  border: 1px solid var(--error, #dc2626);
+  font-size: 13px;
+  color: var(--error, #dc2626);
+}
+.sheet-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  margin-top: 20px;
+}
+.grab {
+  width: 40px;
+  height: 4px;
+  background: var(--text-3);
+  border-radius: 2px;
+  margin: 0 auto 16px;
 }
 </style>

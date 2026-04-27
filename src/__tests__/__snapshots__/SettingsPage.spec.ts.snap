@@ -20,6 +20,24 @@ exports[`SettingsPage > renders stable markup 1`] = `
     <h2 data-v-4ff3282c="" class="section-title">legal.sectionTitle</h2>
     <div data-v-4ff3282c="" class="legal-links"><button data-v-4ff3282c="" type="button" class="legal-link">legal.imprintLink</button><button data-v-4ff3282c="" type="button" class="legal-link">legal.privacyLink</button></div>
   </section>
+  <section data-v-4ff3282c="" class="settings-section">
+    <h2 data-v-4ff3282c="" class="section-title">pages.settings.backup.title</h2>
+    <div data-v-4ff3282c="" class="settings-row">
+      <div data-v-4ff3282c="" class="settings-row__body"><span data-v-4ff3282c="" class="settings-row__label">pages.settings.backup.exportLabel</span><span data-v-4ff3282c="" class="settings-row__hint">pages.settings.backup.exportHint</span></div><button data-v-4ff3282c="" type="button" class="ghost-btn">pages.settings.backup.exportBtn</button>
+    </div>
+    <div data-v-4ff3282c="" class="settings-row">
+      <div data-v-4ff3282c="" class="settings-row__body"><span data-v-4ff3282c="" class="settings-row__label">pages.settings.backup.importLabel</span><span data-v-4ff3282c="" class="settings-row__hint">pages.settings.backup.importHint</span></div><label data-v-4ff3282c="" class="ghost-btn">pages.settings.backup.importBtn <input data-v-4ff3282c="" type="file" accept=".json,application/json" hidden=""></label>
+    </div>
+  </section>
+  <q-dialog data-v-4ff3282c="" modelvalue="false">
+    <div data-v-4ff3282c="" class="sheet-card" style="max-width: 420px;">
+      <div data-v-4ff3282c="" class="grab" aria-hidden="true"></div>
+      <h2 data-v-4ff3282c="">pages.settings.backup.importConfirmTitle</h2>
+      <p data-v-4ff3282c="" class="sub">pages.settings.backup.importConfirm</p>
+      <!--v-if-->
+      <div data-v-4ff3282c="" class="sheet-actions"><button data-v-4ff3282c="" type="button" class="ghost-btn">common.cancel</button><button data-v-4ff3282c="" type="button" class="primary-btn">common.confirm</button></div>
+    </div>
+  </q-dialog>
   <section data-v-4ff3282c="" class="settings-section debug-toggle-section"><button data-v-4ff3282c="" type="button" class="debug-toggle-btn"> Debug ▾</button></section>
   <!--v-if-->
 </div>"

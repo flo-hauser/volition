@@ -10,6 +10,8 @@ import {
   getStorageDebugLabel,
   type StorageAdapter,
 } from 'src/services/storage/storageAdapter';
+import { exportToJSON } from 'src/services/dataTransfer';
+import type { StorageState } from 'src/types/storage';
 import { SCHEMA_VERSION } from 'src/types/storage';
 import type { Checkin, Task } from 'src/types/task';
 import { createId } from 'src/utils/id';
@@ -296,6 +298,18 @@ export const useTasksStore = defineStore('tasks', () => {
     await toggleForDay(taskId, getLocalDayISO());
   }
 
+  function exportState(): string {
+    return exportToJSON(createStateSnapshot());
+  }
+
+  async function importState(incoming: StorageState): Promise<void> {
+    await persistOrRollback(() => {
+      tasks.value = cloneState(incoming.tasks);
+      checkinsByDay.value = cloneState(incoming.checkinsByDay);
+      taskOrder.value = cloneState(incoming.taskOrder);
+    });
+  }
+
   return {
     tasks,
     checkinsByDay,
@@ -314,5 +328,7 @@ export const useTasksStore = defineStore('tasks', () => {
     reorderTasks,
     toggleForDay,
     toggleToday,
+    exportState,
+    importState,
   };
 });
