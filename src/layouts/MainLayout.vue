@@ -48,6 +48,12 @@
           {{ t('app.loading') }}
         </div>
       </div>
+
+      <div v-if="!isNative" class="legal-footer">
+        <router-link to="/imprint" class="legal-footer-link">{{ t('legal.imprintLink') }}</router-link>
+        <span class="legal-footer-sep">·</span>
+        <router-link to="/privacy" class="legal-footer-link">{{ t('legal.privacyLink') }}</router-link>
+      </div>
     </q-page-container>
 
     <q-footer class="vol-footer">
@@ -84,10 +90,13 @@
 
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
+import { Platform } from 'quasar';
 import { useI18n } from 'vue-i18n';
 import { useRoute, useRouter } from 'vue-router';
 
 import { useTasksStore } from 'src/stores/tasks.store';
+
+const isNative = Platform.is.capacitor;
 
 const tasksStore = useTasksStore();
 const route = useRoute();
@@ -164,5 +173,26 @@ onBeforeUnmount(() => {
   background: transparent;
   color: var(--text);
   box-shadow: none;
+}
+.legal-footer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  padding: 24px 0 32px;
+}
+.legal-footer-link {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-3);
+  text-decoration: none;
+  letter-spacing: 0.04em;
+}
+.legal-footer-link:hover {
+  color: var(--text-2);
+}
+.legal-footer-sep {
+  font-size: 11px;
+  color: var(--text-3);
 }
 </style>

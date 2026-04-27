@@ -22,6 +22,7 @@ exports[`MainLayout > renders stable markup 1`] = `
       </div>
     </q-slide-transition-stub>
     <!--v-if-->
+    <div data-v-22686b16="" class="legal-footer"><a data-v-22686b16="" class="legal-footer-link">legal.imprintLink</a><span data-v-22686b16="" class="legal-footer-sep">·</span><a data-v-22686b16="" class="legal-footer-link">legal.privacyLink</a></div>
   </q-page-container-stub>
   <q-footer-stub data-v-22686b16="" class="vol-footer">
     <nav data-v-22686b16="" class="tabbar" aria-label="Primary"><a data-v-22686b16=""><a data-v-22686b16="" href="/" class="tab active" aria-current="page">

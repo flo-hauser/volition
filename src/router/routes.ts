@@ -39,6 +39,18 @@ const routes: RouteRecordRaw[] = [
         path: 'tasks/new',
         redirect: '/tasks?new=1',
       },
+      {
+        path: 'imprint',
+        name: 'imprint',
+        component: () => import('pages/ImprintPage.vue'),
+        meta: { titleKey: 'nav.settings', hideHeader: true },
+      },
+      {
+        path: 'privacy',
+        name: 'privacy',
+        component: () => import('pages/PrivacyPage.vue'),
+        meta: { titleKey: 'nav.settings', hideHeader: true },
+      },
     ],
   },
   {

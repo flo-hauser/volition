@@ -19,6 +19,10 @@ vi.mock('vue-router', () => ({
   useRouter: () => ({ push: mockPush }),
 }));
 
+vi.mock('quasar', () => ({
+  Platform: { is: { capacitor: false } },
+}));
+
 vi.mock('src/stores/tasks.store', () => ({
   useTasksStore: () => mockStore,
 }));
