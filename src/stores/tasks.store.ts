@@ -1,7 +1,8 @@
 import { computed, ref } from 'vue';
 import { defineStore } from 'pinia';
 
-import { getIsoWeekId, getLocalDayISO, getPreviousWeekId, getWeekDays } from 'src/composables/useDay';
+import { getLocalDayISO, getPreviousWeekId, getWeekDays, getWeekId } from 'src/composables/useDay';
+import { getStoredWeekStartDay } from 'src/composables/useAppPreferences';
 import { countTaskCheckinsForWeek } from 'src/composables/useProgress';
 import { indexedDbAdapter } from 'src/services/storage/indexedDbAdapter';
 import { localStorageAdapter } from 'src/services/storage/localStorageAdapter';
@@ -77,25 +78,27 @@ export const useTasksStore = defineStore('tasks', () => {
     return Boolean(checkinsByDay.value[dayISO]?.[taskId]);
   }
 
-  function weekProgress(taskId: string, weekId = getIsoWeekId(getLocalDayISO())): number {
-    return countTaskCheckinsForWeek(taskId, weekId, checkinsByDay.value);
+  function weekProgress(taskId: string, weekId = getWeekId(getLocalDayISO(), getStoredWeekStartDay())): number {
+    const weekStartDay = getStoredWeekStartDay();
+    return countTaskCheckinsForWeek(taskId, weekId, checkinsByDay.value, weekStartDay);
   }
 
   function getStreak(taskId: string): number {
     const task = tasks.value[taskId];
     if (!task) return 0;
 
+    const weekStartDay = getStoredWeekStartDay();
     let streak = 0;
-    let weekId = getIsoWeekId(getLocalDayISO());
+    let weekId = getWeekId(getLocalDayISO(), weekStartDay);
 
     for (let i = 0; i < 52; i++) {
-      const progress = countTaskCheckinsForWeek(taskId, weekId, checkinsByDay.value);
+      const progress = countTaskCheckinsForWeek(taskId, weekId, checkinsByDay.value, weekStartDay);
       if (progress >= task.targetPerWeek) {
         streak++;
       } else if (i > 0) {
         break;
       }
-      weekId = getPreviousWeekId(weekId);
+      weekId = getPreviousWeekId(weekId, weekStartDay);
     }
 
     return streak;
@@ -106,16 +109,17 @@ export const useTasksStore = defineStore('tasks', () => {
     weeksBack = 12,
   ): Array<{ dayISO: string; checked: boolean; isToday: boolean; isFuture: boolean }> {
     const todayISO = getLocalDayISO();
-    let weekId = getIsoWeekId(todayISO);
+    const weekStartDay = getStoredWeekStartDay();
+    let weekId = getWeekId(todayISO, weekStartDay);
     const weeks: string[] = [];
 
     for (let i = 0; i < weeksBack; i++) {
       weeks.unshift(weekId);
-      weekId = getPreviousWeekId(weekId);
+      weekId = getPreviousWeekId(weekId, weekStartDay);
     }
 
     return weeks.flatMap((wId) =>
-      getWeekDays(wId).map((day) => ({
+      getWeekDays(wId, weekStartDay).map((day) => ({
         dayISO: day,
         isToday: day === todayISO,
         isFuture: day > todayISO,

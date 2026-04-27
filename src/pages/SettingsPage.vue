@@ -51,6 +51,23 @@
     </section>
 
     <section class="settings-section">
+      <h2 class="section-title">{{ t('pages.settings.weekStart.label') }}</h2>
+      <div class="seg">
+        <button
+          v-for="option in weekStartOptions"
+          :key="option.value"
+          type="button"
+          class="seg-btn"
+          :class="{ sel: weekStartDay === option.value }"
+          :aria-pressed="weekStartDay === option.value"
+          @click="setWeekStartDay(option.value)"
+        >
+          {{ option.label }}
+        </button>
+      </div>
+    </section>
+
+    <section class="settings-section">
       <h2 class="section-title">{{ t('legal.sectionTitle') }}</h2>
       <div class="legal-links">
         <button type="button" class="legal-link" @click="router.push('/imprint')">{{ t('legal.imprintLink') }}</button>
@@ -150,9 +167,11 @@ import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
 
 import {
+  useAppPreferences,
   setStoredLocale,
   setStoredThemeMode,
   type AppLocale,
+  type WeekStartDay,
   type ThemeMode,
 } from 'src/composables/useAppPreferences';
 import {
@@ -172,6 +191,7 @@ const debugLogs = ref<DebugLogEntry[]>([]);
 const showDebug = ref(false);
 const runtimeDiagnostics = computed(() => getRuntimeDiagnostics());
 const store = useTasksStore();
+const { weekStartDay, setWeekStartDay } = useAppPreferences();
 
 const confirmDialogOpen = ref(false);
 const importing = ref(false);
@@ -187,6 +207,11 @@ const themeOptions = computed<{ value: ThemeMode; label: string }[]>(() => [
   { value: 'system', label: t('pages.settings.themeSystem') },
   { value: 'light', label: t('pages.settings.themeLight') },
   { value: 'dark', label: t('pages.settings.themeDark') },
+]);
+
+const weekStartOptions = computed<{ value: WeekStartDay; label: string }[]>(() => [
+  { value: 'monday', label: t('pages.settings.weekStart.monday') },
+  { value: 'sunday', label: t('pages.settings.weekStart.sunday') },
 ]);
 
 const currentLocale = computed<AppLocale>({

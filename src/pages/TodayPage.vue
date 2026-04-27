@@ -86,7 +86,8 @@ import CheckButton from 'src/components/CheckButton.vue';
 import TaskSheet from 'src/components/TaskSheet.vue';
 import TodayHero from 'src/components/TodayHero.vue';
 import WeekMini from 'src/components/WeekMini.vue';
-import { getIsoWeekId, getLocalDayISO, getWeekdayIndex, toLocalDate } from 'src/composables/useDay';
+import { useAppPreferences } from 'src/composables/useAppPreferences';
+import { getLocalDayISO, getWeekId, getWeekdayIndex, toLocalDate } from 'src/composables/useDay';
 import { getWeekPattern } from 'src/composables/useProgress';
 import { useQuote } from 'src/composables/useQuote';
 import { appendDebugLog } from 'src/services/debug/runtimeDiagnostics';
@@ -102,10 +103,11 @@ const $q = useQuasar();
 const store = useTasksStore();
 const router = useRouter();
 const { pickQuote } = useQuote();
+const { weekStartDay } = useAppPreferences();
 
 const todayISO = getLocalDayISO();
-const currentWeekId = getIsoWeekId(todayISO);
-const todayIdx = getWeekdayIndex(currentWeekId, todayISO);
+const currentWeekId = computed(() => getWeekId(todayISO, weekStartDay.value));
+const todayIdx = computed(() => getWeekdayIndex(currentWeekId.value, todayISO, weekStartDay.value));
 
 const pendingTaskIds = ref(new Set<string>());
 const isTaskSheetOpen = ref(false);
@@ -126,7 +128,7 @@ const eyebrow = computed(() => {
     month: 'long',
     day: 'numeric',
   });
-  const weekNumber = currentWeekId.split('-W')[1] ?? '';
+  const weekNumber = currentWeekId.value.split('-W')[1] ?? '';
   return t('pages.today.eyebrow', { date: longDate, week: weekNumber });
 });
 
@@ -137,7 +139,7 @@ function isChecked(taskId: string): boolean {
 }
 
 function getPattern(taskId: string): number[] {
-  return getWeekPattern(taskId, currentWeekId, store.checkinsByDay);
+  return getWeekPattern(taskId, currentWeekId.value, store.checkinsByDay, weekStartDay.value);
 }
 
 async function toggleTask(taskId: string): Promise<void> {

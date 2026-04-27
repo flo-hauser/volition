@@ -41,7 +41,7 @@ export default {
       openTasks: 'Create your first task to start checking in.',
       doneToday: 'Done today',
       progressLabel: '{progress}/{target}/wk',
-      weekId: 'ISO week {weekId}',
+      weekId: 'Week {weekId}',
       allTasks: 'All tasks',
       heroEyebrow: 'Your check-in',
       heroOf: 'of {total} done',
@@ -49,7 +49,7 @@ export default {
     },
     week: {
       title: 'Your <em>week</em>, unfolding.',
-      eyebrow: 'ISO week {week} · {start} — {end}',
+      eyebrow: 'Week {week} · {start} — {end}',
       hint: 'Current week progress for each active task.',
       thisWeek: 'Current week: {weekId}',
       progressLabel: '{progress} / {target}',
@@ -88,6 +88,11 @@ export default {
       themeLight: 'Light',
       themeDark: 'Dark',
       themeHint: 'System mode follows your device setting automatically.',
+      weekStart: {
+        label: 'Week starts on',
+        monday: 'Monday',
+        sunday: 'Sunday',
+      },
       backup: {
         title: 'Backup',
         exportLabel: 'Export data',

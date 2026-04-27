@@ -35,7 +35,7 @@
         <div class="bar">
           <div class="f" :style="{ '--h': barHeight(count) }" />
         </div>
-        <span>{{ DAY_LABELS[i] }}</span>
+        <span>{{ dayLabels[i] }}</span>
       </div>
     </div>
   </section>
@@ -44,8 +44,6 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 
-const DAY_LABELS = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
-
 interface Props {
   done: number;
   target: number;
@@ -53,12 +51,14 @@ interface Props {
   subtitle?: string;
   dayPattern?: number[];
   todayIdx?: number;
+  dayLabels?: readonly string[];
 }
 
 const props = withDefaults(defineProps<Props>(), {
   subtitle: '',
   dayPattern: () => [],
   todayIdx: -1,
+  dayLabels: () => [] as const,
 });
 
 const r = 27;

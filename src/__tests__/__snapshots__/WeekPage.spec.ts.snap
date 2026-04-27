@@ -6,7 +6,7 @@ exports[`WeekPage > renders stable markup 1`] = `
     <div class="page-eyebrow">pages.week.eyebrow</div>
     <h1 class="page-title">pages.week.title</h1>
   </header>
-  <week-strip-stub done="2" target="3" eyebrow="pages.week.stripEyebrow" subtitle="pages.week.stripSubtitle" daypattern="0,0,0,0,0,0,0" todayidx="5"></week-strip-stub>
+  <week-strip-stub done="2" target="3" eyebrow="pages.week.stripEyebrow" subtitle="pages.week.stripSubtitle" daypattern="0,0,0,0,0,0,0" todayidx="5" daylabels="M,T,W,T,F,S,S"></week-strip-stub>
   <div class="section-head">
     <h2 class="section-title">pages.week.perTask</h2>
   </div>

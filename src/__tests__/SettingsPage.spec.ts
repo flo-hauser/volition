@@ -1,4 +1,4 @@
-import { nextTick } from 'vue';
+import { nextTick, ref } from 'vue';
 import { mount } from '@vue/test-utils';
 import { createPinia, setActivePinia } from 'pinia';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -44,6 +44,11 @@ const {
   },
 }));
 
+const weekStartDayRef = ref<'monday' | 'sunday'>('monday');
+const setStoredWeekStartDay = vi.fn((value: 'monday' | 'sunday') => {
+  weekStartDayRef.value = value;
+});
+
 Dark.set = darkSet;
 
 vi.mock('vue-i18n', () => ({
@@ -63,6 +68,10 @@ vi.mock('vue-router', () => ({
 }));
 
 vi.mock('src/composables/useAppPreferences', () => ({
+  useAppPreferences: () => ({
+    weekStartDay: weekStartDayRef,
+    setWeekStartDay: setStoredWeekStartDay,
+  }),
   setStoredLocale,
   setStoredThemeMode,
 }));
@@ -94,10 +103,12 @@ describe('SettingsPage', () => {
   beforeEach(() => {
     setActivePinia(createPinia());
     mockLocale.value = 'en-US';
+    weekStartDayRef.value = 'monday';
     Dark.mode = 'auto';
     darkSet.mockReset();
     setStoredLocale.mockReset();
     setStoredThemeMode.mockReset();
+    setStoredWeekStartDay.mockClear();
     readDebugLogs.mockReset();
     getRuntimeDiagnostics.mockReset();
     mockBack.mockReset();
@@ -223,5 +234,17 @@ describe('SettingsPage', () => {
 
     expect(setStoredThemeMode).toHaveBeenCalledWith('system');
     expect(darkSet).toHaveBeenCalledWith('auto');
+  });
+
+  it('persists week start day when a segmented button is clicked', async () => {
+    const wrapper = mountPage();
+    const sections = wrapper.findAll('.seg');
+    const weekStartButtons = sections[2]?.findAll('.seg-btn') ?? [];
+    const sundayButton = weekStartButtons.find((b) => b.text().includes('weekStart.sunday'));
+
+    await sundayButton?.trigger('click');
+
+    expect(setStoredWeekStartDay).toHaveBeenCalledWith('sunday');
+    expect(weekStartDayRef.value).toBe('sunday');
   });
 });

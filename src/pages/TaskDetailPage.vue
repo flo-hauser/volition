@@ -122,7 +122,8 @@ import { useQuasar } from 'quasar';
 
 import CheckButton from 'src/components/CheckButton.vue';
 import TaskSheet from 'src/components/TaskSheet.vue';
-import { getIsoWeekId, getLocalDayISO, toLocalDate } from 'src/composables/useDay';
+import { useAppPreferences } from 'src/composables/useAppPreferences';
+import { getLocalDayISO, getWeekId, toLocalDate } from 'src/composables/useDay';
 import { appendDebugLog } from 'src/services/debug/runtimeDiagnostics';
 import { useTasksStore } from 'src/stores/tasks.store';
 
@@ -133,12 +134,13 @@ const route = useRoute();
 const router = useRouter();
 const $q = useQuasar();
 const store = useTasksStore();
+const { weekStartDay } = useAppPreferences();
 
 const taskId = computed(() => route.params['id'] as string);
 const task = computed(() => store.tasks[taskId.value] ?? null);
 
 const todayISO = getLocalDayISO();
-const weekId = getIsoWeekId(todayISO);
+const weekId = computed(() => getWeekId(todayISO, weekStartDay.value));
 
 const pending = ref(false);
 const isEditOpen = ref(false);
@@ -147,7 +149,7 @@ const isDeleteOpen = ref(false);
 const deleteBusy = ref(false);
 
 const isDoneToday = computed(() => store.isDone(taskId.value, todayISO));
-const weekProgress = computed(() => store.weekProgress(taskId.value, weekId));
+const weekProgress = computed(() => store.weekProgress(taskId.value, weekId.value));
 const streak = computed(() => store.getStreak(taskId.value));
 
 const heatCells = computed(() => store.getHeatmapDays(taskId.value, 12));

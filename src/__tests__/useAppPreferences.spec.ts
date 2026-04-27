@@ -3,12 +3,15 @@ import { beforeEach, describe, expect, it } from 'vitest';
 import {
   getStoredLocale,
   getStoredThemeMode,
+  getStoredWeekStartDay,
   setStoredLocale,
   setStoredThemeMode,
+  setStoredWeekStartDay,
 } from 'src/composables/useAppPreferences';
 
 const THEME_MODE_KEY = 'volition.themeMode';
 const LOCALE_KEY = 'volition.locale';
+const WEEK_START_DAY_KEY = 'volition.weekStartDay';
 
 describe('useAppPreferences', () => {
   beforeEach(() => {
@@ -60,5 +63,25 @@ describe('useAppPreferences', () => {
   it('persists locale', () => {
     setStoredLocale('de-DE');
     expect(localStorage.getItem(LOCALE_KEY)).toBe('de-DE');
+  });
+
+  it('defaults week start day to monday', () => {
+    expect(getStoredWeekStartDay()).toBe('monday');
+  });
+
+  it('returns stored week start day when valid', () => {
+    localStorage.setItem(WEEK_START_DAY_KEY, 'sunday');
+    setStoredWeekStartDay('sunday');
+    expect(getStoredWeekStartDay()).toBe('sunday');
+  });
+
+  it('falls back to monday for invalid stored week start day', () => {
+    localStorage.setItem(WEEK_START_DAY_KEY, 'friday');
+    expect(getStoredWeekStartDay()).toBe('monday');
+  });
+
+  it('persists week start day', () => {
+    setStoredWeekStartDay('sunday');
+    expect(localStorage.getItem(WEEK_START_DAY_KEY)).toBe('sunday');
   });
 });

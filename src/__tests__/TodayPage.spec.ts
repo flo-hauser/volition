@@ -39,6 +39,7 @@ vi.mock('vue-router', () => ({
 
 vi.mock('src/composables/useDay', () => ({
   getLocalDayISO: () => '2026-02-07',
+  getWeekId: () => '2026-W06',
   getIsoWeekId: () => '2026-W06',
   getWeekdayIndex: () => 5,
   getWeekDays: () => [
@@ -59,6 +60,13 @@ vi.mock('src/composables/useDay', () => ({
 vi.mock('src/composables/useProgress', () => ({
   getWeekPattern: () => [0, 0, 0, 0, 0, 0, 0],
   countTaskCheckinsForWeek: () => 0,
+}));
+
+vi.mock('src/composables/useAppPreferences', () => ({
+  useAppPreferences: () => ({
+    weekStartDay: ref('monday'),
+    setWeekStartDay: vi.fn(),
+  }),
 }));
 
 vi.mock('src/composables/useQuote', () => ({

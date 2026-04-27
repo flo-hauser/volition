@@ -12,6 +12,7 @@
       :subtitle="t('pages.week.stripSubtitle')"
       :day-pattern="dayPattern"
       :today-idx="todayIdx"
+      :day-labels="dayLabels"
     />
 
     <div class="section-head">
@@ -42,7 +43,7 @@
             <span class="of">/ {{ task.targetPerWeek }}</span>
           </div>
         </div>
-        <VizDots :pattern="getPattern(task.id)" :today-idx="todayIdx" />
+        <VizDots :pattern="getPattern(task.id)" :today-idx="todayIdx" :day-labels="dayLabels" />
       </button>
     </div>
 
@@ -59,9 +60,10 @@ import { useRouter } from 'vue-router';
 
 import VizDots from 'src/components/VizDots.vue';
 import WeekStrip from 'src/components/WeekStrip.vue';
+import { useAppPreferences } from 'src/composables/useAppPreferences';
 import {
-  getIsoWeekId,
   getLocalDayISO,
+  getWeekId,
   getWeekDays,
   getWeekdayIndex,
   toLocalDate,
@@ -73,46 +75,54 @@ import type { Task } from 'src/types/task';
 const { t, locale } = useI18n();
 const store = useTasksStore();
 const router = useRouter();
+const { weekStartDay } = useAppPreferences();
 
 const todayISO = getLocalDayISO();
-const weekId = getIsoWeekId(todayISO);
-const todayIdx = getWeekdayIndex(weekId, todayISO);
+const weekId = computed(() => getWeekId(todayISO, weekStartDay.value));
+const todayIdx = computed(() => getWeekdayIndex(weekId.value, todayISO, weekStartDay.value));
 
 const tasks = computed(() => store.activeTasks);
 
 const totalDone = computed(() =>
-  tasks.value.reduce((sum, task) => sum + store.weekProgress(task.id, weekId), 0),
+  tasks.value.reduce((sum, task) => sum + store.weekProgress(task.id, weekId.value), 0),
 );
 const totalTarget = computed(() =>
   tasks.value.reduce((sum, task) => sum + task.targetPerWeek, 0),
 );
 
 const eyebrow = computed(() => {
-  const days = getWeekDays(weekId);
+  const days = getWeekDays(weekId.value, weekStartDay.value);
   const first = days[0];
   const last = days[6];
   if (!first || !last) return '';
   const fmt: Intl.DateTimeFormatOptions = { month: 'short', day: 'numeric' };
   const start = toLocalDate(first).toLocaleDateString(locale.value, fmt);
   const end = toLocalDate(last).toLocaleDateString(locale.value, fmt);
-  const weekNumber = weekId.split('-W')[1] ?? '';
+  const weekNumber = weekId.value.split('-W')[1] ?? '';
   return t('pages.week.eyebrow', { week: weekNumber, start, end });
 });
 
 const dayPattern = computed<number[]>(() => {
-  const days = getWeekDays(weekId);
+  const days = getWeekDays(weekId.value, weekStartDay.value);
   return days.map((day) => {
     const dayCheckins = store.checkinsByDay[day];
     return dayCheckins ? Object.keys(dayCheckins).length : 0;
   });
 });
 
+const dayLabels = computed(() => {
+  const formatter = new Intl.DateTimeFormat(locale.value, { weekday: 'narrow' });
+  return getWeekDays(weekId.value, weekStartDay.value).map((day) =>
+    formatter.format(toLocalDate(day)),
+  );
+});
+
 function isAchieved(task: Task): boolean {
-  return store.weekProgress(task.id, weekId) >= task.targetPerWeek;
+  return store.weekProgress(task.id, weekId.value) >= task.targetPerWeek;
 }
 
 function getPattern(taskId: string): number[] {
-  return getWeekPattern(taskId, weekId, store.checkinsByDay);
+  return getWeekPattern(taskId, weekId.value, store.checkinsByDay, weekStartDay.value);
 }
 
 function goToDetail(taskId: string): void {

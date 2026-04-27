@@ -29,8 +29,8 @@ Drag-and-drop ordering on `TasksPage`. Store order in `StorageState`. Today and 
 **Haptic feedback** ✅ ~~**[plan](haptic-and-swipe.md)**~~  
 On mobile (Capacitor), fire a light haptic tap when checking in a task. One line with `@capacitor/haptics`.
 
-**Week start day preference** **[plan](week-start-preference.md)**  
-Some users start their week on Sunday. Store preference in `useAppPreferences`, thread through `useDay` and all week calculations.
+**Week start day preference** ✅ ~~**[plan](week-start-preference.md)**~~  
+Users can now choose whether weeks start on Monday or Sunday. The preference is stored locally, updates week math throughout the app, and the week overview labels now follow both locale and chosen week order.
 
 **Swipe to check in** ✅ ~~**[plan](haptic-and-swipe.md)**~~  
 On `TodayPage`, swipe right on a task row to toggle it done — faster than tapping the checkbox.
