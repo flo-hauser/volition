@@ -25,7 +25,7 @@ vi.mock('vue-i18n', () => ({
 }));
 
 vi.mock('quasar', () => ({
-  useQuasar: () => ({ notify: mockNotify }),
+  useQuasar: () => ({ notify: mockNotify, platform: { is: { android: false } } }),
 }));
 
 vi.mock('@capacitor/haptics', () => ({

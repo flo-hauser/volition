@@ -18,7 +18,7 @@
     "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
-    "@capacitor/haptics": "^8.0.2",
+    "@capacitor/haptics": "^7.0.5",
     "@fontsource/geist": "^5.2.8",
     "@fontsource/instrument-serif": "^5.2.8",
     "@fontsource/jetbrains-mono": "^5.2.8",
