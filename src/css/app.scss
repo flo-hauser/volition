@@ -4,34 +4,34 @@
 
 :root {
   /* Palette — light (sage / moss green) */
-  --cream: #F4F1E4;
-  --cream-soft: #ECE9DA;
-  --cream-deep: #DCD8C2;
-  --ink: #1F2C24;
+  --cream: #f4f1e4;
+  --cream-soft: #ece9da;
+  --cream-deep: #dcd8c2;
+  --ink: #1f2c24;
   --ink-soft: #344038;
-  --ink-mute: #5C6A5F;
-  --moss: #6F9C72;
-  --moss-deep: #4A6B4D;
-  --moss-shadow: #33502F;
-  --acid: #C7E07A;
-  --azure: #4F8A6A;
+  --ink-mute: #5c6a5f;
+  --moss: #6f9c72;
+  --moss-deep: #4a6b4d;
+  --moss-shadow: #33502f;
+  --acid: #c7e07a;
+  --azure: #4f8a6a;
 
   /* Semantic — light */
   --bg: var(--cream);
-  --bg-elev: #FAF7E9;
-  --bg-sunk: #E5E0CC;
-  --surface: #FBF8EB;
-  --surface-2: #F4F1E4;
-  --hairline: rgba(31, 44, 36, 0.10);
-  --hairline-strong: rgba(31, 44, 36, 0.20);
+  --bg-elev: #faf7e9;
+  --bg-sunk: #e5e0cc;
+  --surface: #fbf8eb;
+  --surface-2: #f4f1e4;
+  --hairline: rgba(31, 44, 36, 0.1);
+  --hairline-strong: rgba(31, 44, 36, 0.2);
   --text: var(--ink);
   --text-2: var(--ink-soft);
   --text-3: var(--ink-mute);
   --accent: var(--moss);
   --accent-deep: var(--moss-deep);
   --accent-ink: var(--moss-shadow);
-  --accent-glow: rgba(111, 156, 114, 0.20);
-  --success: #5EBA7D;
+  --accent-glow: rgba(111, 156, 114, 0.2);
+  --success: #5eba7d;
 
   /* Scale */
   --r-xs: 8px;
@@ -60,28 +60,28 @@
 
 body.body--dark {
   /* Match the reference template's dark surfaces and accents. */
-  --bg: #131A15;
-  --bg-elev: #1A2218;
-  --bg-sunk: #0D1310;
-  --surface: #1F2820;
+  --bg: #131a15;
+  --bg-elev: #1a2218;
+  --bg-sunk: #0d1310;
+  --surface: #1f2820;
   --surface-2: #253027;
 
   --hairline: rgba(199, 224, 122, 0.08);
   --hairline-strong: rgba(199, 224, 122, 0.18);
 
-  --text: #E9F0D8;
-  --text-2: #BAC8A6;
-  --text-3: #7E8E72;
+  --text: #e9f0d8;
+  --text-2: #bac8a6;
+  --text-3: #7e8e72;
 
-  --accent: #9BC579;
-  --accent-deep: #6F9C72;
-  --accent-ink: #C7E07A;
+  --accent: #9bc579;
+  --accent-deep: #6f9c72;
+  --accent-ink: #c7e07a;
   --accent-glow: rgba(155, 197, 121, 0.22);
-  --success: #8BD5A3;
+  --success: #8bd5a3;
 
   --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.55);
-  --shadow-md: 0 6px 24px rgba(0, 0, 0, 0.70), 0 1px 3px rgba(0, 0, 0, 0.50);
-  --shadow-lg: 0 16px 56px rgba(0, 0, 0, 0.80);
+  --shadow-md: 0 6px 24px rgba(0, 0, 0, 0.7), 0 1px 3px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 16px 56px rgba(0, 0, 0, 0.8);
   --shadow-inset: inset 0 1px 0 rgba(199, 224, 122, 0.05);
 
   color: var(--text) !important;
@@ -604,6 +604,7 @@ body.body--dark .check-btn.done .tick {
    Week page
    ============================================================ */
 .week-card {
+  width: calc(100% - 32px);
   margin: 0 16px 10px;
   padding: 16px 18px;
   border-radius: var(--r-md);
@@ -1434,9 +1435,9 @@ body.body--dark .freq-picker button.sel {
   gap: 10px;
 }
 .app-banner.warn {
-  background: color-mix(in oklab, var(--warning, #C7E07A) 20%, var(--surface));
+  background: color-mix(in oklab, var(--warning, #c7e07a) 20%, var(--surface));
   color: var(--text);
-  border-color: color-mix(in oklab, var(--warning, #C7E07A) 40%, var(--hairline));
+  border-color: color-mix(in oklab, var(--warning, #c7e07a) 40%, var(--hairline));
 }
 .app-banner.error {
   background: color-mix(in oklab, var(--negative, #c10015) 12%, var(--surface));
