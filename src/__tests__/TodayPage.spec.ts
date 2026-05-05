@@ -93,7 +93,8 @@ function mountPage() {
       stubs: {
         'q-page': true,
         CheckButton: {
-          template: '<button class="check-btn-stub" @click="$emit(\'update:modelValue\', !modelValue)" />',
+          template:
+            '<button class="check-btn-stub" @click="$emit(\'update:modelValue\', !modelValue)" />',
           props: ['modelValue', 'disabled', 'ariaCheck', 'ariaUncheck'],
           emits: ['update:modelValue'],
         },
@@ -140,7 +141,9 @@ describe('TodayPage', () => {
 
   it('toggles a task for today', async () => {
     const wrapper = mountPage();
-    await (wrapper.vm as unknown as { toggleTask: (id: string) => Promise<void> }).toggleTask('task-1');
+    await (wrapper.vm as unknown as { toggleTask: (id: string) => Promise<void> }).toggleTask(
+      'task-1',
+    );
 
     expect(mockStore.toggleToday).toHaveBeenCalledWith('task-1');
     expect(mockImpact).toHaveBeenCalledWith({ style: 'LIGHT' });
@@ -150,7 +153,9 @@ describe('TodayPage', () => {
     mockStore.isDone.mockReturnValue(true);
     const wrapper = mountPage();
 
-    await (wrapper.vm as unknown as { toggleTask: (id: string) => Promise<void> }).toggleTask('task-1');
+    await (wrapper.vm as unknown as { toggleTask: (id: string) => Promise<void> }).toggleTask(
+      'task-1',
+    );
 
     expect(mockImpact).not.toHaveBeenCalled();
   });
@@ -163,7 +168,8 @@ describe('TodayPage', () => {
       'task-1',
     );
 
-    const pendingTaskIds = (wrapper.vm as unknown as { pendingTaskIds: Set<string> }).pendingTaskIds;
+    const pendingTaskIds = (wrapper.vm as unknown as { pendingTaskIds: Set<string> })
+      .pendingTaskIds;
     expect(pendingTaskIds.has('task-1')).toBe(false);
     expect(mockNotify).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -176,9 +182,11 @@ describe('TodayPage', () => {
   it('toggles a task from a right swipe while idle', async () => {
     const wrapper = mountPage();
 
-    (wrapper.vm as unknown as {
-      onSwipeRight: (id: string, details: { direction: string }) => void;
-    }).onSwipeRight('task-1', { direction: 'right' });
+    (
+      wrapper.vm as unknown as {
+        onSwipeRight: (id: string, details: { direction: string }) => void;
+      }
+    ).onSwipeRight('task-1', { direction: 'right' });
 
     await Promise.resolve();
     await Promise.resolve();

@@ -30,8 +30,8 @@
       <p class="legal-block">
         {{ t('legal.imprint.dispute1') }}
         <a href="https://ec.europa.eu/consumers/odr" target="_blank" rel="noopener noreferrer">
-          https://ec.europa.eu/consumers/odr
-        </a>.<br /><br />
+          https://ec.europa.eu/consumers/odr </a
+        >.<br /><br />
         {{ t('legal.imprint.dispute2') }}
       </p>
 

@@ -122,7 +122,10 @@ describe('TasksPage', () => {
 
     await (
       wrapper.vm as unknown as {
-        submitCreate: (payload: { title: string; targetPerWeek: 1 | 2 | 3 | 4 | 5 | 6 | 7 }) => Promise<void>;
+        submitCreate: (payload: {
+          title: string;
+          targetPerWeek: 1 | 2 | 3 | 4 | 5 | 6 | 7;
+        }) => Promise<void>;
       }
     ).submitCreate({ title: 'Walk', targetPerWeek: 5 });
 
@@ -159,7 +162,9 @@ describe('TasksPage', () => {
     mockStore.archivedTasks = [{ id: 'task-2', title: 'Archived', targetPerWeek: 2 }];
     const wrapper = mountPage();
 
-    await (wrapper.vm as unknown as { unarchive: (id: string) => Promise<void> }).unarchive('task-2');
+    await (wrapper.vm as unknown as { unarchive: (id: string) => Promise<void> }).unarchive(
+      'task-2',
+    );
 
     expect(mockStore.unarchiveTask).toHaveBeenCalledWith('task-2');
   });

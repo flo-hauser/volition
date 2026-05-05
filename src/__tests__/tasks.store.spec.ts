@@ -133,9 +133,9 @@ describe('useTasksStore', () => {
     const store = useTasksStore();
     await store.init(adapter);
 
-    await expect(
-      store.createTask({ title: 'Should rollback', targetPerWeek: 3 }),
-    ).rejects.toThrow('save failed');
+    await expect(store.createTask({ title: 'Should rollback', targetPerWeek: 3 })).rejects.toThrow(
+      'save failed',
+    );
 
     expect(Object.keys(store.tasks)).toHaveLength(0);
     expect(adapter.saveState).toHaveBeenCalledTimes(1);
@@ -208,9 +208,7 @@ describe('useTasksStore', () => {
 
     await store.archiveTask(a.id);
 
-    expect(store.tasks[a.id]?.archivedAt).toMatch(
-      /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z$/,
-    );
+    expect(store.tasks[a.id]?.archivedAt).toMatch(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z$/);
     expect(store.taskOrder).toEqual([b.id]);
     expect(store.activeTasks.map((t) => t.id)).toEqual([b.id]);
     expect(store.archivedTasks.map((t) => t.id)).toEqual([a.id]);

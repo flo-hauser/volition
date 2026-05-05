@@ -26,12 +26,7 @@
       </div>
     </div>
     <div v-if="dayPattern.length === 7" class="week-strip-days">
-      <div
-        v-for="(count, i) in dayPattern"
-        :key="i"
-        class="col"
-        :class="{ today: i === todayIdx }"
-      >
+      <div v-for="(count, i) in dayPattern" :key="i" class="col" :class="{ today: i === todayIdx }">
         <div class="bar">
           <div class="f" :style="{ '--h': barHeight(count) }" />
         </div>
@@ -65,7 +60,9 @@ const r = 27;
 const circumference = 2 * Math.PI * r;
 
 const pct = computed(() => (props.target > 0 ? Math.round((props.done / props.target) * 100) : 0));
-const dashOffset = computed(() => circumference * (1 - Math.min(props.done / Math.max(props.target, 1), 1)));
+const dashOffset = computed(
+  () => circumference * (1 - Math.min(props.done / Math.max(props.target, 1), 1)),
+);
 
 function barHeight(count: number): string {
   if (props.target === 0 || count === 0) return '0';

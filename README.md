@@ -50,14 +50,14 @@ The app opens automatically in your browser with hot-reload enabled.
 
 ## Available Scripts
 
-| Command | Description |
-| --- | --- |
-| `npm run dev` | Start Quasar dev server |
-| `npm run build` | Production build (web/PWA) |
-| `npm run lint` | ESLint with flat config |
-| `npm run format` | Prettier format |
-| `npm run test` | Run test suite (single pass) |
-| `npm run test:watch` | Run tests in watch mode |
+| Command                 | Description                       |
+| ----------------------- | --------------------------------- |
+| `npm run dev`           | Start Quasar dev server           |
+| `npm run build`         | Production build (web/PWA)        |
+| `npm run lint`          | ESLint with flat config           |
+| `npm run format`        | Prettier format                   |
+| `npm run test`          | Run test suite (single pass)      |
+| `npm run test:watch`    | Run tests in watch mode           |
 | `npm run test:coverage` | Run tests with v8 coverage report |
 
 Run a single test file:
@@ -70,17 +70,17 @@ npx vitest run src/__tests__/tasks.store.spec.ts
 
 ## Tech Stack
 
-| Layer | Choice |
-| --- | --- |
-| Framework | Vue 3 + Composition API |
-| UI library | Quasar 2 |
-| State | Pinia |
-| Router | Vue Router 4 (history mode) |
-| Language | TypeScript (strict) |
-| Storage | IndexedDB (primary) + localStorage (fallback) |
-| Mobile | Capacitor |
-| PWA | Workbox (GenerateSW) |
-| Testing | Vitest + @vue/test-utils |
+| Layer      | Choice                                        |
+| ---------- | --------------------------------------------- |
+| Framework  | Vue 3 + Composition API                       |
+| UI library | Quasar 2                                      |
+| State      | Pinia                                         |
+| Router     | Vue Router 4 (history mode)                   |
+| Language   | TypeScript (strict)                           |
+| Storage    | IndexedDB (primary) + localStorage (fallback) |
+| Mobile     | Capacitor                                     |
+| PWA        | Workbox (GenerateSW)                          |
+| Testing    | Vitest + @vue/test-utils                      |
 
 ---
 

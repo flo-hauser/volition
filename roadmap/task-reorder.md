@@ -13,15 +13,15 @@ Drag-and-drop ordering on `TasksPage`. Order persists in `StorageState`. `TodayP
 
 ## What already exists
 
-| Piece | Location | Notes |
-|---|---|---|
-| `activeTasks` computed | [src/stores/tasks.store.ts:54](../src/stores/tasks.store.ts#L54) | Returns `Object.values(tasks.value).filter(...)` — unordered |
-| Task list in TasksPage | [src/pages/TasksPage.vue:11](../src/pages/TasksPage.vue#L11) | `v-for="task in tasks"` over `store.activeTasks` |
-| Task list in TodayPage | [src/pages/TodayPage.vue:23](../src/pages/TodayPage.vue#L23) | Same source, no drag needed |
-| Task list in WeekPage | [src/pages/WeekPage.vue:21](../src/pages/WeekPage.vue#L21) | Same source, no drag needed |
-| `persistOrRollback` | [src/stores/tasks.store.ts:121](../src/stores/tasks.store.ts#L121) | Use for the reorder mutation |
-| `StorageState` | [src/types/storage.ts](../src/types/storage.ts) | Needs one new field |
-| `SCHEMA_VERSION = 1` | [src/types/storage.ts:3](../src/types/storage.ts#L3) | Must bump to 2 |
+| Piece                  | Location                                                           | Notes                                                        |
+| ---------------------- | ------------------------------------------------------------------ | ------------------------------------------------------------ |
+| `activeTasks` computed | [src/stores/tasks.store.ts:54](../src/stores/tasks.store.ts#L54)   | Returns `Object.values(tasks.value).filter(...)` — unordered |
+| Task list in TasksPage | [src/pages/TasksPage.vue:11](../src/pages/TasksPage.vue#L11)       | `v-for="task in tasks"` over `store.activeTasks`             |
+| Task list in TodayPage | [src/pages/TodayPage.vue:23](../src/pages/TodayPage.vue#L23)       | Same source, no drag needed                                  |
+| Task list in WeekPage  | [src/pages/WeekPage.vue:21](../src/pages/WeekPage.vue#L21)         | Same source, no drag needed                                  |
+| `persistOrRollback`    | [src/stores/tasks.store.ts:121](../src/stores/tasks.store.ts#L121) | Use for the reorder mutation                                 |
+| `StorageState`         | [src/types/storage.ts](../src/types/storage.ts)                    | Needs one new field                                          |
+| `SCHEMA_VERSION = 1`   | [src/types/storage.ts:3](../src/types/storage.ts#L3)               | Must bump to 2                                               |
 
 No drag library is installed. SortableJS is the right choice — small, framework-agnostic, no Vue wrapper needed.
 
@@ -48,13 +48,13 @@ A single ordered array of task IDs. One write per reorder. Clean separation: tas
 **File:** [src/types/storage.ts](../src/types/storage.ts)
 
 ```ts
-export const SCHEMA_VERSION = 2 as const;   // was 1
+export const SCHEMA_VERSION = 2 as const; // was 1
 
 export interface StorageState {
   meta: StorageMeta;
   tasks: Record<string, Task>;
   checkinsByDay: Record<string, Record<string, Checkin>>;
-  taskOrder: string[];                        // ordered list of task IDs
+  taskOrder: string[]; // ordered list of task IDs
 }
 ```
 
@@ -98,7 +98,7 @@ async function init(adapter?: StorageAdapter): Promise<void> {
     tasks.value = loadedState.tasks;
     checkinsByDay.value = loadedState.checkinsByDay;
     taskOrder.value = Object.keys(loadedState.tasks);
-    await storageAdapter.saveState(createStateSnapshot());  // persist migrated state
+    await storageAdapter.saveState(createStateSnapshot()); // persist migrated state
     isReady.value = true;
     return;
   }
@@ -164,7 +164,7 @@ async function createTask(data: Omit<Task, 'id' | 'createdAt'>): Promise<Task> {
   return persistOrRollback(() => {
     const task: Task = { ...data, id: generateId(), createdAt: new Date().toISOString() };
     tasks.value[task.id] = task;
-    taskOrder.value = [...taskOrder.value, task.id];   // append at end
+    taskOrder.value = [...taskOrder.value, task.id]; // append at end
     return task;
   });
 }
@@ -216,21 +216,14 @@ The current row is a single `<button class="tasks-row">` with a click handler fo
 
 ```html
 <div class="tasks-list" ref="taskListEl">
-  <div
-    v-for="task in tasks"
-    :key="task.id"
-    class="tasks-row"
-    :data-id="task.id"
-  >
+  <div v-for="task in tasks" :key="task.id" class="tasks-row" :data-id="task.id">
     <!-- drag handle — only draggable surface -->
     <button class="drag-handle" aria-label="Reorder" @click.stop>
       <svg …><!-- 6-dot grip icon --></svg>
     </button>
 
     <!-- row body — navigates to detail, same content as before -->
-    <button class="tasks-row__body" @click="goToDetail(task.id)">
-      …
-    </button>
+    <button class="tasks-row__body" @click="goToDetail(task.id)">…</button>
 
     <!-- context menu for archive (from archiving plan) goes here -->
   </div>
@@ -253,7 +246,7 @@ onMounted(() => {
 
   sortableInstance = Sortable.create(taskListEl.value, {
     handle: '.drag-handle',
-    animation: 0,          // ← must be 0; see note below
+    animation: 0, // ← must be 0; see note below
     ghostClass: 'tasks-row--ghost',
     onEnd(evt: SortableEvent) {
       if (evt.oldIndex === evt.newIndex) return;
@@ -274,7 +267,7 @@ onUnmounted(() => {
 });
 ```
 
-**Why `animation: 0`:** SortableJS and Vue's virtual DOM both manipulate the same DOM nodes. If SortableJS runs its CSS transition *and then* `store.reorderTasks` triggers a Vue re-render, Vue reconciles using `:key` and may teleport elements mid-animation, causing a flicker. With `animation: 0` SortableJS moves elements instantly, Vue re-renders to the same order (no-op in practice), and there is no conflict. The ghost/placeholder CSS still gives visual drag feedback.
+**Why `animation: 0`:** SortableJS and Vue's virtual DOM both manipulate the same DOM nodes. If SortableJS runs its CSS transition _and then_ `store.reorderTasks` triggers a Vue re-render, Vue reconciles using `:key` and may teleport elements mid-animation, causing a flicker. With `animation: 0` SortableJS moves elements instantly, Vue re-renders to the same order (no-op in practice), and there is no conflict. The ghost/placeholder CSS still gives visual drag feedback.
 
 Using DOM order (not index arithmetic) means the resulting array is always authoritative regardless of how SortableJS moves elements.
 
@@ -293,9 +286,11 @@ Using DOM order (not index arithmetic) means the resulting array is always autho
   flex-shrink: 0;
   color: var(--ink-faint);
   cursor: grab;
-  touch-action: none;   // required for Sortable touch support
+  touch-action: none; // required for Sortable touch support
 
-  &:active { cursor: grabbing; }
+  &:active {
+    cursor: grabbing;
+  }
 }
 
 .tasks-row--ghost {
@@ -337,11 +332,11 @@ Add test cases:
 
 ## Files touched
 
-| File | Change |
-|---|---|
-| [src/types/storage.ts](../src/types/storage.ts) | `SCHEMA_VERSION` 1 → 2, add `taskOrder: string[]` |
+| File                                                      | Change                                                                                                      |
+| --------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| [src/types/storage.ts](../src/types/storage.ts)           | `SCHEMA_VERSION` 1 → 2, add `taskOrder: string[]`                                                           |
 | [src/stores/tasks.store.ts](../src/stores/tasks.store.ts) | `taskOrder` ref, updated `activeTasks`, `createTask`, `deleteTask`, new `reorderTasks`, migration in `init` |
-| [src/pages/TasksPage.vue](../src/pages/TasksPage.vue) | Drag handle, `ref` on list, SortableJS setup |
-| [src/css/app.scss](../src/css/app.scss) | `.drag-handle`, `.tasks-row--ghost` |
-| `package.json` | `sortablejs` + `@types/sortablejs` |
-| `src/__tests__/tasks.store.spec.ts` | 4 new test cases incl. migration |
+| [src/pages/TasksPage.vue](../src/pages/TasksPage.vue)     | Drag handle, `ref` on list, SortableJS setup                                                                |
+| [src/css/app.scss](../src/css/app.scss)                   | `.drag-handle`, `.tasks-row--ghost`                                                                         |
+| `package.json`                                            | `sortablejs` + `@types/sortablejs`                                                                          |
+| `src/__tests__/tasks.store.spec.ts`                       | 4 new test cases incl. migration                                                                            |

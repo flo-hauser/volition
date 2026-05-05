@@ -7,10 +7,7 @@ import { countTaskCheckinsForWeek } from 'src/composables/useProgress';
 import { indexedDbAdapter } from 'src/services/storage/indexedDbAdapter';
 import { localStorageAdapter } from 'src/services/storage/localStorageAdapter';
 import { createResilientStorageAdapter } from 'src/services/storage/resilientStorageAdapter';
-import {
-  getStorageDebugLabel,
-  type StorageAdapter,
-} from 'src/services/storage/storageAdapter';
+import { getStorageDebugLabel, type StorageAdapter } from 'src/services/storage/storageAdapter';
 import { exportToJSON } from 'src/services/dataTransfer';
 import type { StorageState } from 'src/types/storage';
 import { SCHEMA_VERSION } from 'src/types/storage';
@@ -78,7 +75,10 @@ export const useTasksStore = defineStore('tasks', () => {
     return Boolean(checkinsByDay.value[dayISO]?.[taskId]);
   }
 
-  function weekProgress(taskId: string, weekId = getWeekId(getLocalDayISO(), getStoredWeekStartDay())): number {
+  function weekProgress(
+    taskId: string,
+    weekId = getWeekId(getLocalDayISO(), getStoredWeekStartDay()),
+  ): number {
     const weekStartDay = getStoredWeekStartDay();
     return countTaskCheckinsForWeek(taskId, weekId, checkinsByDay.value, weekStartDay);
   }
@@ -167,7 +167,12 @@ export const useTasksStore = defineStore('tasks', () => {
     const loadedState = await storageAdapter.loadState();
     syncActiveStorageBackend();
 
-    const state = loadedState ?? { meta: { schemaVersion: -1 }, tasks: {}, checkinsByDay: {}, taskOrder: [] };
+    const state = loadedState ?? {
+      meta: { schemaVersion: -1 },
+      tasks: {},
+      checkinsByDay: {},
+      taskOrder: [],
+    };
 
     if (state.meta.schemaVersion !== SCHEMA_VERSION) {
       tasks.value = {};

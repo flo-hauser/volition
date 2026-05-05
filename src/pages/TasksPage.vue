@@ -18,12 +18,7 @@
     </header>
 
     <div v-if="tasks.length > 0" ref="taskListEl" class="tasks-list">
-      <div
-        v-for="task in tasks"
-        :key="task.id"
-        class="tasks-row"
-        :data-id="task.id"
-      >
+      <div v-for="task in tasks" :key="task.id" class="tasks-row" :data-id="task.id">
         <button class="drag-handle" type="button" aria-label="Reorder" @click.stop>
           <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" width="16" height="16">
             <circle cx="7" cy="5" r="1.5" />
@@ -43,7 +38,11 @@
           <div class="body">
             <div class="title">{{ task.title }}</div>
             <div class="hint">
-              {{ task.targetPerWeek === 7 ? t('pages.tasks.hintEveryDay') : t('pages.tasks.hintDaysOfSeven', { count: task.targetPerWeek }) }}
+              {{
+                task.targetPerWeek === 7
+                  ? t('pages.tasks.hintEveryDay')
+                  : t('pages.tasks.hintDaysOfSeven', { count: task.targetPerWeek })
+              }}
               <template v-if="store.getStreak(task.id) > 1">
                 · {{ store.getStreak(task.id) }}w streak
               </template>
@@ -70,11 +69,7 @@
       <section v-if="showArchived && archivedTasks.length > 0" class="tasks-archived">
         <div class="tasks-archived__label">{{ t('pages.tasks.archivedSection') }}</div>
         <div class="tasks-list tasks-list--archived">
-          <div
-            v-for="task in archivedTasks"
-            :key="task.id"
-            class="tasks-row tasks-row--archived"
-          >
+          <div v-for="task in archivedTasks" :key="task.id" class="tasks-row tasks-row--archived">
             <button type="button" class="tasks-row__body" @click="goToDetail(task.id)">
               <div class="freq" aria-hidden="true">
                 {{ task.targetPerWeek }}
@@ -179,7 +174,10 @@ function openCreateDialog(): void {
   isTaskDialogOpen.value = true;
 }
 
-async function submitCreate(payload: { title: string; targetPerWeek: TargetPerWeek }): Promise<void> {
+async function submitCreate(payload: {
+  title: string;
+  targetPerWeek: TargetPerWeek;
+}): Promise<void> {
   taskDialogBusy.value = true;
   try {
     await store.createTask(payload);
@@ -214,7 +212,9 @@ async function unarchive(taskId: string): Promise<void> {
 
 watch(
   () => route.query['new'],
-  (flag) => { if (flag === '1') openCreateDialog(); },
+  (flag) => {
+    if (flag === '1') openCreateDialog();
+  },
   { immediate: true },
 );
 

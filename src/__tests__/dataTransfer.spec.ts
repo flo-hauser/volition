@@ -3,11 +3,7 @@ import { exportToJSON, parseImport, triggerDownload } from 'src/services/dataTra
 import type { StorageState } from 'src/types/storage';
 import { SCHEMA_VERSION } from 'src/types/storage';
 
-const {
-  mockWriteFile,
-  mockCanShare,
-  mockShare,
-} = vi.hoisted(() => ({
+const { mockWriteFile, mockCanShare, mockShare } = vi.hoisted(() => ({
   mockWriteFile: vi.fn(),
   mockCanShare: vi.fn(),
   mockShare: vi.fn(),
@@ -233,9 +229,11 @@ describe('dataTransfer', () => {
     });
 
     it('writes and shares a file on native platforms', async () => {
-      (window as Window & {
-        Capacitor?: { isNativePlatform: () => boolean };
-      }).Capacitor = {
+      (
+        window as Window & {
+          Capacitor?: { isNativePlatform: () => boolean };
+        }
+      ).Capacitor = {
         isNativePlatform: () => true,
       };
 

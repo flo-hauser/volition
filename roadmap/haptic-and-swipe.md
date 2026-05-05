@@ -9,14 +9,14 @@ Both features touch the same files and the same user gesture — check-in on `To
 
 ## What already exists
 
-| Piece | Location | Notes |
-|---|---|---|
-| Task row | [src/pages/TodayPage.vue:24](../src/pages/TodayPage.vue#L24) | `.task-row` flex container; `@click` navigates to detail |
-| Toggle handler | [src/pages/TodayPage.vue:137](../src/pages/TodayPage.vue#L137) | `toggleTask(id)` — already used by CheckButton |
-| CheckButton pulse | [src/components/CheckButton.vue:51](../src/components/CheckButton.vue#L51) | Fires on check, not uncheck — haptic should match this |
-| `.task-row.done` style | [src/css/app.scss:319](../src/css/app.scss#L319) | Background/border change, 260 ms transition — swipe completion lands here automatically |
-| `@capacitor/haptics` | `src-capacitor/package.json` | **Not installed** |
-| Quasar `TouchSwipe` directive | `quasar.config.ts:57` | **Not enabled** — just needs one line to activate |
+| Piece                         | Location                                                                   | Notes                                                                                   |
+| ----------------------------- | -------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
+| Task row                      | [src/pages/TodayPage.vue:24](../src/pages/TodayPage.vue#L24)               | `.task-row` flex container; `@click` navigates to detail                                |
+| Toggle handler                | [src/pages/TodayPage.vue:137](../src/pages/TodayPage.vue#L137)             | `toggleTask(id)` — already used by CheckButton                                          |
+| CheckButton pulse             | [src/components/CheckButton.vue:51](../src/components/CheckButton.vue#L51) | Fires on check, not uncheck — haptic should match this                                  |
+| `.task-row.done` style        | [src/css/app.scss:319](../src/css/app.scss#L319)                           | Background/border change, 260 ms transition — swipe completion lands here automatically |
+| `@capacitor/haptics`          | `src-capacitor/package.json`                                               | **Not installed**                                                                       |
+| Quasar `TouchSwipe` directive | `quasar.config.ts:57`                                                      | **Not enabled** — just needs one line to activate                                       |
 
 ---
 
@@ -38,7 +38,7 @@ Call from `toggleTask()` in [src/pages/TodayPage.vue](../src/pages/TodayPage.vue
 import { Haptics, ImpactStyle } from '@capacitor/haptics';
 
 async function toggleTask(taskId: string): Promise<void> {
-  const wasChecked = store.isTodayChecked(taskId);  // read BEFORE toggling
+  const wasChecked = store.isTodayChecked(taskId); // read BEFORE toggling
   pendingTaskIds.add(taskId);
   try {
     await store.toggleToday(taskId);
@@ -63,6 +63,7 @@ The `.catch(() => {})` ensures the web build never throws (Capacitor throws on u
 ### Why Quasar `v-touch-swipe` and not native touch events
 
 Quasar's `TouchSwipe` directive:
+
 - Is already in the installed Quasar package — zero extra dependency
 - Requires a configurable minimum distance before firing (no accidental triggers)
 - Does not fire a `click` when a swipe is detected — the navigate-to-detail `@click` stays safe
@@ -91,7 +92,7 @@ That is the only config change needed.
   :class="{ done: store.isTodayChecked(task.id), swiping: swipingTaskId === task.id }"
   v-touch-swipe.right.mouse="(details) => onSwipeRight(task.id, details)"
   @click="goToDetail(task.id)"
->
+></div>
 ```
 
 Handler in `<script setup>`:
@@ -142,10 +143,10 @@ The roadmap says "swipe right to toggle it done". For simplicity, the swipe righ
 
 ## Interaction summary after both features
 
-| Action | Result |
-|---|---|
-| Tap task body | Navigate to detail (unchanged) |
-| Tap CheckButton | Toggle done/undone + haptic on check-in + pulse animation |
+| Action             | Result                                                        |
+| ------------------ | ------------------------------------------------------------- |
+| Tap task body      | Navigate to detail (unchanged)                                |
+| Tap CheckButton    | Toggle done/undone + haptic on check-in + pulse animation     |
 | Swipe right on row | Toggle done/undone + haptic on check-in + row nudge animation |
 
 All three paths share `toggleTask()` — haptics and state change are never duplicated.
@@ -166,9 +167,9 @@ All three paths share `toggleTask()` — haptics and state change are never dupl
 
 ## Files touched
 
-| File | Change |
-|---|---|
-| `src-capacitor/package.json` + root `package.json` | Add `@capacitor/haptics` |
-| `quasar.config.ts` | Add `TouchSwipe` to `directives` |
+| File                                                  | Change                                                                                   |
+| ----------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| `src-capacitor/package.json` + root `package.json`    | Add `@capacitor/haptics`                                                                 |
+| `quasar.config.ts`                                    | Add `TouchSwipe` to `directives`                                                         |
 | [src/pages/TodayPage.vue](../src/pages/TodayPage.vue) | Haptics call in `toggleTask`, swipe handler, `v-touch-swipe` on row, `swipingTaskId` ref |
-| [src/css/app.scss](../src/css/app.scss) | `.task-row.swiping` nudge style |
+| [src/css/app.scss](../src/css/app.scss)               | `.task-row.swiping` nudge style                                                          |

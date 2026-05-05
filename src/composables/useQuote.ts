@@ -11,7 +11,13 @@ export function useQuote() {
     if (total === 0) return pool('quotes.start')[0] ?? '';
     const ratio = progress / total;
     const phase =
-      ratio === 1 ? 'quotes.done' : ratio > 0.66 ? 'quotes.near' : ratio > 0.3 ? 'quotes.mid' : 'quotes.start';
+      ratio === 1
+        ? 'quotes.done'
+        : ratio > 0.66
+          ? 'quotes.near'
+          : ratio > 0.3
+            ? 'quotes.mid'
+            : 'quotes.start';
     const quotes = pool(phase);
     return quotes[seed % quotes.length] ?? quotes[0] ?? '';
   }

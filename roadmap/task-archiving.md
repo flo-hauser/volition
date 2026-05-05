@@ -24,13 +24,13 @@ Without this, the task silently lingers in `taskOrder` as a stale entry. The sto
 
 ## What already exists
 
-| Piece | Location | Status |
-| --- | --- | --- |
-| `archivedAt?: string` field on `Task` | [src/types/task.ts](../src/types/task.ts) | Ready, no schema change needed |
-| `activeTasks` filter (`!task.archivedAt`) | [src/stores/tasks.store.ts:54](../src/stores/tasks.store.ts#L54) | Ready |
-| `persistOrRollback` helper | [src/stores/tasks.store.ts:121](../src/stores/tasks.store.ts#L121) | Use the same pattern as `updateTask` / `deleteTask` |
-| Hardcoded `archived: 0` eyebrow | [src/pages/TasksPage.vue:5](../src/pages/TasksPage.vue#L5) | Must be replaced |
-| `q-dialog` confirm pattern | [src/pages/TaskDetailPage.vue:87](../src/pages/TaskDetailPage.vue#L87) | Follow for any destructive confirm |
+| Piece                                     | Location                                                               | Status                                              |
+| ----------------------------------------- | ---------------------------------------------------------------------- | --------------------------------------------------- |
+| `archivedAt?: string` field on `Task`     | [src/types/task.ts](../src/types/task.ts)                              | Ready, no schema change needed                      |
+| `activeTasks` filter (`!task.archivedAt`) | [src/stores/tasks.store.ts:54](../src/stores/tasks.store.ts#L54)       | Ready                                               |
+| `persistOrRollback` helper                | [src/stores/tasks.store.ts:121](../src/stores/tasks.store.ts#L121)     | Use the same pattern as `updateTask` / `deleteTask` |
+| Hardcoded `archived: 0` eyebrow           | [src/pages/TasksPage.vue:5](../src/pages/TasksPage.vue#L5)             | Must be replaced                                    |
+| `q-dialog` confirm pattern                | [src/pages/TaskDetailPage.vue:87](../src/pages/TaskDetailPage.vue#L87) | Follow for any destructive confirm                  |
 
 ---
 
@@ -43,7 +43,7 @@ Without this, the task silently lingers in `taskOrder` as a stale entry. The sto
 - Added `archiveTask`, `unarchiveTask`, and `archivedTasks` in [src/stores/tasks.store.ts](../src/stores/tasks.store.ts)
 - Archiving removes the task ID from `taskOrder`
 - Unarchiving appends the task ID back to the end of `taskOrder`
-- Added store tests in [src/__tests__/tasks.store.spec.ts](../src/__tests__/tasks.store.spec.ts)
+- Added store tests in [src/**tests**/tasks.store.spec.ts](../src/__tests__/tasks.store.spec.ts)
 
 ### Tasks list UI
 
@@ -82,12 +82,12 @@ Without this, the task silently lingers in `taskOrder` as a stale entry. The sto
 
 ## Files touched
 
-| File | Change |
-| --- | --- |
-| [src/stores/tasks.store.ts](../src/stores/tasks.store.ts) | Add `archiveTask`, `unarchiveTask`, `archivedTasks` |
-| [src/pages/TasksPage.vue](../src/pages/TasksPage.vue) | Context menus, toggle, eyebrow fix |
-| [src/css/app.scss](../src/css/app.scss) | `.tasks-row--archived` style |
-| [src/i18n/en-US/index.ts](../src/i18n/en-US/index.ts) | Archive / unarchive labels and toasts |
-| [src/i18n/de-DE/index.ts](../src/i18n/de-DE/index.ts) | Same in German |
-| [tasks.store.spec.ts](../src/__tests__/tasks.store.spec.ts) | 2 new test cases |
-| [src/pages/TaskDetailPage.vue](../src/pages/TaskDetailPage.vue) | Archive and unarchive actions in the header |
+| File                                                            | Change                                              |
+| --------------------------------------------------------------- | --------------------------------------------------- |
+| [src/stores/tasks.store.ts](../src/stores/tasks.store.ts)       | Add `archiveTask`, `unarchiveTask`, `archivedTasks` |
+| [src/pages/TasksPage.vue](../src/pages/TasksPage.vue)           | Context menus, toggle, eyebrow fix                  |
+| [src/css/app.scss](../src/css/app.scss)                         | `.tasks-row--archived` style                        |
+| [src/i18n/en-US/index.ts](../src/i18n/en-US/index.ts)           | Archive / unarchive labels and toasts               |
+| [src/i18n/de-DE/index.ts](../src/i18n/de-DE/index.ts)           | Same in German                                      |
+| [tasks.store.spec.ts](../src/__tests__/tasks.store.spec.ts)     | 2 new test cases                                    |
+| [src/pages/TaskDetailPage.vue](../src/pages/TaskDetailPage.vue) | Archive and unarchive actions in the header         |

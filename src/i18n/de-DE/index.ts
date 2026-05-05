@@ -63,7 +63,8 @@ export default {
     tasks: {
       title: 'Deine <em>Praktiken</em>.',
       eyebrow: '{active} aktiv · {archived} archiviert',
-      subtitle: 'Positiv formuliert — jede Aufgabe benennt, was du tun willst, nicht, was du vermeiden willst.',
+      subtitle:
+        'Positiv formuliert — jede Aufgabe benennt, was du tun willst, nicht, was du vermeiden willst.',
       hint: 'Aktive Aufgaben und ihre Wochenziele.',
       archivedSection: 'Archivierte Aufgaben',
       archivedHint: 'Archiviert',
@@ -101,7 +102,8 @@ export default {
         exportSuccess: 'Sicherung exportiert.',
         exportFailed: 'Sicherung konnte nicht exportiert werden.',
         importLabel: 'Daten importieren',
-        importHint: 'Aus einer zuvor exportierten Datei wiederherstellen. Ersetzt alle aktuellen Daten.',
+        importHint:
+          'Aus einer zuvor exportierten Datei wiederherstellen. Ersetzt alle aktuellen Daten.',
         importBtn: 'Datei auswählen',
         importConfirmTitle: 'Sicherung wiederherstellen?',
         importConfirm: 'Das ersetzt alle deine aktuellen Aufgaben und Check-ins. Fortfahren?',
@@ -169,22 +171,28 @@ export default {
       s3: 'Inhaltlich verantwortlich',
       addressAbove: '(Adresse wie oben)',
       s4: 'Streitschlichtung',
-      dispute1: 'Die Europäische Kommission stellt eine Plattform zur Online-Streitbeilegung (OS) bereit:',
-      dispute2: 'Wir sind nicht bereit oder verpflichtet, an Streitbeilegungsverfahren vor einer Verbraucherschlichtungsstelle teilzunehmen.',
+      dispute1:
+        'Die Europäische Kommission stellt eine Plattform zur Online-Streitbeilegung (OS) bereit:',
+      dispute2:
+        'Wir sind nicht bereit oder verpflichtet, an Streitbeilegungsverfahren vor einer Verbraucherschlichtungsstelle teilzunehmen.',
       s5: 'Haftung für Inhalte',
-      liability: 'Als Diensteanbieter sind wir gemäß allgemeinem Recht für eigene Inhalte auf diesen Seiten verantwortlich. Wir sind nicht verpflichtet, übermittelte oder gespeicherte fremde Informationen zu überwachen oder nach Umständen zu forschen, die auf eine rechtswidrige Tätigkeit hinweisen.',
+      liability:
+        'Als Diensteanbieter sind wir gemäß allgemeinem Recht für eigene Inhalte auf diesen Seiten verantwortlich. Wir sind nicht verpflichtet, übermittelte oder gespeicherte fremde Informationen zu überwachen oder nach Umständen zu forschen, die auf eine rechtswidrige Tätigkeit hinweisen.',
     },
     privacy: {
       title: 'Datenschutzerklärung',
       s1: 'Auf einen Blick',
-      intro: 'Volition speichert alle Daten ausschließlich auf deinem Gerät. Es werden keine personenbezogenen Daten an externe Server übermittelt, keine Analysen erfasst und keine Drittanbieterdienste genutzt.',
+      intro:
+        'Volition speichert alle Daten ausschließlich auf deinem Gerät. Es werden keine personenbezogenen Daten an externe Server übermittelt, keine Analysen erfasst und keine Drittanbieterdienste genutzt.',
       s2: 'Verantwortliche Stelle',
       s3: 'Welche Daten gespeichert werden',
       storedIntro: 'Volition speichert folgende Daten ausschließlich lokal auf deinem Gerät:',
-      storedItem1: 'Von dir erstellte Aufgaben (Titel, wöchentliches Häufigkeitsziel, Erstellungsdatum)',
+      storedItem1:
+        'Von dir erstellte Aufgaben (Titel, wöchentliches Häufigkeitsziel, Erstellungsdatum)',
       storedItem2: 'Von dir erfasste tägliche Check-ins (Aufgabenzuordnung, Datum)',
       storedItem3: 'App-Einstellungen (Sprache, Farbschema)',
-      storedOutro: 'Diese Daten werden mithilfe der IndexedDB- und localStorage-APIs deines Browsers gespeichert. Sie verlassen dein Gerät nicht, es sei denn, du exportierst sie ausdrücklich.',
+      storedOutro:
+        'Diese Daten werden mithilfe der IndexedDB- und localStorage-APIs deines Browsers gespeichert. Sie verlassen dein Gerät nicht, es sei denn, du exportierst sie ausdrücklich.',
       s4: 'Welche Daten NICHT erhoben werden',
       notItem1: 'Kein Name, keine E-Mail-Adresse und keine Kontoinformationen',
       notItem2: 'Keine Standortdaten',
@@ -192,12 +200,15 @@ export default {
       notItem4: 'Keine Tracking- oder Werbe-Cookies',
       notItem5: 'Keine Datenweitergabe an Dritte',
       s5: 'Lokale Datenspeicherung',
-      localStorageText: 'Die App nutzt localStorage zur Speicherung von Sprache und Design sowie IndexedDB für Aufgaben und Check-ins. Diese Speicherung ist für die Funktion der App unbedingt erforderlich und bedarf gemäß DSGVO keiner Einwilligung.',
+      localStorageText:
+        'Die App nutzt localStorage zur Speicherung von Sprache und Design sowie IndexedDB für Aufgaben und Check-ins. Diese Speicherung ist für die Funktion der App unbedingt erforderlich und bedarf gemäß DSGVO keiner Einwilligung.',
       s6: 'Deine Rechte',
-      rights1: 'Da alle Daten lokal auf deinem Gerät gespeichert werden, hast du jederzeit die volle Kontrolle. Du kannst alle App-Daten jederzeit löschen, indem du den App-Speicher in den Einstellungen deines Browsers oder Geräts leerst. Eine Anfrage an uns ist nicht erforderlich.',
+      rights1:
+        'Da alle Daten lokal auf deinem Gerät gespeichert werden, hast du jederzeit die volle Kontrolle. Du kannst alle App-Daten jederzeit löschen, indem du den App-Speicher in den Einstellungen deines Browsers oder Geräts leerst. Eine Anfrage an uns ist nicht erforderlich.',
       rights2: 'Bei Fragen zum Datenschutz erreichst du uns unter:',
       s7: 'Änderungen dieser Richtlinie',
-      changes: 'Diese Richtlinie kann aktualisiert werden, wenn sich die Datenpraktiken der App ändern. Die aktuelle Version ist jederzeit in der App unter Einstellungen → Datenschutzerklärung verfügbar.',
+      changes:
+        'Diese Richtlinie kann aktualisiert werden, wenn sich die Datenpraktiken der App ändern. Die aktuelle Version ist jederzeit in der App unter Einstellungen → Datenschutzerklärung verfügbar.',
       lastUpdated: 'Zuletzt aktualisiert: April 2026',
     },
   },

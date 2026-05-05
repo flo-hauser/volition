@@ -29,12 +29,14 @@ export function exportToJSON(state: StorageState): string {
 }
 
 function isNativePlatform(): boolean {
-  const maybeCapacitor = (window as Window & {
-    Capacitor?: {
-      isNativePlatform?: () => boolean;
-      getPlatform?: () => string;
-    };
-  }).Capacitor;
+  const maybeCapacitor = (
+    window as Window & {
+      Capacitor?: {
+        isNativePlatform?: () => boolean;
+        getPlatform?: () => string;
+      };
+    }
+  ).Capacitor;
 
   if (typeof maybeCapacitor?.isNativePlatform === 'function') {
     return maybeCapacitor.isNativePlatform();

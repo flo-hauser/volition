@@ -143,7 +143,9 @@ const freqCaption = computed(() => {
 const frequencyChoices: readonly TargetPerWeek[] = [1, 2, 3, 4, 5, 6, 7] as const;
 
 function frequencyAriaLabel(n: TargetPerWeek): string {
-  return n === 7 ? t('pages.newTask.targetOptionDaily') : t('pages.newTask.targetOption', { count: n });
+  return n === 7
+    ? t('pages.newTask.targetOptionDaily')
+    : t('pages.newTask.targetOption', { count: n });
 }
 
 function resetForm(): void {

@@ -13,14 +13,14 @@ Let users download their full dataset as a JSON file and restore it from a previ
 
 ## What already exists
 
-| Piece | Location | Notes |
-|---|---|---|
-| `StorageState` shape | [src/types/storage.ts](../src/types/storage.ts) | `{ meta, tasks, checkinsByDay }` |
-| `createStateSnapshot()` | [src/stores/tasks.store.ts:111](../src/stores/tasks.store.ts#L111) | Already serializes full state — reuse directly |
-| `persistOrRollback` | [src/stores/tasks.store.ts:121](../src/stores/tasks.store.ts#L121) | Safe mutation with rollback on error |
-| `SCHEMA_VERSION = 1` | [src/types/storage.ts:3](../src/types/storage.ts#L3) | Must be checked on import |
-| Settings page | [src/pages/SettingsPage.vue](../src/pages/SettingsPage.vue) | Add new section here |
-| Debug "Data" section | [src/pages/SettingsPage.vue:87](../src/pages/SettingsPage.vue#L87) | Shows raw data — keep separate from user-facing backup section |
+| Piece                   | Location                                                           | Notes                                                          |
+| ----------------------- | ------------------------------------------------------------------ | -------------------------------------------------------------- |
+| `StorageState` shape    | [src/types/storage.ts](../src/types/storage.ts)                    | `{ meta, tasks, checkinsByDay }`                               |
+| `createStateSnapshot()` | [src/stores/tasks.store.ts:111](../src/stores/tasks.store.ts#L111) | Already serializes full state — reuse directly                 |
+| `persistOrRollback`     | [src/stores/tasks.store.ts:121](../src/stores/tasks.store.ts#L121) | Safe mutation with rollback on error                           |
+| `SCHEMA_VERSION = 1`    | [src/types/storage.ts:3](../src/types/storage.ts#L3)               | Must be checked on import                                      |
+| Settings page           | [src/pages/SettingsPage.vue](../src/pages/SettingsPage.vue)        | Add new section here                                           |
+| Debug "Data" section    | [src/pages/SettingsPage.vue:87](../src/pages/SettingsPage.vue#L87) | Shows raw data — keep separate from user-facing backup section |
 
 No Capacitor Filesystem plugin is installed. The browser File API is sufficient and already works in both web and Capacitor WebView.
 
@@ -37,7 +37,7 @@ import type { Task } from '@/types/task';
 import type { Checkin } from '@/types/task';
 
 export interface ExportEnvelope {
-  exportedAt: string;          // ISO timestamp
+  exportedAt: string; // ISO timestamp
   schemaVersion: number;
   tasks: Record<string, Task>;
   checkinsByDay: Record<string, Record<string, Checkin>>;
@@ -158,9 +158,7 @@ Add a "Backup" section above (or below) the existing debug section. Keep it clea
       <span class="settings-row__label">{{ t('settings.backup.exportLabel') }}</span>
       <span class="settings-row__hint">{{ t('settings.backup.exportHint') }}</span>
     </div>
-    <button class="ghost-btn" @click="handleExport">
-      {{ t('settings.backup.exportBtn') }}
-    </button>
+    <button class="ghost-btn" @click="handleExport">{{ t('settings.backup.exportBtn') }}</button>
   </div>
 
   <!-- Import -->
@@ -221,9 +219,7 @@ Importing overwrites all local data. Gate it behind a `q-dialog` confirm — sam
   <div class="dialog-card">
     <p>{{ t('settings.backup.importConfirm') }}</p>
     <div class="dialog-actions">
-      <button class="ghost-btn" @click="confirmDialogOpen = false">
-        {{ t('common.cancel') }}
-      </button>
+      <button class="ghost-btn" @click="confirmDialogOpen = false">{{ t('common.cancel') }}</button>
       <button class="primary-btn" :disabled="importing" @click="confirmImport">
         {{ t('common.confirm') }}
       </button>
@@ -296,6 +292,7 @@ backup: {
 **File:** `src/__tests__/dataTransfer.spec.ts` (new)
 
 Cases to cover:
+
 - `exportToJSON` produces valid JSON with correct `schemaVersion`, all tasks, all check-ins
 - `parseImport` on a valid export returns `ok: true` with reconstructed `StorageState`
 - `parseImport` on malformed JSON returns `ok: false, error: 'invalid_json'`
@@ -320,11 +317,11 @@ Round-trip test: `parseImport(exportToJSON(state)).state` deep-equals the origin
 
 ## Files touched
 
-| File | Change |
-|---|---|
-| `src/services/dataTransfer.ts` | New — `exportToJSON`, `triggerDownload`, `parseImport` |
-| [src/stores/tasks.store.ts](../src/stores/tasks.store.ts) | Add `exportState`, `importState` |
-| [src/pages/SettingsPage.vue](../src/pages/SettingsPage.vue) | New "Backup" section, dialogs, handlers |
-| `src/i18n/en-US/index.ts` | `backup.*` strings |
-| `src/i18n/de-DE/index.ts` | `backup.*` strings (German) |
-| `src/__tests__/dataTransfer.spec.ts` | New — unit tests incl. round-trip |
+| File                                                        | Change                                                 |
+| ----------------------------------------------------------- | ------------------------------------------------------ |
+| `src/services/dataTransfer.ts`                              | New — `exportToJSON`, `triggerDownload`, `parseImport` |
+| [src/stores/tasks.store.ts](../src/stores/tasks.store.ts)   | Add `exportState`, `importState`                       |
+| [src/pages/SettingsPage.vue](../src/pages/SettingsPage.vue) | New "Backup" section, dialogs, handlers                |
+| `src/i18n/en-US/index.ts`                                   | `backup.*` strings                                     |
+| `src/i18n/de-DE/index.ts`                                   | `backup.*` strings (German)                            |
+| `src/__tests__/dataTransfer.spec.ts`                        | New — unit tests incl. round-trip                      |

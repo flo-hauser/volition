@@ -17,7 +17,12 @@ function isStorageStateLike(value: unknown): value is StorageState {
   const tasks = value.tasks;
   const checkinsByDay = value.checkinsByDay;
 
-  return isRecord(meta) && typeof meta.schemaVersion === 'number' && isRecord(tasks) && isRecord(checkinsByDay);
+  return (
+    isRecord(meta) &&
+    typeof meta.schemaVersion === 'number' &&
+    isRecord(tasks) &&
+    isRecord(checkinsByDay)
+  );
 }
 
 export const localStorageAdapter: StorageAdapter = {

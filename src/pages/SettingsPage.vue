@@ -61,8 +61,12 @@
     <section class="settings-section">
       <h2 class="section-title">{{ t('legal.sectionTitle') }}</h2>
       <div class="legal-links">
-        <button type="button" class="legal-link" @click="router.push('/imprint')">{{ t('legal.imprintLink') }}</button>
-        <button type="button" class="legal-link" @click="router.push('/privacy')">{{ t('legal.privacyLink') }}</button>
+        <button type="button" class="legal-link" @click="router.push('/imprint')">
+          {{ t('legal.imprintLink') }}
+        </button>
+        <button type="button" class="legal-link" @click="router.push('/privacy')">
+          {{ t('legal.privacyLink') }}
+        </button>
       </div>
     </section>
 
@@ -100,7 +104,12 @@
           {{ t(`pages.settings.backup.importError${importError}`) || importError }}
         </div>
         <div class="sheet-actions">
-          <button type="button" class="ghost-btn" :disabled="importing" @click="confirmDialogOpen = false">
+          <button
+            type="button"
+            class="ghost-btn"
+            :disabled="importing"
+            @click="confirmDialogOpen = false"
+          >
             {{ t('common.cancel') }}
           </button>
           <button type="button" class="primary-btn" :disabled="importing" @click="confirmImport">
@@ -117,36 +126,36 @@
     </section>
 
     <template v-if="showDebug">
-    <section class="settings-section">
-      <h2 class="section-title">Diagnostics</h2>
-      <div class="diag">
-        <div>Secure Context: {{ String(runtimeDiagnostics.isSecureContext) }}</div>
-        <div>crypto.randomUUID: {{ String(runtimeDiagnostics.hasRandomUUID) }}</div>
-        <div>IndexedDB: {{ String(runtimeDiagnostics.hasIndexedDB) }}</div>
-        <div>LocalStorage: {{ String(runtimeDiagnostics.hasLocalStorage) }}</div>
-        <div>Storage Backend: {{ store.activeStorageBackend }}</div>
-        <div class="ua">UA: {{ runtimeDiagnostics.userAgent }}</div>
-      </div>
-      <button type="button" class="ghost-btn" @click="reloadDebugData">Reload diagnostics</button>
-      <div v-if="debugLogs.length > 0" class="diag-logs">
-        <div class="diag-logs-head">Recent logs (up to 20)</div>
-        <div v-for="entry in debugLogs" :key="entry.id" class="diag-log">
-          {{ entry.at }} | {{ entry.scope }} | {{ entry.message }}
+      <section class="settings-section">
+        <h2 class="section-title">Diagnostics</h2>
+        <div class="diag">
+          <div>Secure Context: {{ String(runtimeDiagnostics.isSecureContext) }}</div>
+          <div>crypto.randomUUID: {{ String(runtimeDiagnostics.hasRandomUUID) }}</div>
+          <div>IndexedDB: {{ String(runtimeDiagnostics.hasIndexedDB) }}</div>
+          <div>LocalStorage: {{ String(runtimeDiagnostics.hasLocalStorage) }}</div>
+          <div>Storage Backend: {{ store.activeStorageBackend }}</div>
+          <div class="ua">UA: {{ runtimeDiagnostics.userAgent }}</div>
         </div>
-      </div>
-      <p v-else class="settings-hint">No captured runtime error yet.</p>
-    </section>
-    <section class="settings-section">
-      <h2 class="section-title">Data</h2>
-      <div class="diag">
-        Tasks <br />
-        {{ store.activeTasks }}
-      </div>
-      <div class="diag">
-        Check Ins <br />
-        {{ store.checkinsByDay }}
-      </div>
-    </section>
+        <button type="button" class="ghost-btn" @click="reloadDebugData">Reload diagnostics</button>
+        <div v-if="debugLogs.length > 0" class="diag-logs">
+          <div class="diag-logs-head">Recent logs (up to 20)</div>
+          <div v-for="entry in debugLogs" :key="entry.id" class="diag-log">
+            {{ entry.at }} | {{ entry.scope }} | {{ entry.message }}
+          </div>
+        </div>
+        <p v-else class="settings-hint">No captured runtime error yet.</p>
+      </section>
+      <section class="settings-section">
+        <h2 class="section-title">Data</h2>
+        <div class="diag">
+          Tasks <br />
+          {{ store.activeTasks }}
+        </div>
+        <div class="diag">
+          Check Ins <br />
+          {{ store.checkinsByDay }}
+        </div>
+      </section>
     </template>
   </q-page>
 </template>

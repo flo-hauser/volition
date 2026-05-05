@@ -147,7 +147,9 @@ describe('SettingsPage', () => {
   it('reads current locale through computed getter', () => {
     mockLocale.value = 'de-DE';
     const wrapper = mountPage();
-    expect((wrapper.vm as unknown as { currentLocale: 'en-US' | 'de-DE' }).currentLocale).toBe('de-DE');
+    expect((wrapper.vm as unknown as { currentLocale: 'en-US' | 'de-DE' }).currentLocale).toBe(
+      'de-DE',
+    );
   });
 
   it('persists changes when a segmented locale button is clicked', async () => {

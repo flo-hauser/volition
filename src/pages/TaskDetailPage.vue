@@ -4,11 +4,13 @@
       <button type="button" class="icon-btn" :aria-label="t('common.back')" @click="goBack">
         <q-icon name="arrow_back" />
       </button>
-      <div style="display:flex;gap:6px">
+      <div style="display: flex; gap: 6px">
         <button
           type="button"
           class="icon-btn"
-          :aria-label="task.archivedAt ? t('pages.tasks.unarchiveTask') : t('pages.tasks.archiveTask')"
+          :aria-label="
+            task.archivedAt ? t('pages.tasks.unarchiveTask') : t('pages.tasks.archiveTask')
+          "
           @click="task.archivedAt ? handleUnarchive() : handleArchive()"
         >
           <q-icon :name="task.archivedAt ? 'unarchive' : 'archive'" />
@@ -21,7 +23,12 @@
         >
           <q-icon name="edit" />
         </button>
-        <button type="button" class="icon-btn" :aria-label="t('pages.tasks.deleteTask')" @click="confirmDelete">
+        <button
+          type="button"
+          class="icon-btn"
+          :aria-label="t('pages.tasks.deleteTask')"
+          @click="confirmDelete"
+        >
           <q-icon name="delete" />
         </button>
       </div>
@@ -29,7 +36,9 @@
 
     <div class="detail-hero">
       <h1 class="title">{{ task.title }}</h1>
-      <span class="freq-pill">◦ {{ t('pages.week.targetPerWeek', { count: task.targetPerWeek }) }}</span>
+      <span class="freq-pill"
+        >◦ {{ t('pages.week.targetPerWeek', { count: task.targetPerWeek }) }}</span
+      >
     </div>
 
     <div class="stat-grid">
@@ -49,7 +58,9 @@
 
     <div class="detail-check-row">
       <div>
-        <div class="l">{{ isDoneToday ? t('pages.detail.checkedInToday') : t('pages.detail.notYetToday') }}</div>
+        <div class="l">
+          {{ isDoneToday ? t('pages.detail.checkedInToday') : t('pages.detail.notYetToday') }}
+        </div>
         <div class="sub">{{ todayLabel }}</div>
       </div>
       <CheckButton
@@ -96,7 +107,12 @@
         <h2>{{ t('pages.tasks.deleteTask') }}</h2>
         <p class="sub">{{ t('pages.tasks.deleteConfirm') }}</p>
         <div class="sheet-actions">
-          <button type="button" class="ghost-btn" :disabled="deleteBusy" @click="isDeleteOpen = false">
+          <button
+            type="button"
+            class="ghost-btn"
+            :disabled="deleteBusy"
+            @click="isDeleteOpen = false"
+          >
             {{ t('common.cancel') }}
           </button>
           <button type="button" class="primary-btn" :disabled="deleteBusy" @click="submitDelete">

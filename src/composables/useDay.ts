@@ -81,9 +81,7 @@ function getWeekYearForMode(date: Date, weekStartDay: WeekStartDay): number {
 }
 
 function getWeekStart(date: Date, weekStartDay: WeekStartDay): Date {
-  return weekStartDay === 'sunday'
-    ? startOfWeek(date, { weekStartsOn: 0 })
-    : startOfISOWeek(date);
+  return weekStartDay === 'sunday' ? startOfWeek(date, { weekStartsOn: 0 }) : startOfISOWeek(date);
 }
 
 function getStartOfWeekForWeekId(
@@ -91,9 +89,7 @@ function getStartOfWeekForWeekId(
   weekNumber: number,
   weekStartDay: WeekStartDay,
 ): Date {
-  const anchor = weekStartDay === 'sunday'
-    ? new Date(weekYear, 0, 1)
-    : new Date(weekYear, 0, 4);
+  const anchor = weekStartDay === 'sunday' ? new Date(weekYear, 0, 1) : new Date(weekYear, 0, 4);
   const firstWeekStart = getWeekStart(anchor, weekStartDay);
   return addDays(firstWeekStart, (weekNumber - 1) * 7);
 }

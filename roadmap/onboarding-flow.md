@@ -13,13 +13,13 @@ A three-screen intro shown only on first launch: what Volition is, how frequency
 
 ## What already exists
 
-| Piece | Location | Notes |
-|---|---|---|
-| Router | [src/router/index.ts](../src/router/index.ts) | No guards yet — add `beforeEach` here |
-| Routes | [src/router/routes.ts](../src/router/routes.ts) | All main routes are children of `MainLayout` |
-| `useAppPreferences` | [src/composables/useAppPreferences.ts](../src/composables/useAppPreferences.ts) | localStorage pattern — add flag here |
-| `MainLayout` | `src/layouts/MainLayout.vue` | Has header + bottom nav — must be bypassed for onboarding |
-| i18n | `src/i18n/en-US/index.ts`, `src/i18n/de-DE/index.ts` | Add `onboarding.*` namespace |
+| Piece               | Location                                                                        | Notes                                                     |
+| ------------------- | ------------------------------------------------------------------------------- | --------------------------------------------------------- |
+| Router              | [src/router/index.ts](../src/router/index.ts)                                   | No guards yet — add `beforeEach` here                     |
+| Routes              | [src/router/routes.ts](../src/router/routes.ts)                                 | All main routes are children of `MainLayout`              |
+| `useAppPreferences` | [src/composables/useAppPreferences.ts](../src/composables/useAppPreferences.ts) | localStorage pattern — add flag here                      |
+| `MainLayout`        | `src/layouts/MainLayout.vue`                                                    | Has header + bottom nav — must be bypassed for onboarding |
+| i18n                | `src/i18n/en-US/index.ts`, `src/i18n/de-DE/index.ts`                            | Add `onboarding.*` namespace                              |
 
 ---
 
@@ -85,9 +85,9 @@ Place it before the `MainLayout` children block so it is matched first.
 import { hasCompletedOnboarding } from 'src/composables/useAppPreferences';
 
 router.beforeEach((to) => {
-  if (to.name === 'onboarding') return true;            // already going there
-  if (hasCompletedOnboarding()) return true;            // normal user
-  return { name: 'onboarding' };                        // first launch → redirect
+  if (to.name === 'onboarding') return true; // already going there
+  if (hasCompletedOnboarding()) return true; // normal user
+  return { name: 'onboarding' }; // first launch → redirect
 });
 ```
 
@@ -108,12 +108,7 @@ A single page that manages step state internally. No child routes — step URLs 
   <div class="onboarding">
     <!-- step indicator dots -->
     <div class="onboarding__dots">
-      <span
-        v-for="n in 3"
-        :key="n"
-        class="dot"
-        :class="{ active: step === n }"
-      />
+      <span v-for="n in 3" :key="n" class="dot" :class="{ active: step === n }" />
     </div>
 
     <!-- screen content — swap with transition -->
@@ -132,9 +127,7 @@ A single page that manages step state internally. No child routes — step URLs 
       <button class="ghost-btn" @click="finish">
         {{ step < 3 ? t('onboarding.skip') : t('onboarding.getStarted') }}
       </button>
-      <button v-if="step < 3" class="primary-btn" @click="next">
-        {{ t('onboarding.next') }}
-      </button>
+      <button v-if="step < 3" class="primary-btn" @click="next">{{ t('onboarding.next') }}</button>
     </div>
   </div>
 </template>
@@ -277,7 +270,9 @@ onboarding: {
     background: var(--hairline);
     transition: background 240ms var(--ease);
 
-    &.active { background: var(--accent); }
+    &.active {
+      background: var(--accent);
+    }
   }
 }
 
@@ -316,8 +311,14 @@ onboarding: {
 .slide-leave-active {
   transition: all 240ms var(--ease);
 }
-.slide-enter-from { opacity: 0; transform: translateX(24px); }
-.slide-leave-to   { opacity: 0; transform: translateX(-24px); }
+.slide-enter-from {
+  opacity: 0;
+  transform: translateX(24px);
+}
+.slide-leave-to {
+  opacity: 0;
+  transform: translateX(-24px);
+}
 ```
 
 ---
@@ -351,12 +352,12 @@ function resetOnboarding(): void {
 
 ## Files touched
 
-| File | Change |
-|---|---|
+| File                                                                            | Change                                             |
+| ------------------------------------------------------------------------------- | -------------------------------------------------- |
 | [src/composables/useAppPreferences.ts](../src/composables/useAppPreferences.ts) | `hasCompletedOnboarding`, `setOnboardingCompleted` |
-| [src/router/routes.ts](../src/router/routes.ts) | Add `/onboarding` route outside `MainLayout` |
-| [src/router/index.ts](../src/router/index.ts) | `beforeEach` guard |
-| `src/pages/OnboardingPage.vue` | New — three-step onboarding component |
-| [src/css/app.scss](../src/css/app.scss) | `.onboarding*` styles, slide transition |
-| `src/i18n/en-US/index.ts` | `onboarding.*` strings |
-| `src/i18n/de-DE/index.ts` | Same in German |
+| [src/router/routes.ts](../src/router/routes.ts)                                 | Add `/onboarding` route outside `MainLayout`       |
+| [src/router/index.ts](../src/router/index.ts)                                   | `beforeEach` guard                                 |
+| `src/pages/OnboardingPage.vue`                                                  | New — three-step onboarding component              |
+| [src/css/app.scss](../src/css/app.scss)                                         | `.onboarding*` styles, slide transition            |
+| `src/i18n/en-US/index.ts`                                                       | `onboarding.*` strings                             |
+| `src/i18n/de-DE/index.ts`                                                       | Same in German                                     |

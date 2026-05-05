@@ -13,9 +13,10 @@
     "test": "vitest run",
     "dev": "quasar dev",
     "build": "quasar build",
-    "postinstall": "quasar prepare",
+    "postinstall": "quasar prepare && git config core.hooksPath .githooks",
     "test:watch": "vitest",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "postversion": "node .githooks/sync-versions.js && git add src-capacitor/package.json && git commit --amend --no-edit"
   },
   "dependencies": {
     "@capacitor/filesystem": "^7.1.8",

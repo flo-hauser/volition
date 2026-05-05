@@ -13,17 +13,17 @@ Let users choose whether their week starts on Monday (ISO default, current behav
 
 ## What already exists
 
-| Piece | Location | Notes |
-|---|---|---|
-| All week logic | [src/composables/useDay.ts](../src/composables/useDay.ts) | Uses `startOfISOWeek` from date-fns — always Monday |
-| `getIsoWeekId`, `getWeekDays`, `getWeekdayIndex`, `getPreviousWeekId` | [src/composables/useDay.ts](../src/composables/useDay.ts) | All 4 need to become week-start-aware |
-| `useProgress` | [src/composables/useProgress.ts](../src/composables/useProgress.ts) | Calls `getWeekDays` — will inherit fix automatically |
-| Store week calls | [src/stores/tasks.store.ts:73](../src/stores/tasks.store.ts#L73) | `getStreak`, `getHeatmapDays` use `getIsoWeekId`, `getPreviousWeekId` |
-| `WeekPage` | [src/pages/WeekPage.vue:78](../src/pages/WeekPage.vue#L78) | Calls `getIsoWeekId`, `getWeekdayIndex` |
-| `TodayPage` | [src/pages/TodayPage.vue:101](../src/pages/TodayPage.vue#L101) | Same pattern |
-| `useAppPreferences` | [src/composables/useAppPreferences.ts](../src/composables/useAppPreferences.ts) | Holds `themeMode` and `locale` — add `weekStartDay` here |
-| `SettingsPage` | [src/pages/SettingsPage.vue](../src/pages/SettingsPage.vue) | Add toggle here, following existing theme/locale button pattern |
-| date-fns v4 | `package.json` | `startOfWeek(date, { weekStartsOn })` handles both modes |
+| Piece                                                                 | Location                                                                        | Notes                                                                 |
+| --------------------------------------------------------------------- | ------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
+| All week logic                                                        | [src/composables/useDay.ts](../src/composables/useDay.ts)                       | Uses `startOfISOWeek` from date-fns — always Monday                   |
+| `getIsoWeekId`, `getWeekDays`, `getWeekdayIndex`, `getPreviousWeekId` | [src/composables/useDay.ts](../src/composables/useDay.ts)                       | All 4 need to become week-start-aware                                 |
+| `useProgress`                                                         | [src/composables/useProgress.ts](../src/composables/useProgress.ts)             | Calls `getWeekDays` — will inherit fix automatically                  |
+| Store week calls                                                      | [src/stores/tasks.store.ts:73](../src/stores/tasks.store.ts#L73)                | `getStreak`, `getHeatmapDays` use `getIsoWeekId`, `getPreviousWeekId` |
+| `WeekPage`                                                            | [src/pages/WeekPage.vue:78](../src/pages/WeekPage.vue#L78)                      | Calls `getIsoWeekId`, `getWeekdayIndex`                               |
+| `TodayPage`                                                           | [src/pages/TodayPage.vue:101](../src/pages/TodayPage.vue#L101)                  | Same pattern                                                          |
+| `useAppPreferences`                                                   | [src/composables/useAppPreferences.ts](../src/composables/useAppPreferences.ts) | Holds `themeMode` and `locale` — add `weekStartDay` here              |
+| `SettingsPage`                                                        | [src/pages/SettingsPage.vue](../src/pages/SettingsPage.vue)                     | Add toggle here, following existing theme/locale button pattern       |
+| date-fns v4                                                           | `package.json`                                                                  | `startOfWeek(date, { weekStartsOn })` handles both modes              |
 
 The check-in data (`checkinsByDay`) is keyed by day ISO strings (`YYYY-MM-DD`), **not by week ID**. Changing the week start preference does not affect stored data at all — only how days are grouped for display and streak math.
 
@@ -41,9 +41,7 @@ const VALID_WEEK_STARTS: WeekStartDay[] = ['monday', 'sunday'];
 
 function getStoredWeekStartDay(): WeekStartDay {
   const raw = localStorage.getItem(WEEK_START_KEY);
-  return VALID_WEEK_STARTS.includes(raw as WeekStartDay)
-    ? (raw as WeekStartDay)
-    : 'monday';  // default: ISO / Monday
+  return VALID_WEEK_STARTS.includes(raw as WeekStartDay) ? (raw as WeekStartDay) : 'monday'; // default: ISO / Monday
 }
 
 function setStoredWeekStartDay(value: WeekStartDay): void {
@@ -76,21 +74,15 @@ import {
 import type { WeekStartDay } from './useAppPreferences';
 
 function weekStart(date: Date, mode: WeekStartDay): Date {
-  return mode === 'sunday'
-    ? startOfWeek(date, { weekStartsOn: 0 })
-    : startOfISOWeek(date);
+  return mode === 'sunday' ? startOfWeek(date, { weekStartsOn: 0 }) : startOfISOWeek(date);
 }
 
 function weekNumber(date: Date, mode: WeekStartDay): number {
-  return mode === 'sunday'
-    ? getWeek(date, { weekStartsOn: 0 })
-    : getISOWeek(date);
+  return mode === 'sunday' ? getWeek(date, { weekStartsOn: 0 }) : getISOWeek(date);
 }
 
 function weekYear(date: Date, mode: WeekStartDay): number {
-  return mode === 'sunday'
-    ? getWeekYear(date, { weekStartsOn: 0 })
-    : getISOWeekYear(date);
+  return mode === 'sunday' ? getWeekYear(date, { weekStartsOn: 0 }) : getISOWeekYear(date);
 }
 
 // replaces getIsoWeekId
@@ -105,16 +97,20 @@ export function getWeekId(dayISO: string, mode: WeekStartDay = 'monday'): string
 export function getWeekDays(weekId: string, mode: WeekStartDay = 'monday'): string[] {
   const [yearStr, weekStr] = weekId.split('-W');
   // reconstruct the start date of this week
-  const jan4 = new Date(Number(yearStr), 0, 4);  // Jan 4 is always in week 1
+  const jan4 = new Date(Number(yearStr), 0, 4); // Jan 4 is always in week 1
   const startOfFirstWeek = weekStart(jan4, mode);
   const targetWeekStart = addDays(startOfFirstWeek, (Number(weekStr) - 1) * 7);
   return Array.from({ length: 7 }, (_, i) =>
-    formatISO(addDays(targetWeekStart, i), { representation: 'date' })
+    formatISO(addDays(targetWeekStart, i), { representation: 'date' }),
   );
 }
 
 // replaces getWeekdayIndex
-export function getWeekdayIndex(weekId: string, dayISO: string, mode: WeekStartDay = 'monday'): number {
+export function getWeekdayIndex(
+  weekId: string,
+  dayISO: string,
+  mode: WeekStartDay = 'monday',
+): number {
   const days = getWeekDays(weekId, mode);
   return days.indexOf(dayISO);
 }
@@ -150,13 +146,13 @@ import { getWeekId, getWeekDays, getPreviousWeekId } from '@/composables/useDay'
 const { getStoredWeekStartDay } = useAppPreferences();
 
 // replace every getIsoWeekId(...) call with:
-getWeekId(dayISO, getStoredWeekStartDay())
+getWeekId(dayISO, getStoredWeekStartDay());
 
 // replace every getPreviousWeekId(...) call with:
-getPreviousWeekId(weekId, getStoredWeekStartDay())
+getPreviousWeekId(weekId, getStoredWeekStartDay());
 
 // replace every getWeekDays(...) call with:
-getWeekDays(weekId, getStoredWeekStartDay())
+getWeekDays(weekId, getStoredWeekStartDay());
 ```
 
 ### WeekPage — [src/pages/WeekPage.vue:78](../src/pages/WeekPage.vue#L78)
@@ -166,9 +162,9 @@ const { getStoredWeekStartDay } = useAppPreferences();
 const weekStartDay = computed(() => getStoredWeekStartDay());
 
 // replace getIsoWeekId(today) with:
-getWeekId(today, weekStartDay.value)
+getWeekId(today, weekStartDay.value);
 // replace getWeekdayIndex(...) with:
-getWeekdayIndex(currentWeekId.value, today, weekStartDay.value)
+getWeekdayIndex(currentWeekId.value, today, weekStartDay.value);
 ```
 
 ### TodayPage — [src/pages/TodayPage.vue:101](../src/pages/TodayPage.vue#L101)
@@ -258,11 +254,12 @@ weekStart: {
 
 ## Step 7 — Tests
 
-**File:** [src/__tests__/useDay.spec.ts](../src/__tests__/useDay.spec.ts)
+**File:** [src/**tests**/useDay.spec.ts](../src/__tests__/useDay.spec.ts)
 
 Existing tests call `getIsoWeekId` — they continue to pass because the default is `'monday'`.
 
 Add a parallel suite for Sunday mode:
+
 - A known date (e.g. 2025-01-06, a Monday) is in week 2 ISO but week 1 Sunday-start (week started 2025-01-05 Sunday)
 - `getWeekDays` with Sunday mode returns 7 days starting on Sunday
 - `getWeekdayIndex` returns 0 for Sunday, 1 for Monday
@@ -284,14 +281,14 @@ Add a parallel suite for Sunday mode:
 
 ## Files touched
 
-| File | Change |
-|---|---|
-| [src/composables/useAppPreferences.ts](../src/composables/useAppPreferences.ts) | `WeekStartDay` type, reactive `weekStartDay` ref, `setWeekStartDay` |
-| [src/composables/useDay.ts](../src/composables/useDay.ts) | All 4 functions accept `WeekStartDay` param; Sunday path via date-fns `{ weekStartsOn: 0 }` |
-| [src/stores/tasks.store.ts](../src/stores/tasks.store.ts) | Thread `weekStartDay` into all `useDay` calls |
-| [src/pages/WeekPage.vue](../src/pages/WeekPage.vue) | Thread `weekStartDay` into `useDay` calls |
-| [src/pages/TodayPage.vue](../src/pages/TodayPage.vue) | Thread `weekStartDay` into `useDay` calls |
-| [src/pages/SettingsPage.vue](../src/pages/SettingsPage.vue) | New toggle row |
-| `src/i18n/en-US/index.ts` | `settings.weekStart.*` strings |
-| `src/i18n/de-DE/index.ts` | Same in German |
-| `src/__tests__/useDay.spec.ts` | Sunday-mode test suite |
+| File                                                                            | Change                                                                                      |
+| ------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| [src/composables/useAppPreferences.ts](../src/composables/useAppPreferences.ts) | `WeekStartDay` type, reactive `weekStartDay` ref, `setWeekStartDay`                         |
+| [src/composables/useDay.ts](../src/composables/useDay.ts)                       | All 4 functions accept `WeekStartDay` param; Sunday path via date-fns `{ weekStartsOn: 0 }` |
+| [src/stores/tasks.store.ts](../src/stores/tasks.store.ts)                       | Thread `weekStartDay` into all `useDay` calls                                               |
+| [src/pages/WeekPage.vue](../src/pages/WeekPage.vue)                             | Thread `weekStartDay` into `useDay` calls                                                   |
+| [src/pages/TodayPage.vue](../src/pages/TodayPage.vue)                           | Thread `weekStartDay` into `useDay` calls                                                   |
+| [src/pages/SettingsPage.vue](../src/pages/SettingsPage.vue)                     | New toggle row                                                                              |
+| `src/i18n/en-US/index.ts`                                                       | `settings.weekStart.*` strings                                                              |
+| `src/i18n/de-DE/index.ts`                                                       | Same in German                                                                              |
+| `src/__tests__/useDay.spec.ts`                                                  | Sunday-mode test suite                                                                      |

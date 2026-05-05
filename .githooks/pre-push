@@ -1,0 +1,32 @@
+#!/bin/bash
+#
+# Pre-push hook: Validate that git tags match package.json version
+# Prevents pushing misaligned version tags to remote
+#
+
+set -e
+
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[0m' # No Color
+
+# Check if we're pushing tags
+while IFS= read -r local_ref local_sha remote_ref remote_sha; do
+  # Check if this is a tag reference
+  if [[ $local_ref == refs/tags/* ]]; then
+    tag="${local_ref#refs/tags/}"
+
+    echo -e "${YELLOW}Checking version for tag: ${tag}${NC}"
+
+    # Run the version check script
+    if ! node "$(dirname "$0")/check-version.js" "$tag"; then
+      echo -e "${RED}❌ Push rejected: Version mismatch${NC}"
+      exit 1
+    fi
+  fi
+done
+
+echo -e "${GREEN}✓ Version checks passed${NC}"
+exit 0

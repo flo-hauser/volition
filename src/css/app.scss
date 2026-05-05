@@ -698,6 +698,16 @@ body.body--dark .achieved-badge {
   color: var(--text-3);
   position: relative;
   transition: all 240ms var(--ease);
+  padding: 0;
+  cursor: default;
+}
+.viz-dots .cell.clickable {
+  cursor: pointer;
+}
+.viz-dots .cell.clickable:hover:not(:disabled) {
+  border-color: var(--accent);
+  border-style: solid;
+  background: color-mix(in oklab, var(--accent) 8%, transparent);
 }
 .viz-dots .cell.filled {
   background: var(--accent);
@@ -724,6 +734,21 @@ body.body--dark .viz-dots .cell.filled {
 }
 .viz-dots .cell.future {
   opacity: 0.5;
+  cursor: not-allowed;
+}
+.viz-dots .cell.pulse {
+  animation: viz-ripple 700ms var(--ease-out);
+}
+@keyframes viz-ripple {
+  0% {
+    box-shadow: 0 0 0 0 var(--accent);
+  }
+  70% {
+    box-shadow: 0 0 0 8px transparent;
+  }
+  100% {
+    box-shadow: 0 0 0 0 transparent;
+  }
 }
 
 /* ============================================================
